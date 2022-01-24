@@ -1,0 +1,215 @@
+{
+  "main_menu": {
+    "key": "main_menu",
+    "title": "Hi{$name}, Welcome to Sidooh. What would you like to do?",
+    "type": "GENESIS",
+    "options": {
+      "1": {
+        "label": "Know About Sidooh",
+        "value": "1",
+        "next": "about"
+      },
+      "2": {
+        "label": "Buy Airtime",
+        "value": "2",
+        "next": "airtime"
+      },
+      "3": {
+        "label": "Pay",
+        "value": "3",
+        "next": "pay"
+      },
+      "4": {
+        "label": "Save",
+        "value": "4",
+        "next": "coming_soon"
+      },
+      "5": {
+        "title": "Invite",
+        "value": "5",
+        "next": "refer_pin"
+      },
+      "6": {
+        "label": "Become an Agent",
+        "value": "6",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "about": {
+    "key": "about",
+    "type": "OPEN",
+    "title": "Sidooh is a cashback rewards platform that gives you cash refunds on every item you purchase through the platform. The earned cashback is then automatically saved and invested in financial assets like Treasury Bills and Bonds, Fixed Deposits, etc. so as to generate extra income for you.",
+    "paginated": true
+  },
+  "airtime": {
+    "key": "airtime",
+    "title": "Buy airtime",
+    "options": {
+      "1": {
+        "label": "Self {$my_number}",
+        "value": "1",
+        "next": "airtime_amount"
+      },
+      "2": {
+        "label": "Other Number",
+        "value": "2",
+        "next": "airtime_other_number_select"
+      }
+    }
+  },
+  "airtime_other_number_select": {
+    "key": "airtime_other_number_select",
+    "title": "Select other number",
+    "options": {
+      "5": {
+        "label": "Add Other Number",
+        "type": "int",
+        "value": "5",
+        "next": "airtime_other_number"
+      }
+    }
+  },
+  "airtime_other_number": {
+    "key": "airtime_other_number",
+    "title": "Enter other number",
+    "type": "OPEN",
+    "next": "airtime_amount",
+    "option_type": "NUMBER"
+  },
+  "airtime_amount": {
+    "key": "airtime_amount",
+    "title": "Please input airtime amount (MIN: KES20)",
+    "type": "OPEN",
+    "next": "payment_method",
+    "option_type": "AIRTIME"
+  },
+  "payment_method": {
+    "key": "payment_method",
+    "title": "Pay Ksh{$amount} {$product} for {$number} using:",
+    "options": {
+      "1": {
+        "label": "MPESA",
+        "value": "1",
+        "next": "payment_confirmation"
+      },
+      "2": {
+        "label": "VOUCHER ({$voucher_balance})",
+        "value": "2",
+        "next": "payment_pin_confirmation"
+      }
+    }
+  },
+  "payment_pin_confirmation": {
+    "key": "payment_pin_confirmation",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "payment_confirmation",
+    "option_type": "PIN"
+  },
+  "payment_confirmation": {
+    "key": "payment_confirmation",
+    "title": "Ksh{$amount} {$product} for {$number} will be deducted from {$payment_method_text}:",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "payment_end"
+      },
+      "2": {
+        "label": "Cancel",
+        "value": "2",
+        "next": "cancel"
+      },
+      "3": {
+        "label": "Other MPESA number",
+        "value": "3",
+        "next": "payment_other_number_mpesa"
+      }
+    }
+  },
+  "payment_other_number_mpesa": {
+    "key": "payment_other_number_mpesa",
+    "title": "Enter MPESA number",
+    "type": "OPEN",
+    "next": "payment_confirmation_final",
+    "option_type": "NUMBER"
+  },
+  "payment_confirmation_final": {
+    "key": "payment_confirmation_final",
+    "title": "Ksh{$amount} {$product} for {$number} will be deducted from {$payment_method_text}:",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "payment_end"
+      },
+      "2": {
+        "label": "Cancel",
+        "value": "2",
+        "next": "cancel"
+      }
+    }
+  },
+  "pay": {
+    "key": "pay",
+    "title": "What would you like to pay for?",
+    "super_product": 3,
+    "options": {
+      "1": {
+        "label": "Ksh365 Sidooh Agent Monthly Subscription Fee",
+        "value": "1",
+        "next": "coming_soon"
+      },
+      "2": {
+        "label": "Top Up Voucher",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Pay Merchant (coming soon)",
+        "value": "3",
+        "next": "coming_soon"
+      },
+      "4": {
+        "label": "Pay Utilities",
+        "value": "4",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "refer_pin": {
+    "key": "refer_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "refer",
+    "option_type": "PIN"
+  },
+  "refer": {
+    "key": "refer",
+    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {$enrollment_time}hrs. Enter no:",
+    "type": "OPEN",
+    "next": "refer_end",
+    "option_type": "PHONE"
+  },
+  "refer_end": {
+    "key": "refer_end",
+    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {$enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
+    "type": "OPEN"
+  },
+  "payment_end": {
+    "key": "payment_end",
+    "title": "Your request has been received and is being processed. {$method_instruction}. Thank you.",
+    "type": "END"
+  },
+  "coming_soon": {
+    "key": "coming_soon",
+    "title": "COMING SOON. We shall inform you once the service is available.",
+    "type": "OPEN"
+  },
+  "cancel": {
+    "key": "cancel",
+    "title": "Thank you for using Sidooh. Sidooh, Makes You Money on Every Purchase.",
+    "type": "OPEN"
+  }
+}
