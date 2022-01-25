@@ -39,7 +39,7 @@ func WriteFile(data interface{}, filename string) error {
 	}
 
 	wd, err := os.Getwd()
-	err = os.WriteFile(filepath.Join(wd, filename), marshal, 0777)
+	err = os.WriteFile(filepath.Join(wd, "data/", filename), marshal, 0777)
 	if err != nil {
 		return err
 	}

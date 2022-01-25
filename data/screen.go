@@ -110,3 +110,8 @@ func (screen *Screen) Validate() error {
 
 	return nil
 }
+
+func (screen Screen) ValidateInput(input string) bool {
+	//TODO: Add validations
+	return true
+}
