@@ -20,7 +20,7 @@ func ReadFile(filename string) ([]byte, error) {
 }
 
 func UnmarshalFromFile(to interface{}, filename string) error {
-	file, err := ReadFile("state")
+	file, err := ReadFile(filename)
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func setNextScreens(current *Screen) {
 	if ok {
 
 		if current.Next == nil {
-			fmt.Println(current.Key, "Setting next", next.Key)
+			//fmt.Println(current.Key, "Setting next", next.Key)
 
 			current.setNext(next)
 			setNextScreens(next)
@@ -82,7 +82,7 @@ func setNextScreens(current *Screen) {
 			if ok {
 
 				if option.Next == nil {
-					fmt.Println(current.Key, option.Value, "Setting next", next.Key)
+					//fmt.Println(current.Key, option.Value, "Setting next", next.Key)
 
 					option.setNext(next)
 					setNextScreens(next)

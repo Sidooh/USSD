@@ -1,6 +1,7 @@
 package products
 
 const (
+	DEFAULT          = 0
 	AIRTIME          = 2
 	PAY              = 3
 	PAY_SUBSCRIPTION = 31

@@ -1,7 +1,7 @@
 {
   "main_menu": {
     "key": "main_menu",
-    "title": "Hi{$name}, Welcome to Sidooh. What would you like to do?",
+    "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",
     "type": "GENESIS",
     "options": {
       "1": {
@@ -33,6 +33,11 @@
         "label": "Become an Agent",
         "value": "6",
         "next": "coming_soon"
+      },
+      "7": {
+        "label": "My Account",
+        "value": "7",
+        "next": "coming_soon"
       }
     }
   },
@@ -47,7 +52,7 @@
     "title": "Buy airtime",
     "options": {
       "1": {
-        "label": "Self {$my_number}",
+        "label": "Self {phone}",
         "value": "1",
         "next": "airtime_amount"
       },
@@ -86,7 +91,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay Ksh{$amount} {$product} for {$number} using:",
+    "title": "Pay Ksh{amount} {product} for {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -94,7 +99,7 @@
         "next": "payment_confirmation"
       },
       "2": {
-        "label": "VOUCHER ({$voucher_balance})",
+        "label": "VOUCHER ({voucher_balance})",
         "value": "2",
         "next": "payment_pin_confirmation"
       }
@@ -109,7 +114,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "Ksh{$amount} {$product} for {$number} will be deducted from {$payment_method_text}:",
+    "title": "Ksh{amount} {product} for {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",
@@ -137,7 +142,7 @@
   },
   "payment_confirmation_final": {
     "key": "payment_confirmation_final",
-    "title": "Ksh{$amount} {$product} for {$number} will be deducted from {$payment_method_text}:",
+    "title": "Ksh{amount} {product} for {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",
@@ -187,19 +192,19 @@
   },
   "refer": {
     "key": "refer",
-    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {$enrollment_time}hrs. Enter no:",
+    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {enrollment_time}hrs. Enter no:",
     "type": "OPEN",
     "next": "refer_end",
     "option_type": "PHONE"
   },
   "refer_end": {
     "key": "refer_end",
-    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {$enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
+    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
     "type": "OPEN"
   },
   "payment_end": {
     "key": "payment_end",
-    "title": "Your request has been received and is being processed. {$method_instruction}. Thank you.",
+    "title": "Your request has been received and is being processed. {method_instruction}. Thank you.",
     "type": "END"
   },
   "coming_soon": {

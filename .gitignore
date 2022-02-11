@@ -27,3 +27,6 @@ gen
 **/test.db
 .env
 */**.log
+
+# Session state json file
+*_*.json

@@ -10,9 +10,9 @@ type Airtime struct {
 	screen *data.Screen
 }
 
-func (a *Airtime) Process(screen *data.Screen) {
+func (a *Airtime) Process(session string, screen *data.Screen) {
 	fmt.Println("AIRTIME: process")
-	a.initialize(screen)
+	a.initialize(session, screen)
 
 	a.ProcessScreen()
 

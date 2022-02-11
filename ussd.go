@@ -9,42 +9,60 @@ import (
 
 var screens = map[string]*data.Screen{}
 
-//var stateData = state.State{}
-
-func getNextScreen(screenKey string) data.Screen {
-	return *screens[screenKey]
-}
-
 func process(session string, input string) string {
-	stateData, err := state.RetrieveState(session)
-	if err != nil {
-		return ""
-	} else {
-		stateData.Screen = *screens["main_menu"]
+	fmt.Println("==========================")
+	fmt.Println("Processing...")
+	stateData := state.RetrieveState(session)
+
+	// User is starting
+	if stateData.ScreenPath.Key == "" {
+		fmt.Println("User starting...")
+		stateData.Init(screens)
+		stateData.SaveState()
+
+		fmt.Println("==========================")
+		fmt.Println("Return GENESIS response.")
+		return stateData.ScreenPath.GetStringRep()
 	}
 
-	if stateData.Screen.Type == data.OPEN {
-		if stateData.Screen.ValidateInput(input) {
-			stateData.ProcessInput(input)
+	// Check for global Navigation
+	if input == "0" || input == "00" {
+		stateData.NavigateBackOrHome(screens, input)
+		stateData.SaveState()
+
+		fmt.Println("==========================")
+		fmt.Println("Return BACK/HOME response.")
+		return stateData.ScreenPath.GetStringRep()
+	}
+
+	if stateData.ScreenPath.Type == data.OPEN {
+		if stateData.ScreenPath.ValidateInput(input) {
+			stateData.ProcessOpenInput(input)
+
+			stateData.MoveNext(screens, stateData.ScreenPath.Screen.NextKey)
 		}
 	} else {
 		if v, e := strconv.Atoi(input); e == nil {
-			if _, ok := stateData.Screen.Options[v]; ok {
-				stateData.ProcessInput(input)
+			if o, ok := stateData.ScreenPath.Options[v]; ok {
+				stateData.ProcessOptionInput(v)
+
+				stateData.MoveNext(screens, o.NextKey)
 			}
 		}
 	}
 
-	if stateData.Screen.Type == data.GENESIS {
+	if stateData.ScreenPath.Type == data.GENESIS {
 		stateData.Status = data.GENESIS
 	}
-	if stateData.Screen.Type == data.END {
+	if stateData.ScreenPath.Type == data.END {
 		stateData.Status = data.END
 	}
 
 	stateData.SaveState()
 
-	return stateData.Screen.GetStringRep()
+	fmt.Println("==========================")
+	fmt.Println("Return response.")
+	return stateData.ScreenPath.GetStringRep()
 }
 
 func main() {
@@ -57,16 +75,20 @@ func main() {
 
 	screens = loadedScreens
 
+	fmt.Println(process("a", ""))
+
 	fmt.Println(process("a", "2"))
+	//
+	//fmt.Println(process("a", "1"))
+	//
+	//fmt.Println(process("a", "00"))
+	//
+	//fmt.Println(process("a", "0"))
 
-	fmt.Println(process("a", "1"))
-
-	fmt.Println(process("a", "20"))
-
-	fmt.Println(process("a", "1"))
-
-	fmt.Println(process("a", "1"))
-
-	fmt.Println(process("a", "1"))
+	//fmt.Println(process("a", "20"))
+	//
+	//fmt.Println(process("a", "1"))
+	//
+	//fmt.Println(process("a", "1"))
 
 }
