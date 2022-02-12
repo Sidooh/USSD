@@ -87,7 +87,7 @@
     "title": "Please input airtime amount (MIN: KES20)",
     "type": "OPEN",
     "next": "payment_method",
-    "option_type": "AIRTIME"
+    "validations": "INT,MIN:20,MAX:10000"
   },
   "payment_method": {
     "key": "payment_method",

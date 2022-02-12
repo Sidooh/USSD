@@ -5,6 +5,7 @@ import (
 	"USSD/products"
 	"USSD/service"
 	"fmt"
+	"strconv"
 )
 
 type State struct {
@@ -85,8 +86,8 @@ func (s *State) SaveState() error {
 func (s *State) ProcessOpenInput(input string) {
 	fmt.Println("Processing open input: ", input)
 
-	s.product.Process(s.Session, &s.ScreenPath.Screen)
-
+	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
+	s.product.Process(input)
 }
 
 func (s *State) ProcessOptionInput(input int) {
@@ -95,8 +96,8 @@ func (s *State) ProcessOptionInput(input int) {
 		s.SetProduct(input)
 	}
 
-	s.product.Process(s.Session, &s.ScreenPath.Screen)
-
+	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
+	s.product.Process(strconv.Itoa(input))
 }
 
 func (s *State) SetPrevious() {
@@ -123,6 +124,18 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 		s.ScreenPath.Previous = nil
 		s.SetProduct(0)
 	}
+}
+
+func (s *State) GetStringResponse() string {
+	response := s.ScreenPath.GetStringRep()
+
+	if s.ScreenPath.Type != data.GENESIS {
+		response += "\n"
+		response += "0. Back"
+		response += "00. Home"
+	}
+
+	return response
 }
 
 func getScreen(screens map[string]*data.Screen, screenKey string) data.Screen {

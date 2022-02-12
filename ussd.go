@@ -9,7 +9,7 @@ import (
 
 var screens = map[string]*data.Screen{}
 
-func process(session string, input string) string {
+func process(session string, input string) *state.State {
 	fmt.Println("==========================")
 	fmt.Println("Processing...")
 	stateData := state.RetrieveState(session)
@@ -22,7 +22,7 @@ func process(session string, input string) string {
 
 		fmt.Println("==========================")
 		fmt.Println("Return GENESIS response.")
-		return stateData.ScreenPath.GetStringRep()
+		return stateData
 	}
 
 	// Check for global Navigation
@@ -32,7 +32,7 @@ func process(session string, input string) string {
 
 		fmt.Println("==========================")
 		fmt.Println("Return BACK/HOME response.")
-		return stateData.ScreenPath.GetStringRep()
+		return stateData
 	}
 
 	if stateData.ScreenPath.Type == data.OPEN {
@@ -40,6 +40,8 @@ func process(session string, input string) string {
 			stateData.ProcessOpenInput(input)
 
 			stateData.MoveNext(screens, stateData.ScreenPath.Screen.NextKey)
+
+			stateData.SaveState()
 		}
 	} else {
 		if v, e := strconv.Atoi(input); e == nil {
@@ -47,22 +49,20 @@ func process(session string, input string) string {
 				stateData.ProcessOptionInput(v)
 
 				stateData.MoveNext(screens, o.NextKey)
+
+				stateData.SaveState()
 			}
 		}
 	}
 
-	if stateData.ScreenPath.Type == data.GENESIS {
-		stateData.Status = data.GENESIS
-	}
-	if stateData.ScreenPath.Type == data.END {
-		stateData.Status = data.END
-	}
-
-	stateData.SaveState()
-
 	fmt.Println("==========================")
 	fmt.Println("Return response.")
-	return stateData.ScreenPath.GetStringRep()
+	return stateData
+}
+
+func processAndRespond(session string, input string) string {
+	response := process(session, input)
+	return response.GetStringResponse()
 }
 
 func main() {
@@ -75,20 +75,20 @@ func main() {
 
 	screens = loadedScreens
 
-	fmt.Println(process("a", ""))
+	fmt.Println(processAndRespond("a", ""))
 
-	fmt.Println(process("a", "2"))
+	fmt.Println(processAndRespond("a", "2"))
 	//
-	//fmt.Println(process("a", "1"))
+	fmt.Println(processAndRespond("a", "1"))
 	//
-	//fmt.Println(process("a", "00"))
+	//fmt.Println(processAndRespond("a", "00"))
 	//
-	//fmt.Println(process("a", "0"))
+	//fmt.Println(processAndRespond("a", "0"))
 
-	//fmt.Println(process("a", "20"))
+	fmt.Println(processAndRespond("a", "+20"))
 	//
-	//fmt.Println(process("a", "1"))
+	//fmt.Println(processAndRespond("a", "1"))
 	//
-	//fmt.Println(process("a", "1"))
+	//fmt.Println(processAndRespond("a", "1"))
 
 }

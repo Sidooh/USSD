@@ -2,36 +2,25 @@ package data
 
 import (
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 )
 
 type Screen struct {
-	Key     string          `json:"key"`
-	Title   string          `json:"title"`
-	Type    string          `json:"type"`
-	Options map[int]*Option `json:"options"`
-	NextKey string          `json:"next"`
-	Next    *Screen         `json:"-"`
+	Key         string          `json:"key"`
+	Title       string          `json:"title"`
+	Type        string          `json:"type"`
+	Options     map[int]*Option `json:"options"`
+	NextKey     string          `json:"next"`
+	Next        *Screen         `json:"-"`
+	Validations string          `json:"validations"`
 }
 
 type ScreenPath struct {
 	Screen
 	Previous *ScreenPath `json:"previous"`
 }
-
-// types of screens
-const (
-	GENESIS = "GENESIS"
-	OPEN    = "OPEN"
-	CLOSED  = "CLOSED"
-	END     = "END"
-)
-
-// special screens
-const (
-	MAIN_MENU = "main_menu"
-)
 
 var nextExceptionScreens = map[string]bool{
 	"about": true, "cancel": true, "coming_soon": true,
@@ -43,9 +32,17 @@ func (screen *Screen) setNext(s *Screen) {
 }
 
 func (screen *Screen) GetStringRep() string {
+	// The below is needed in order to iterate over options in order.
+	// Can be updated when go 1.18 is stable using generics
+	var keys []int
+	for k := range screen.Options {
+		keys = append(keys, k)
+	}
+	sort.Ints(keys)
+
 	optionsString := ""
-	for _, v := range screen.Options {
-		optionsString += v.GetStringRep() + "\n"
+	for _, k := range keys {
+		optionsString += screen.Options[k].GetStringRep() + "\n"
 	}
 	return fmt.Sprintf("%v\n\n%v", screen.Title, optionsString)
 }
@@ -123,8 +120,52 @@ func (screen *Screen) Validate() error {
 }
 
 func (screen *Screen) ValidateInput(input string) bool {
-	//TODO: Add validations
-	return true
+	//TODO: Add validations : Urgent
+	fmt.Println(screen.Validations)
+
+	validations := strings.Split(screen.Validations, ",")
+
+	var currentValidationCheck bool = false
+	for _, s := range validations {
+		validation := strings.Split(s, ":")
+
+		if !screen.checkValidation(validation, input) {
+			fmt.Println("Validation: ", input, " failed on ", validation)
+			currentValidationCheck = false
+			break
+		}
+
+		currentValidationCheck = true
+	}
+
+	return currentValidationCheck
+}
+
+func (screen *Screen) checkValidation(v []string, input string) bool {
+	var validateAgainst = 0
+	if len(v) > 1 {
+		if v, e := strconv.Atoi(v[1]); e == nil {
+			validateAgainst = v
+		}
+	}
+
+	switch v[0] {
+	case INT:
+		return getIntVal(input) > 0
+	case MIN:
+		return getIntVal(input) >= validateAgainst
+	case MAX:
+		return getIntVal(input) <= validateAgainst
+	}
+
+	return false
+}
+
+func getIntVal(str string) int {
+	if v, e := strconv.Atoi(str); e == nil {
+		return v
+	}
+	return 0
 }
 
 func (screen *Screen) SubstituteVars(vars map[string]string) {
@@ -135,7 +176,7 @@ func (screen *Screen) SubstituteVars(vars map[string]string) {
 	}
 }
 
-//SOURCE: https://github.com/syyongx/php2go/blob/master/php.go
+// Strtr SOURCE: https://github.com/syyongx/php2go/blob/master/php.go
 // Strtr strtr()
 //
 // If the parameter length is 1, type is: map[string]string
