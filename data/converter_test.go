@@ -98,7 +98,8 @@ func TestLoadData(t *testing.T) {
 	//4. Test valid file
 	createDataTestFile(map[string]*Screen{
 		"main_menu": {
-			Key: "main_menu",
+			Key:   "main_menu",
+			Title: "Main Menu Title",
 			Options: map[int]*Option{
 				1: {
 					Label:   "end",
@@ -107,8 +108,9 @@ func TestLoadData(t *testing.T) {
 			},
 		},
 		"end": {
-			Key:  "end",
-			Type: END,
+			Key:   "end",
+			Type:  END,
+			Title: "End Title",
 		},
 	})
 
