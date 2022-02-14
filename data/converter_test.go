@@ -18,7 +18,7 @@ func TestMain(m *testing.M) {
 }
 
 func createTestFile() {
-	_ = os.WriteFile(filename, []byte("test"), 0644)
+	_ = WriteFile("test", filename)
 }
 
 func createDataTestFile(data interface{}) {

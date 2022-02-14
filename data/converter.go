@@ -25,7 +25,7 @@ func UnmarshalFromFile(to interface{}, filename string) error {
 
 	err = json.Unmarshal(file, &to)
 	if err != nil {
-		return nil
+		return err
 	}
 	return nil
 }
