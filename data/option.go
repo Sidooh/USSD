@@ -24,7 +24,7 @@ func (option *Option) Validate() error {
 	if option.Next == nil {
 		return fmt.Errorf("next is not set for option " + option.Label + " with value " + strconv.Itoa(option.Value))
 	} else {
-		err := option.Next.Validate()
+		err := option.Next.Validate(true, true)
 		if err != nil {
 			panic(err)
 		}

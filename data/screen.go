@@ -47,38 +47,47 @@ func (screen *Screen) GetStringRep() string {
 	return fmt.Sprintf("%v\n\n%v", screen.Title, optionsString)
 }
 
-func (screen *Screen) Validate() error {
+func (screen *Screen) Validate(withOptions bool, recursive bool) error {
+	if screen.Key == "" {
+		return fmt.Errorf("key should be set for screen")
+	}
+
+	if screen.Title == "" {
+		return fmt.Errorf("title should be set for screen " + screen.Key)
+	}
+
 	if screen.Type == "" {
-		screen.Type = CLOSED
-		//return fmt.Errorf("type should be set for " + screen.Key)
+		return fmt.Errorf("type should be set for screen " + screen.Key)
 	}
 
 	if screen.Type == GENESIS || screen.Type == CLOSED {
 		// Validate that Next is not set
 		if screen.Next != nil {
-			return fmt.Errorf("next should not be set for " + screen.Key + " of type " + screen.Type)
+			return fmt.Errorf("next should not be set for screen " + screen.Key + " of type " + screen.Type)
 		}
 
 		// Validate that options exist
 		if len(screen.Options) == 0 {
-			return fmt.Errorf("screen options are not set for " + screen.Key + " of type " + screen.Type)
+			return fmt.Errorf("screen options are not set for screen " + screen.Key + " of type " + screen.Type)
 		}
 
 		// Validate that options are valid
-		existingOptions := map[string]struct{}{}
-		for _, option := range screen.Options {
-			// Validate option
-			err := option.Validate()
-			if err != nil {
-				panic(err)
-			}
+		if withOptions {
+			existingOptions := map[string]struct{}{}
+			for _, option := range screen.Options {
+				// Validate option
+				err := option.Validate()
+				if err != nil {
+					panic(err)
+				}
 
-			//	Check if option already exists in list
-			_, ok := existingOptions[option.Label]
-			if ok {
-				return fmt.Errorf("screen options contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
-			} else {
-				existingOptions[option.Label] = struct{}{}
+				//	Check if option already exists in list
+				_, ok := existingOptions[option.Label]
+				if ok {
+					return fmt.Errorf("screen options contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
+				} else {
+					existingOptions[option.Label] = struct{}{}
+				}
 			}
 		}
 	}
@@ -87,32 +96,34 @@ func (screen *Screen) Validate() error {
 		// Validate that Next must be set
 		// exceptions about,
 		if screen.Next != nil {
-			err := screen.Next.Validate()
-			if err != nil {
-				panic(err)
+			if recursive {
+				err := screen.Next.Validate(withOptions, recursive)
+				if err != nil {
+					panic(err)
+				}
 			}
 		} else {
 
 			if _, ok := nextExceptionScreens[screen.Key]; ok != true {
-				return fmt.Errorf("next is not set for " + screen.Key + " of type " + screen.Type)
+				return fmt.Errorf("next is not set for screen " + screen.Key + " of type " + screen.Type)
 			}
 		}
 
 		//	 Validate has no options
 		if screen.Options != nil {
-			return fmt.Errorf("screen options should not be set for " + screen.Key + " of type " + screen.Type)
+			return fmt.Errorf("screen options should not be set for screen " + screen.Key + " of type " + screen.Type)
 		}
 	}
 
 	if screen.Type == END {
 		// Validate that Next must not set
 		if screen.Next != nil {
-			return fmt.Errorf("next should not be set for " + screen.Key + " of type " + screen.Type)
+			return fmt.Errorf("next should not be set for screen " + screen.Key + " of type " + screen.Type)
 		}
 
 		//	Validate has no options
 		if screen.Options != nil {
-			return fmt.Errorf("screen options should not be set for " + screen.Key + " of type " + screen.Type)
+			return fmt.Errorf("screen options should not be set for screen " + screen.Key + " of type " + screen.Type)
 		}
 	}
 

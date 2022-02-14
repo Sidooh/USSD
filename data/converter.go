@@ -77,10 +77,14 @@ func setNextScreens(screens map[string]*Screen, current *Screen) {
 
 		if current.Next == nil {
 			current.setNext(next)
-			setNextScreens(nil, next)
+			setNextScreens(screens, next)
 		}
 
 	} else {
+		// Set default type
+		if current.Type == "" {
+			current.Type = CLOSED
+		}
 
 		for _, option := range current.Options {
 			next, ok = screens[option.NextKey]
@@ -89,7 +93,7 @@ func setNextScreens(screens map[string]*Screen, current *Screen) {
 
 				if option.Next == nil {
 					option.setNext(next)
-					setNextScreens(nil, next)
+					setNextScreens(screens, next)
 				}
 
 			}
@@ -101,7 +105,7 @@ func setNextScreens(screens map[string]*Screen, current *Screen) {
 
 func validateScreens(screens map[string]*Screen) error {
 	for _, d := range screens {
-		err := d.Validate()
+		err := d.Validate(true, true)
 		if err != nil {
 			return err
 		}
