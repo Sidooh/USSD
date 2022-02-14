@@ -40,6 +40,7 @@ func TestReadFile(t *testing.T) {
 }
 
 func TestUnmarshalFromFile(t *testing.T) {
+	_ = os.Remove(filename)
 	data := ""
 
 	err := UnmarshalFromFile(data, filename)

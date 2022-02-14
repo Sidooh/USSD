@@ -14,7 +14,7 @@ func ReadFile(filename string) ([]byte, error) {
 		return nil, err
 	}
 
-	return file, err
+	return file, nil
 }
 
 func UnmarshalFromFile(to interface{}, filename string) error {
