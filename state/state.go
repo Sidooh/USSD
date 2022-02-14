@@ -56,7 +56,7 @@ func RetrieveState(session string) *State {
 		Session: session,
 		Status:  data.GENESIS,
 	}
-	err := data.UnmarshalFromFile(&stateData, session+"_state.json")
+	err := data.UnmarshalFromFile(&stateData, session+data.STATE_FILE)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -75,7 +75,7 @@ func (s *State) SaveState() error {
 
 	s.ScreenPath.SubstituteVars(s.Vars)
 
-	err := data.WriteFile(s, s.Session+"_state.json")
+	err := data.WriteFile(s, s.Session+data.STATE_FILE)
 	if err != nil {
 		panic(err)
 	}

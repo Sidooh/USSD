@@ -66,12 +66,11 @@ func processAndRespond(session string, input string) string {
 }
 
 func main() {
-	//screens := screens{}
-
 	loadedScreens, err := data.LoadData()
 	if err != nil {
 		fmt.Println(err)
 	}
+	fmt.Printf("Validated %v screens successfully\n", len(loadedScreens))
 
 	screens = loadedScreens
 

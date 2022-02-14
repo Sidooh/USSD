@@ -2,16 +2,14 @@ package data
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"os"
 	"path/filepath"
 )
 
-var screens = map[string]*Screen{}
-
 func ReadFile(filename string) ([]byte, error) {
 	wd, err := os.Getwd()
-	file, err := os.ReadFile(filepath.Join(wd, "data/", filename))
+	file, err := os.ReadFile(filepath.Join(wd, DATA_DIRECTORY, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +37,7 @@ func WriteFile(data interface{}, filename string) error {
 	}
 
 	wd, err := os.Getwd()
-	err = os.WriteFile(filepath.Join(wd, "data/", filename), marshal, 0777)
+	err = os.WriteFile(filepath.Join(wd, DATA_DIRECTORY, filename), marshal, 0644)
 	if err != nil {
 		return err
 	}
@@ -48,56 +46,65 @@ func WriteFile(data interface{}, filename string) error {
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := ReadFile("data.json")
+	file, err := ReadFile(DATA_FILE)
 	if err != nil {
 		return nil, err
 	}
 
+	var screens = map[string]*Screen{}
 	err = json.Unmarshal(file, &screens)
 	if err != nil {
 		return nil, err
 	}
 
-	setNextScreens(screens["main_menu"])
+	if len(screens) == 0 {
+		return nil, errors.New("data file is empty")
+	}
 
-	validateScreens()
+	setNextScreens(screens, screens[MAIN_MENU])
+
+	err = validateScreens(screens)
+	if err != nil {
+		return nil, err
+	}
 
 	return screens, nil
 }
 
-func setNextScreens(current *Screen) {
+func setNextScreens(screens map[string]*Screen, current *Screen) {
 	next, ok := screens[current.NextKey]
 	if ok {
 
 		if current.Next == nil {
-			//fmt.Println(current.Key, "Setting next", next.Key)
-
 			current.setNext(next)
-			setNextScreens(next)
+			setNextScreens(nil, next)
 		}
 
 	} else {
+
 		for _, option := range current.Options {
 			next, ok = screens[option.NextKey]
+
 			if ok {
 
 				if option.Next == nil {
-					//fmt.Println(current.Key, option.Value, "Setting next", next.Key)
-
 					option.setNext(next)
-					setNextScreens(next)
+					setNextScreens(nil, next)
 				}
+
 			}
+
 		}
+
 	}
 }
 
-func validateScreens() {
+func validateScreens(screens map[string]*Screen) error {
 	for _, d := range screens {
 		err := d.Validate()
 		if err != nil {
-			panic(err)
+			return err
 		}
 	}
-	fmt.Printf("Validated %v screens successfully\n", len(screens))
+	return nil
 }

@@ -8,6 +8,15 @@ const (
 	END     = "END"
 )
 
+const (
+	STATE_FILE = "_state.json"
+)
+
+var (
+	DATA_FILE      = "data.json"
+	DATA_DIRECTORY = "data"
+)
+
 // screen keys
 const (
 	MAIN_MENU = "main_menu"
