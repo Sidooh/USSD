@@ -30,3 +30,7 @@ gen
 
 # Session state json file
 *_*.json
+
+# USSD test files
+*/*test.file
+*/*test-data.json

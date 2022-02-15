@@ -9,7 +9,7 @@ import (
 
 var screens = map[string]*data.Screen{}
 
-func process(session string, input string) *state.State {
+func Process(session string, input string) *state.State {
 	fmt.Println("==========================")
 	fmt.Println("Processing...")
 	stateData := state.RetrieveState(session)
@@ -61,11 +61,11 @@ func process(session string, input string) *state.State {
 }
 
 func processAndRespond(session string, input string) string {
-	response := process(session, input)
+	response := Process(session, input)
 	return response.GetStringResponse()
 }
 
-func main() {
+func LoadScreens() {
 	loadedScreens, err := data.LoadData()
 	if err != nil {
 		fmt.Println(err)
@@ -73,6 +73,10 @@ func main() {
 	fmt.Printf("Validated %v screens successfully\n", len(loadedScreens))
 
 	screens = loadedScreens
+}
+
+func main() {
+	LoadScreens()
 
 	fmt.Println(processAndRespond("a", ""))
 
@@ -86,8 +90,8 @@ func main() {
 
 	fmt.Println(processAndRespond("a", "+20"))
 	//
-	//fmt.Println(processAndRespond("a", "1"))
+	fmt.Println(processAndRespond("a", "1"))
 	//
-	//fmt.Println(processAndRespond("a", "1"))
+	fmt.Println(processAndRespond("a", "1"))
 
 }
