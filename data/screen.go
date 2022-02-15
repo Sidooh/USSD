@@ -131,8 +131,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 }
 
 func (screen *Screen) ValidateInput(input string) bool {
-	//TODO: Add validations : Urgent
-	fmt.Println(screen.Validations)
+	fmt.Println("\tValidating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")
 
@@ -148,6 +147,8 @@ func (screen *Screen) ValidateInput(input string) bool {
 
 		currentValidationCheck = true
 	}
+
+	fmt.Println("\t*** Validation result ", currentValidationCheck)
 
 	return currentValidationCheck
 }

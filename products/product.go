@@ -17,17 +17,17 @@ type Product struct {
 }
 
 func (p *Product) Initialize(vars map[string]string, screen *data.Screen) {
-	fmt.Println("PRODUCT: initialize")
+	fmt.Println("\t - PRODUCT: initialize")
 	p.screen = screen
 	p.vars = vars
 }
 
 func (p *Product) Process(input string) {
-	fmt.Println("PRODUCT: Process")
+	fmt.Println("\t - PRODUCT: Process")
 }
 
 func (p *Product) finalize() {
-	fmt.Println("PRODUCT: finalize")
+	fmt.Println("\t - PRODUCT: finalize")
 
 	//	Final checks
 }

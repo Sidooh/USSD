@@ -5,14 +5,14 @@ import (
 	"USSD/state"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 var screens = map[string]*data.Screen{}
 
-func Process(session string, input string) *state.State {
-	fmt.Println("==========================")
-	fmt.Println("Processing...")
-	stateData := state.RetrieveState(session)
+func Process(code, phone, session, input string) *state.State {
+	fmt.Println("START ========================")
+	stateData := state.RetrieveState(code, phone, session)
 
 	// User is starting
 	if stateData.ScreenPath.Key == "" {
@@ -20,8 +20,7 @@ func Process(session string, input string) *state.State {
 		stateData.Init(screens)
 		stateData.SaveState()
 
-		fmt.Println("==========================")
-		fmt.Println("Return GENESIS response.")
+		fmt.Println("- Return GENESIS response.")
 		return stateData
 	}
 
@@ -30,38 +29,32 @@ func Process(session string, input string) *state.State {
 		stateData.NavigateBackOrHome(screens, input)
 		stateData.SaveState()
 
-		fmt.Println("==========================")
-		fmt.Println("Return BACK/HOME response.")
+		fmt.Println("- Return BACK/HOME response.")
 		return stateData
 	}
 
 	if stateData.ScreenPath.Type == data.OPEN {
 		if stateData.ScreenPath.ValidateInput(input) {
-			stateData.ProcessOpenInput(input)
-
-			stateData.MoveNext(screens, stateData.ScreenPath.Screen.NextKey)
+			stateData.ProcessOpenInput(screens, input)
 
 			stateData.SaveState()
 		}
 	} else {
 		if v, e := strconv.Atoi(input); e == nil {
-			if o, ok := stateData.ScreenPath.Options[v]; ok {
-				stateData.ProcessOptionInput(v)
-
-				stateData.MoveNext(screens, o.NextKey)
+			if option, ok := stateData.ScreenPath.Options[v]; ok {
+				stateData.ProcessOptionInput(screens, option)
 
 				stateData.SaveState()
 			}
 		}
 	}
 
-	fmt.Println("==========================")
-	fmt.Println("Return response.")
+	fmt.Println("- Return response.")
 	return stateData
 }
 
-func processAndRespond(session string, input string) string {
-	response := Process(session, input)
+func processAndRespond(code, phone, session, input string) string {
+	response := Process(code, phone, session, input)
 	return response.GetStringResponse()
 }
 
@@ -78,20 +71,19 @@ func LoadScreens() {
 func main() {
 	LoadScreens()
 
-	fmt.Println(processAndRespond("a", ""))
+	paths := map[string][]string{
+		//"about": {"", "1"},
+		"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"},
+		//"pay_utility_tokens_existing-acc_100_mpesa_accept": {"", "3", "4", "1", "100", "1", "1"},
+	}
 
-	fmt.Println(processAndRespond("a", "2"))
-	//
-	fmt.Println(processAndRespond("a", "1"))
-	//
-	//fmt.Println(processAndRespond("a", "00"))
-	//
-	//fmt.Println(processAndRespond("a", "0"))
-
-	fmt.Println(processAndRespond("a", "+20"))
-	//
-	fmt.Println(processAndRespond("a", "1"))
-	//
-	fmt.Println(processAndRespond("a", "1"))
+	for path, inputs := range paths {
+		for _, input := range inputs {
+			start := time.Now()
+			fmt.Println(processAndRespond("*384*99#", "254714611696", path, input))
+			fmt.Println("LATENCY == ", time.Since(start))
+			fmt.Println("========================== END")
+		}
+	}
 
 }

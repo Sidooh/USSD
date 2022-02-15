@@ -9,7 +9,9 @@ import (
 )
 
 type State struct {
+	Code       string `json:"code"`
 	Session    string `json:"session"`
+	Phone      string `json:"phone"`
 	ProductKey int    `json:"product_key"`
 	product    products.ProductI
 	ScreenPath data.ScreenPath   `json:"screen_path"`
@@ -17,15 +19,20 @@ type State struct {
 	Vars       map[string]string `json:"vars"`
 }
 
-func (s *State) Init(screens map[string]*data.Screen) {
+var screens = map[string]*data.Screen{}
+
+func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
+	screens = sc
 	s.ScreenPath.Screen = *screens[data.MAIN_MENU]
 
-	account, err := service.FetchAccount(s.Session)
+	account, err := service.FetchAccount(s.Phone)
 	if err != nil {
 		s.Vars["{name}"] = ""
+		s.Vars["{voucher_balance}"] = "0"
 	} else {
 		s.Vars["{name}"] = " " + account.Name
+		s.Vars["{voucher_balance}"] = account.Balances[0].Amount
 	}
 
 	s.Vars["{phone}"] = account.Phone
@@ -51,10 +58,12 @@ func (s *State) getProduct() int {
 	}
 }
 
-func RetrieveState(session string) *State {
+func RetrieveState(code, phone, session string) *State {
 	stateData := State{
+		Code:    code,
 		Session: session,
 		Status:  data.GENESIS,
+		Phone:   phone,
 	}
 	err := data.UnmarshalFromFile(&stateData, session+data.STATE_FILE)
 	if err != nil {
@@ -83,21 +92,32 @@ func (s *State) SaveState() error {
 	return nil
 }
 
-func (s *State) ProcessOpenInput(input string) {
+func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 	fmt.Println("Processing open input: ", input)
+	screens = m
+
+	s.ScreenPath.Screen.Next = getScreen(screens, s.ScreenPath.Screen.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
+
+	s.MoveNext(s.ScreenPath.Screen.NextKey)
 }
 
-func (s *State) ProcessOptionInput(input int) {
-	fmt.Println("Processing option input: ", input)
+func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {
+	fmt.Println("Processing option input: ", option.Value)
+	screens = m
+
 	if s.ScreenPath.Type == data.GENESIS {
-		s.SetProduct(input)
+		s.SetProduct(option.Value)
 	}
 
+	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
+
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
-	s.product.Process(strconv.Itoa(input))
+	s.product.Process(strconv.Itoa(option.Value))
+
+	s.MoveNext(option.NextKey)
 }
 
 func (s *State) SetPrevious() {
@@ -106,11 +126,23 @@ func (s *State) SetPrevious() {
 			Screen: s.ScreenPath.Screen, Previous: s.ScreenPath.Previous,
 		}
 	}
+
+	// TODO: Fully check and test this: What will happen if I go back and no screen exists?
+	s.ensurePathDepth(s.ScreenPath.Previous, 7)
 }
 
-func (s *State) MoveNext(screens map[string]*data.Screen, screenKey string) {
+func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) {
+	fmt.Println(i)
+	if previous.Previous != nil && i > 0 {
+		s.ensurePathDepth(previous.Previous, i-1)
+	}
+
+	previous.Previous = nil
+}
+
+func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
-	s.ScreenPath.Screen = getScreen(screens, screenKey)
+	s.ScreenPath.Screen = *getScreen(screens, screenKey)
 }
 
 func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
@@ -120,7 +152,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = getScreen(screens, data.MAIN_MENU)
+		s.ScreenPath.Screen = *getScreen(screens, data.MAIN_MENU)
 		s.ScreenPath.Previous = nil
 		s.SetProduct(0)
 	}
@@ -130,7 +162,9 @@ func (s *State) GetStringResponse() string {
 	response := s.ScreenPath.GetStringRep()
 
 	if s.ScreenPath.Type != data.GENESIS {
-		response += "\n"
+		if s.ScreenPath.Type == data.CLOSED {
+			response += "\n"
+		}
 		response += "0. Back"
 		response += "\n"
 		response += "00. Home"
@@ -139,6 +173,6 @@ func (s *State) GetStringResponse() string {
 	return response
 }
 
-func getScreen(screens map[string]*data.Screen, screenKey string) data.Screen {
-	return *screens[screenKey]
+func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
+	return screens[screenKey]
 }
