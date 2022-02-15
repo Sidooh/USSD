@@ -3,7 +3,6 @@ package products
 import (
 	"USSD/data"
 	"fmt"
-	"strings"
 )
 
 type Airtime struct {
@@ -33,7 +32,20 @@ func (a *Airtime) processScreen(input string) {
 		break
 	case data.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
-		a.screen.Next.Title = "Buy" + strings.TrimPrefix(a.screen.Next.Title, "Pay")
+		break
+
+	case data.PAYMENT_METHOD:
+		switch input {
+		case "1":
+			a.vars["{payment_method}"] = data.MPESA
+			a.vars["{payment_method_text}"] = data.MPESA + " " + a.vars["{phone}"]
+			a.vars["{method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
+			break
+		case "2":
+			a.vars["{payment_method}"] = data.VOUCHER
+			a.vars["{payment_method_text}"] = data.VOUCHER + "{voucher_balance}"
+			break
+		}
 		break
 	}
 }

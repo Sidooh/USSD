@@ -45,6 +45,16 @@ func WriteFile(data interface{}, filename string) error {
 	return nil
 }
 
+func RemoveFile(filename string) error {
+	wd, err := os.Getwd()
+	err = os.Remove(filepath.Join(wd, DATA_DIRECTORY, filename))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func LoadData() (map[string]*Screen, error) {
 	file, err := ReadFile(DATA_FILE)
 	if err != nil {

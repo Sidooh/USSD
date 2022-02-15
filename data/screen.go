@@ -140,7 +140,7 @@ func (screen *Screen) ValidateInput(input string) bool {
 		validation := strings.Split(s, ":")
 
 		if !screen.checkValidation(validation, input) {
-			fmt.Println("Validation: ", input, " failed on ", validation)
+			fmt.Println("\t*** ", input, " failed on ", validation)
 			currentValidationCheck = false
 			break
 		}
@@ -168,9 +168,19 @@ func (screen *Screen) checkValidation(v []string, input string) bool {
 		return getIntVal(input) >= validateAgainst
 	case MAX:
 		return getIntVal(input) <= validateAgainst
+	case PHONE:
+		return isValidPhone(input)
+	case DISALLOW_CURRENT:
+		return isValidPhone(input)
+	case MPESA_NUMBER:
+		return getIntVal(input) <= validateAgainst
 	}
 
 	return false
+}
+
+func isValidPhone(input string) bool {
+	return true
 }
 
 func getIntVal(str string) int {

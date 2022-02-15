@@ -5,6 +5,7 @@ import (
 	"USSD/products"
 	"USSD/service"
 	"fmt"
+	"log"
 	"strconv"
 )
 
@@ -67,7 +68,7 @@ func RetrieveState(code, phone, session string) *State {
 	}
 	err := data.UnmarshalFromFile(&stateData, session+data.STATE_FILE)
 	if err != nil {
-		fmt.Println(err)
+		log.Default().Println(err)
 	}
 
 	stateData.SetProduct(stateData.ProductKey)
@@ -90,6 +91,10 @@ func (s *State) SaveState() error {
 	}
 
 	return nil
+}
+
+func (s *State) unsetState() {
+	_ = data.RemoveFile(s.Session + data.STATE_FILE)
 }
 
 func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
@@ -132,12 +137,12 @@ func (s *State) SetPrevious() {
 }
 
 func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) {
-	fmt.Println(i)
+	fmt.Println(previous.Key, i)
 	if previous.Previous != nil && i > 0 {
 		s.ensurePathDepth(previous.Previous, i-1)
+	} else {
+		previous.Previous = nil
 	}
-
-	previous.Previous = nil
 }
 
 func (s *State) MoveNext(screenKey string) {
@@ -159,9 +164,18 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 }
 
 func (s *State) GetStringResponse() string {
-	response := s.ScreenPath.GetStringRep()
+	response := ""
 
-	if s.ScreenPath.Type != data.GENESIS {
+	if s.ScreenPath.Type == data.END {
+		response += "END "
+		s.unsetState()
+	} else {
+		response += "CON "
+	}
+
+	response += s.ScreenPath.GetStringRep()
+
+	if s.ScreenPath.Type != data.GENESIS && s.ScreenPath.Type != data.END {
 		if s.ScreenPath.Type == data.CLOSED {
 			response += "\n"
 		}

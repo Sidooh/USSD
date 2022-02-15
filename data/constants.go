@@ -27,6 +27,9 @@ const (
 	BETA        = "beta"
 	CANCEL      = "cancel"
 
+	// global
+	PAYMENT_METHOD = "payment_method"
+
 	//	AIRTIME
 	AIRTIME                     = "airtime"
 	AIRTIME_OTHER_NUMBER_SELECT = "airtime_other_number_select"
@@ -35,7 +38,15 @@ const (
 )
 
 const (
-	INT = "INT"
-	MIN = "MIN"
-	MAX = "MAX"
+	INT              = "INT"
+	MIN              = "MIN"
+	MAX              = "MAX"
+	PHONE            = "PHONE"
+	DISALLOW_CURRENT = "DISALLOW_CURRENT"
+	MPESA_NUMBER     = "MPESA_NUMBER"
+)
+
+const (
+	MPESA   = "MPESA"
+	VOUCHER = "VOUCHER"
 )
