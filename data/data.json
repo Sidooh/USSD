@@ -138,7 +138,7 @@
     "title": "Enter MPESA number",
     "type": "OPEN",
     "next": "payment_confirmation_final",
-    "validations": "PHONE,DISALLOW_CURRENT,MPESA_NUMBER"
+    "validations": "SAFARICOM,DISALLOW_CURRENT"
   },
   "payment_confirmation_final": {
     "key": "payment_confirmation_final",

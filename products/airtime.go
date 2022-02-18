@@ -1,7 +1,7 @@
 package products
 
 import (
-	"USSD/data"
+	"USSD/utils"
 	"fmt"
 )
 
@@ -22,28 +22,28 @@ func (a *Airtime) processScreen(input string) {
 	fmt.Println("\t --> selected: ", a.screen.Key)
 
 	switch a.screen.Key {
-	case data.AIRTIME:
+	case utils.AIRTIME:
 		a.vars["{product}"] = a.productRep
 		a.vars["{number}"] = a.vars["{phone}"]
 		break
-	case data.AIRTIME_OTHER_NUMBER_SELECT:
+	case utils.AIRTIME_OTHER_NUMBER_SELECT:
 		break
-	case data.AIRTIME_OTHER_NUMBER:
+	case utils.AIRTIME_OTHER_NUMBER:
 		break
-	case data.AIRTIME_AMOUNT:
+	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
 		break
 
-	case data.PAYMENT_METHOD:
+	case utils.PAYMENT_METHOD:
 		switch input {
 		case "1":
-			a.vars["{payment_method}"] = data.MPESA
-			a.vars["{payment_method_text}"] = data.MPESA + " " + a.vars["{phone}"]
+			a.vars["{payment_method}"] = utils.MPESA
+			a.vars["{payment_method_text}"] = utils.MPESA + " " + a.vars["{phone}"]
 			a.vars["{method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
 			break
 		case "2":
-			a.vars["{payment_method}"] = data.VOUCHER
-			a.vars["{payment_method_text}"] = data.VOUCHER + "{voucher_balance}"
+			a.vars["{payment_method}"] = utils.VOUCHER
+			a.vars["{payment_method_text}"] = utils.VOUCHER + "{voucher_balance}"
 			break
 		}
 		break

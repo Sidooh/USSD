@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD/utils"
 	"errors"
 	"testing"
 )
@@ -73,8 +74,8 @@ func TestScreen_Validate(t *testing.T) {
 
 	/* Test CLOSED screen*/
 
-	screen.Type = CLOSED // GENESIS is a type of closed screen
-	screen.Next = &Screen{Type: END}
+	screen.Type = utils.CLOSED // GENESIS is a type of closed screen
+	screen.Next = &Screen{Type: utils.END}
 
 	// Check next is NOT set
 	got = screen.Validate(false, false)
@@ -114,7 +115,7 @@ func TestScreen_Validate(t *testing.T) {
 	screen = Screen{
 		Key:   "test_open",
 		Title: "Test OPEN",
-		Type:  OPEN,
+		Type:  utils.OPEN,
 	}
 
 	// Check next is set
@@ -124,7 +125,7 @@ func TestScreen_Validate(t *testing.T) {
 		t.Errorf("Screen_Validate(): got %s; expect %s", got, expect)
 	}
 
-	screen.Next = &Screen{Type: END}
+	screen.Next = &Screen{Type: utils.END}
 
 	// Check options are not set
 	screen.Options = map[int]*Option{
@@ -156,7 +157,7 @@ func TestScreen_Validate(t *testing.T) {
 	screen = Screen{
 		Key:   "test_end",
 		Title: "Test END",
-		Type:  END,
+		Type:  utils.END,
 	}
 
 	// Check options are not set
@@ -177,7 +178,7 @@ func TestScreen_Validate(t *testing.T) {
 	screen.Options = nil
 
 	// Check next is NOT set
-	screen.Next = &Screen{Type: END}
+	screen.Next = &Screen{Type: utils.END}
 	got = screen.Validate(false, false)
 	expect = errors.New("next should not be set for screen test_end of type END")
 	if got.Error() != expect.Error() {

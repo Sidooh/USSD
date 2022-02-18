@@ -1,4 +1,4 @@
-package data
+package utils
 
 // types of screens
 const (
@@ -49,4 +49,21 @@ const (
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
+)
+
+const (
+	SAFARICOM = "SAFARICOM"
+	AIRTEL    = "AIRTEL"
+	TELKOM    = "TELKOM"
+	EQUITEL   = "EQUITEL"
+	FAIBA     = "FAIBA"
+)
+
+// To confirm, use https://regoio.herokuapp.com/ & https://regexr.com/
+const (
+	SAFARICOM_REGEX = `^(\+?254|0)?((7([0129][0-9]|4[0123568]|5[789]|6[89])|(1[1][0-5]))[0-9]{6})$`
+	AIRTEL_REGEX    = `^(\+?254|0)?(((7(3[0-9]|5[0-6]|6[27]|8[0-9]))|(1[0][0-6]))[0-9]{6})$`
+	TELKOM_REGEX    = `^(\+?254|0)?(77[0-9]{7})$`
+	EQUITEL_REGEX   = `^(\+?254|0)?(76[3-6][0-9]{6})$`
+	FAIBA_REGEX     = `^(\+?254|0)?(747[0-9]{6})$`
 )

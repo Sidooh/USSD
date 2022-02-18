@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD/utils"
 	"os"
 	"testing"
 )
@@ -8,11 +9,11 @@ import (
 var filename = "test.file"
 
 func TestMain(m *testing.M) {
-	DATA_DIRECTORY = ""
-	DATA_FILE = "test-data.json"
+	utils.DATA_DIRECTORY = ""
+	utils.DATA_FILE = "test-data.json"
 
 	_ = os.Remove(filename)
-	_ = os.Remove(DATA_FILE)
+	_ = os.Remove(utils.DATA_FILE)
 
 	os.Exit(m.Run())
 }
@@ -22,7 +23,7 @@ func createTestFile() {
 }
 
 func createDataTestFile(data interface{}) {
-	_ = WriteFile(data, DATA_FILE)
+	_ = WriteFile(data, utils.DATA_FILE)
 }
 
 func TestReadFile(t *testing.T) {
@@ -109,7 +110,7 @@ func TestLoadData(t *testing.T) {
 		},
 		"end": {
 			Key:   "end",
-			Type:  END,
+			Type:  utils.END,
 			Title: "End Title",
 		},
 	})

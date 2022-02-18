@@ -4,6 +4,7 @@ import (
 	"USSD/data"
 	"USSD/products"
 	"USSD/service"
+	"USSD/utils"
 	"fmt"
 	"log"
 	"strconv"
@@ -25,7 +26,7 @@ var screens = map[string]*data.Screen{}
 func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
 	screens = sc
-	s.ScreenPath.Screen = *screens[data.MAIN_MENU]
+	s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
 
 	account, err := service.FetchAccount(s.Phone)
 	if err != nil {
@@ -63,10 +64,10 @@ func RetrieveState(code, phone, session string) *State {
 	stateData := State{
 		Code:    code,
 		Session: session,
-		Status:  data.GENESIS,
+		Status:  utils.GENESIS,
 		Phone:   phone,
 	}
-	err := data.UnmarshalFromFile(&stateData, session+data.STATE_FILE)
+	err := data.UnmarshalFromFile(&stateData, session+utils.STATE_FILE)
 	if err != nil {
 		log.Default().Println(err)
 	}
@@ -77,15 +78,15 @@ func RetrieveState(code, phone, session string) *State {
 }
 
 func (s *State) SaveState() error {
-	if s.ScreenPath.Type == data.END {
-		s.Status = data.END
-	} else if s.ScreenPath.Type != data.GENESIS {
-		s.Status = data.OPEN
+	if s.ScreenPath.Type == utils.END {
+		s.Status = utils.END
+	} else if s.ScreenPath.Type != utils.GENESIS {
+		s.Status = utils.OPEN
 	}
 
 	s.ScreenPath.SubstituteVars(s.Vars)
 
-	err := data.WriteFile(s, s.Session+data.STATE_FILE)
+	err := data.WriteFile(s, s.Session+utils.STATE_FILE)
 	if err != nil {
 		panic(err)
 	}
@@ -94,7 +95,7 @@ func (s *State) SaveState() error {
 }
 
 func (s *State) unsetState() {
-	_ = data.RemoveFile(s.Session + data.STATE_FILE)
+	_ = data.RemoveFile(s.Session + utils.STATE_FILE)
 }
 
 func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
@@ -113,7 +114,7 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 	fmt.Println("Processing option input: ", option.Value)
 	screens = m
 
-	if s.ScreenPath.Type == data.GENESIS {
+	if s.ScreenPath.Type == utils.GENESIS {
 		s.SetProduct(option.Value)
 	}
 
@@ -157,7 +158,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = *getScreen(screens, data.MAIN_MENU)
+		s.ScreenPath.Screen = *getScreen(screens, utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
 		s.SetProduct(0)
 	}
@@ -166,7 +167,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 func (s *State) GetStringResponse() string {
 	response := ""
 
-	if s.ScreenPath.Type == data.END {
+	if s.ScreenPath.Type == utils.END {
 		response += "END "
 		s.unsetState()
 	} else {
@@ -175,8 +176,8 @@ func (s *State) GetStringResponse() string {
 
 	response += s.ScreenPath.GetStringRep()
 
-	if s.ScreenPath.Type != data.GENESIS && s.ScreenPath.Type != data.END {
-		if s.ScreenPath.Type == data.CLOSED {
+	if s.ScreenPath.Type != utils.GENESIS && s.ScreenPath.Type != utils.END {
+		if s.ScreenPath.Type == utils.CLOSED {
 			response += "\n"
 		}
 		response += "0. Back"

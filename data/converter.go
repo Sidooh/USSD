@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD/utils"
 	"encoding/json"
 	"errors"
 	"os"
@@ -9,7 +10,7 @@ import (
 
 func ReadFile(filename string) ([]byte, error) {
 	wd, err := os.Getwd()
-	file, err := os.ReadFile(filepath.Join(wd, DATA_DIRECTORY, filename))
+	file, err := os.ReadFile(filepath.Join(wd, utils.DATA_DIRECTORY, filename))
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +38,7 @@ func WriteFile(data interface{}, filename string) error {
 	}
 
 	wd, err := os.Getwd()
-	err = os.WriteFile(filepath.Join(wd, DATA_DIRECTORY, filename), marshal, 0644)
+	err = os.WriteFile(filepath.Join(wd, utils.DATA_DIRECTORY, filename), marshal, 0644)
 	if err != nil {
 		return err
 	}
@@ -47,7 +48,7 @@ func WriteFile(data interface{}, filename string) error {
 
 func RemoveFile(filename string) error {
 	wd, err := os.Getwd()
-	err = os.Remove(filepath.Join(wd, DATA_DIRECTORY, filename))
+	err = os.Remove(filepath.Join(wd, utils.DATA_DIRECTORY, filename))
 	if err != nil {
 		return err
 	}
@@ -56,7 +57,7 @@ func RemoveFile(filename string) error {
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := ReadFile(DATA_FILE)
+	file, err := ReadFile(utils.DATA_FILE)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func LoadData() (map[string]*Screen, error) {
 		return nil, errors.New("data file is empty")
 	}
 
-	setNextScreens(screens, screens[MAIN_MENU])
+	setNextScreens(screens, screens[utils.MAIN_MENU])
 
 	err = validateScreens(screens)
 	if err != nil {
@@ -93,7 +94,7 @@ func setNextScreens(screens map[string]*Screen, current *Screen) {
 	} else {
 		// Set default type
 		if current.Type == "" {
-			current.Type = CLOSED
+			current.Type = utils.CLOSED
 		}
 
 		for _, option := range current.Options {

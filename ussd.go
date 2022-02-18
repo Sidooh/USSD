@@ -3,6 +3,7 @@ package main
 import (
 	"USSD/data"
 	"USSD/state"
+	"USSD/utils"
 	"fmt"
 	"strconv"
 	"time"
@@ -33,8 +34,8 @@ func Process(code, phone, session, input string) *state.State {
 		return stateData
 	}
 
-	if stateData.ScreenPath.Type == data.OPEN {
-		if stateData.ScreenPath.ValidateInput(input) {
+	if stateData.ScreenPath.Type == utils.OPEN {
+		if stateData.ScreenPath.ValidateInput(input, stateData.Phone) {
 			stateData.ProcessOpenInput(screens, input)
 
 			stateData.SaveState()
@@ -75,7 +76,7 @@ func main() {
 		//"about": {"", "1"},
 		//"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"},
 		//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"},
-		"airtime_self_20_mpesa_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254714611696", "1"},
+		"airtime_self_20_mpesa_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254780611696", "1"},
 
 		//"pay_utility_tokens_existing-acc_100_mpesa_accept": {"", "3", "4", "1", "100", "1", "1"},
 	}

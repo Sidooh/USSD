@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD/utils"
 	"fmt"
 	"sort"
 	"strconv"
@@ -60,7 +61,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 		return fmt.Errorf("type should be set for screen " + screen.Key)
 	}
 
-	if screen.Type == GENESIS || screen.Type == CLOSED {
+	if screen.Type == utils.GENESIS || screen.Type == utils.CLOSED {
 		// Validate that Next is not set
 		if screen.Next != nil {
 			return fmt.Errorf("next should not be set for screen " + screen.Key + " of type " + screen.Type)
@@ -92,7 +93,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 		}
 	}
 
-	if screen.Type == OPEN {
+	if screen.Type == utils.OPEN {
 		// Validate that Next must be set
 		// exceptions about,
 		if screen.Next != nil {
@@ -115,7 +116,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 		}
 	}
 
-	if screen.Type == END {
+	if screen.Type == utils.END {
 		// Validate that Next must not set
 		if screen.Next != nil {
 			return fmt.Errorf("next should not be set for screen " + screen.Key + " of type " + screen.Type)
@@ -130,7 +131,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 	return nil
 }
 
-func (screen *Screen) ValidateInput(input string) bool {
+func (screen *Screen) ValidateInput(input string, phone string) bool {
 	fmt.Println("\tValidating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")
@@ -139,7 +140,7 @@ func (screen *Screen) ValidateInput(input string) bool {
 	for _, s := range validations {
 		validation := strings.Split(s, ":")
 
-		if !screen.checkValidation(validation, input) {
+		if !screen.checkValidation(validation, input, phone) {
 			fmt.Println("\t*** ", input, " failed on ", validation)
 			currentValidationCheck = false
 			break
@@ -153,7 +154,7 @@ func (screen *Screen) ValidateInput(input string) bool {
 	return currentValidationCheck
 }
 
-func (screen *Screen) checkValidation(v []string, input string) bool {
+func (screen *Screen) checkValidation(v []string, input string, phone string) bool {
 	var validateAgainst = 0
 	if len(v) > 1 {
 		if v, e := strconv.Atoi(v[1]); e == nil {
@@ -162,24 +163,47 @@ func (screen *Screen) checkValidation(v []string, input string) bool {
 	}
 
 	switch v[0] {
-	case INT:
+	case utils.INT:
 		return getIntVal(input) > 0
-	case MIN:
+	case utils.MIN:
 		return getIntVal(input) >= validateAgainst
-	case MAX:
+	case utils.MAX:
 		return getIntVal(input) <= validateAgainst
-	case PHONE:
+	case utils.PHONE:
 		return isValidPhone(input)
-	case DISALLOW_CURRENT:
-		return isValidPhone(input)
-	case MPESA_NUMBER:
-		return getIntVal(input) <= validateAgainst
+	case utils.DISALLOW_CURRENT:
+		return !isCurrentPhone(input, phone)
+	case utils.SAFARICOM:
+		return isValidPhoneAndProvider(input, utils.SAFARICOM)
 	}
 
 	return false
 }
 
+func isCurrentPhone(input string, phone string) bool {
+	s, err := utils.FormatPhone(input)
+	if err != nil {
+		return false
+	}
+
+	return s == phone
+}
+
+func isValidPhoneAndProvider(input string, requiredProvider string) bool {
+	provider, err := utils.GetPhoneProvider(input)
+	if err != nil {
+		return false
+	}
+
+	return provider == requiredProvider
+}
+
 func isValidPhone(input string) bool {
+	_, err := utils.GetPhoneProvider(input)
+	if err != nil {
+		return false
+	}
+
 	return true
 }
 
