@@ -25,7 +25,7 @@
         "next": "coming_soon"
       },
       "5": {
-        "title": "Invite",
+        "label": "Invite",
         "value": "5",
         "next": "refer_pin"
       },
@@ -110,7 +110,7 @@
     "title": "Please enter your Sidooh PIN",
     "type": "OPEN",
     "next": "payment_confirmation",
-    "option_type": "PIN"
+    "validations": "PIN"
   },
   "payment_confirmation": {
     "key": "payment_confirmation",

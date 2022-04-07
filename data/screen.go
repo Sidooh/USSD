@@ -1,7 +1,8 @@
 package data
 
 import (
-	"USSD/utils"
+	"USSD.sidooh/service"
+	"USSD.sidooh/utils"
 	"fmt"
 	"sort"
 	"strconv"
@@ -175,9 +176,15 @@ func (screen *Screen) checkValidation(v []string, input string, phone string) bo
 		return !isCurrentPhone(input, phone)
 	case utils.SAFARICOM:
 		return isValidPhoneAndProvider(input, utils.SAFARICOM)
+	case utils.PIN:
+		return checkPin(input, phone)
 	}
 
 	return false
+}
+
+func checkPin(input string, phone string) bool {
+	return service.CheckPin(phone, input)
 }
 
 func isCurrentPhone(input string, phone string) bool {

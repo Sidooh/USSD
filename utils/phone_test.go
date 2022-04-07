@@ -14,6 +14,7 @@ func TestMain(m *testing.M) {
 	validPhones["700000000"] = SAFARICOM
 	validPhones["748000000"] = SAFARICOM
 	validPhones["110000000"] = SAFARICOM
+	validPhones["714611696"] = SAFARICOM
 	validPhones["730000000"] = AIRTEL
 	validPhones["762000000"] = AIRTEL
 	validPhones["106000000"] = AIRTEL

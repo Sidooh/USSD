@@ -1,13 +1,14 @@
 package state
 
 import (
-	"USSD/data"
-	"USSD/products"
-	"USSD/service"
-	"USSD/utils"
+	"USSD.sidooh/data"
+	"USSD.sidooh/products"
+	"USSD.sidooh/service"
+	"USSD.sidooh/utils"
 	"fmt"
 	"log"
 	"strconv"
+	"strings"
 )
 
 type State struct {
@@ -28,12 +29,18 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	screens = sc
 	s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
 
+	s.Vars["{name}"] = ""
+
+	// Can we use go defer/concurrency to fetch other details like voucher balances?
 	account, err := service.FetchAccount(s.Phone)
+	//Possible Usecases
+	//1. Error is thrown -> phone "", name "", balances 0
+	//2. Account has no user -> phone, name "", balances,
+	//3. Account and User -> phone, name, balances
 	if err != nil {
-		s.Vars["{name}"] = ""
 		s.Vars["{voucher_balance}"] = "0"
-	} else {
-		s.Vars["{name}"] = " " + account.Name
+	} else if account.User.Name != "" {
+		s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 		s.Vars["{voucher_balance}"] = account.Balances[0].Amount
 	}
 

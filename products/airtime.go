@@ -1,7 +1,7 @@
 package products
 
 import (
-	"USSD/utils"
+	"USSD.sidooh/utils"
 	"fmt"
 )
 
@@ -33,7 +33,6 @@ func (a *Airtime) processScreen(input string) {
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
 		break
-
 	case utils.PAYMENT_METHOD:
 		switch input {
 		case "1":
@@ -43,7 +42,7 @@ func (a *Airtime) processScreen(input string) {
 			break
 		case "2":
 			a.vars["{payment_method}"] = utils.VOUCHER
-			a.vars["{payment_method_text}"] = utils.VOUCHER + "{voucher_balance}"
+			a.vars["{payment_method_text}"] = utils.VOUCHER + "(" + a.vars["{voucher_balance}"] + ")"
 			break
 		}
 		break

@@ -43,7 +43,7 @@ const (
 	MAX              = "MAX"
 	PHONE            = "PHONE"
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
-	MPESA_NUMBER     = "MPESA_NUMBER"
+	PIN              = "PIN"
 )
 
 const (
