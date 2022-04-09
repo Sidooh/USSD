@@ -3,11 +3,14 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/jellydator/ttlcache/v3"
 )
 
 type ApiClient struct {
@@ -20,9 +23,9 @@ type AuthResponse struct {
 }
 
 var (
-	token  = ""
-	ticker = time.NewTicker(14 * time.Minute)
-	quit   = make(chan struct{})
+	cache = ttlcache.New[string, string](
+		ttlcache.WithTTL[string, string](14 * time.Minute),
+	)
 )
 
 func (api *ApiClient) init() {
@@ -50,59 +53,62 @@ func (api *ApiClient) send(data interface{}) error {
 	return nil
 }
 
-func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	api.init()
+func (api *ApiClient) setDefaultHeaders() {
+	api.request.Header.Add("Accept", "application/json")
+	api.request.Header.Add("Content-Type", `application/json`)
+}
 
+func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader) *ApiClient {
 	request, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
 		log.Fatalf("error creating HTTP request: %v", err)
 	}
-	request.Header.Add("Accept", "application/json")
-	request.Header.Add("Content-Type", `application/json`)
-
-	if token != "" {
-		request.Header.Add("Authorization", "Bearer "+token)
-	}
 
 	api.request = request
+	api.setDefaultHeaders()
+
 	return api
 }
 
-func (api ApiClient) EnsureAuthenticated() {
-	if token == "" {
-		values := map[string]string{"email": "aa@a.a", "password": "12345678"}
-		jsonData, err := json.Marshal(values)
+func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
+	if token := cache.Get("token"); token != nil {
+		fmt.Println("Exp", token.ExpiresAt(), token.TTL())
+		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
+	} else {
+		api.EnsureAuthenticated()
 
-		err = api.Authenticate(jsonData)
-		if err != nil {
-			log.Fatalf("error authenticating: %v", err)
-		}
+		token = cache.Get("token")
+		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
+	}
+
+	return api
+}
+
+func (api *ApiClient) EnsureAuthenticated() {
+	values := map[string]string{"email": "aa@a.a", "password": "12345678"}
+	jsonData, err := json.Marshal(values)
+
+	err = api.Authenticate(jsonData)
+	if err != nil {
+		log.Fatalf("error authenticating: %v", err)
 	}
 }
 
-func (a *ApiClient) Authenticate(data []byte) error {
+func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := a.newRequest(http.MethodPost, getUrl("/users/signin"), bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, getUrl("/users/signin"), bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}
 
-	token = response.Token
-
-	//TODO: Test this worker for unsetting token every so often
-	//
-	//go func() {
-	//	for {
-	//		select {
-	//		case <-ticker.C:
-	//			token = ""
-	//		case <-quit:
-	//			ticker.Stop()
-	//			return
-	//		}
-	//	}
-	//}()
+	cache.Set("token", response.Token, 14*time.Minute)
+	go func() {
+		for {
+			time.Sleep(14 * time.Minute)
+			cache.Delete("token")
+		}
+	}()
 
 	return nil
 }

@@ -23,8 +23,9 @@ type Balance struct {
 	Amount string
 }
 
+var apiClient = client.InitAccountClient()
+
 func FetchAccount(phone string) (*Account, error) {
-	apiClient := client.AccountApiClient{}
 	//
 	//values := map[string]string{"email": "aa@a.a", "password": "12345678"}
 	//jsonData, err := json.Marshal(values)
