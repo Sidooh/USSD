@@ -16,6 +16,7 @@ import (
 type ApiClient struct {
 	client  *http.Client
 	request *http.Request
+	baseUrl string
 }
 
 type AuthResponse struct {
@@ -28,8 +29,13 @@ var (
 	)
 )
 
-func (api *ApiClient) init() {
+func (api *ApiClient) init(baseUrl string) {
 	api.client = &http.Client{Timeout: 10 * time.Second}
+	api.baseUrl = baseUrl
+}
+
+func (api *ApiClient) getUrl(endpoint string) string {
+	return api.baseUrl + endpoint
 }
 
 func (api *ApiClient) send(data interface{}) error {
@@ -45,6 +51,10 @@ func (api *ApiClient) send(data interface{}) error {
 		log.Fatalf("Couldn't parse response body. %+v", err)
 	}
 
+	//r, err := ioutil.ReadAll(api.request)
+
+	fmt.Println(api.request, string(body))
+
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		log.Fatalf("Couldn't parse response body. %+v", err)
@@ -59,11 +69,13 @@ func (api *ApiClient) setDefaultHeaders() {
 }
 
 func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader) *ApiClient {
+	endpoint = api.getUrl(endpoint)
 	request, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
 		log.Fatalf("error creating HTTP request: %v", err)
 	}
 
+	fmt.Println(body)
 	api.request = request
 	api.setDefaultHeaders()
 
@@ -97,7 +109,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, getUrl("/users/signin"), bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, "/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}

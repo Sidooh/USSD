@@ -1,8 +1,11 @@
 package products
 
 import (
+	"USSD.sidooh/service"
+	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"fmt"
+	"strconv"
 )
 
 type Airtime struct {
@@ -15,6 +18,7 @@ func (a *Airtime) Process(input string) {
 	a.productRep = "airtime"
 
 	a.processScreen(input)
+	a.finalize()
 }
 
 func (a *Airtime) processScreen(input string) {
@@ -46,5 +50,27 @@ func (a *Airtime) processScreen(input string) {
 			break
 		}
 		break
+	}
+}
+
+func (a *Airtime) finalize() {
+	fmt.Println("\t -- AIRTIME: finalize")
+
+	//	Final checks
+	fmt.Println("====", a.screen.Next.Type)
+
+	if a.screen.Next.Type == utils.END {
+		accountId, _ := strconv.Atoi(a.vars["{account_id}"])
+		amount, _ := strconv.Atoi(a.vars["{amount}"])
+		method := a.vars["{payment_method}"]
+
+		request := client.AirtimePurchaseRequest{
+			Initiator: client.CONSUMER,
+			Amount:    amount,
+			Method:    method,
+			AccountId: accountId,
+		}
+
+		service.PurchaseAirtime(request)
 	}
 }

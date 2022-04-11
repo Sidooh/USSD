@@ -28,7 +28,9 @@ const (
 	CANCEL      = "cancel"
 
 	// global
-	PAYMENT_METHOD = "payment_method"
+	PAYMENT_METHOD       = "payment_method"
+	PAYMENT_CONFIRMATION = "payment_confirmation"
+	PAYMENT_END          = "payment_end"
 
 	//	AIRTIME
 	AIRTIME                     = "airtime"

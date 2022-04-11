@@ -30,4 +30,5 @@ func (p *Product) finalize() {
 	fmt.Println("\t - PRODUCT: finalize")
 
 	//	Final checks
+	fmt.Println("====", p.screen.Type)
 }

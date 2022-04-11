@@ -23,7 +23,7 @@ type Balance struct {
 	Amount string
 }
 
-var apiClient = client.InitAccountClient()
+var accountsClient = client.InitAccountClient()
 
 func FetchAccount(phone string) (*Account, error) {
 	//
@@ -32,7 +32,7 @@ func FetchAccount(phone string) (*Account, error) {
 
 	var account = new(Account)
 
-	err := apiClient.GetAccount(phone, &account)
+	err := accountsClient.GetAccount(phone, &account)
 	if err != nil {
 		return nil, err
 	}

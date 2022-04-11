@@ -44,6 +44,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		s.Vars["{voucher_balance}"] = account.Balances[0].Amount
 	}
 
+	s.Vars["{account_id}"] = strconv.Itoa(account.Id)
 	s.Vars["{phone}"] = account.Phone
 }
 
