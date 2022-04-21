@@ -2,10 +2,7 @@ package service
 
 import (
 	"USSD.sidooh/service/client"
-	"fmt"
 )
-
-//TODO: Flesh out services i.e. Accounts - fetch an account; Products - perform purchases;
 
 type Account struct {
 	Id     int    `json:"id"`
@@ -26,10 +23,6 @@ type Balance struct {
 var accountsClient = client.InitAccountClient()
 
 func FetchAccount(phone string) (*Account, error) {
-	//
-	//values := map[string]string{"email": "aa@a.a", "password": "12345678"}
-	//jsonData, err := json.Marshal(values)
-
 	var account = new(Account)
 
 	err := accountsClient.GetAccount(phone, &account)
@@ -41,10 +34,27 @@ func FetchAccount(phone string) (*Account, error) {
 		{"VOUCHER", "10"},
 	}
 
-	fmt.Println(account, account)
 	return account, nil
 }
 
-func CheckPin(phone string, pin string) bool {
-	return pin == "1234"
+func CheckPin(id string, pin string) bool {
+	var valid map[string]string
+
+	err := accountsClient.CheckPin(id, pin, &valid)
+	if err != nil {
+		return false
+	}
+
+	return valid["message"] == "ok"
+}
+
+func CreateAccount(phone string) (*Account, error) {
+	var account = new(Account)
+
+	err := accountsClient.CreateAccount(phone, &account)
+	if err != nil {
+		return nil, err
+	}
+
+	return account, nil
 }

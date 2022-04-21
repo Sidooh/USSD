@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -51,9 +52,18 @@ func (api *ApiClient) send(data interface{}) error {
 		log.Fatalf("Couldn't parse response body. %+v", err)
 	}
 
-	//r, err := ioutil.ReadAll(api.request)
+	if response.StatusCode != 200 && response.StatusCode != 401 && response.StatusCode != 404 {
 
-	fmt.Println(api.request, string(body))
+		fmt.Println(response)
+		if response.StatusCode < 500 {
+			var errorMessage map[string][]map[string]string
+			err = json.Unmarshal(body, &errorMessage)
+
+			return errors.New(errorMessage["errors"][0]["message"])
+		}
+
+		return errors.New(string(body))
+	}
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {

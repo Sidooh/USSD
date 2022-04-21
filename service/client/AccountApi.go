@@ -38,3 +38,16 @@ func (a *AccountApiClient) CheckPin(id string, pin string, response interface{})
 
 	return nil
 }
+
+func (a *AccountApiClient) CreateAccount(phone string, response interface{}) error {
+	values := map[string]string{"phone": phone}
+	jsonData, err := json.Marshal(values)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = a.newRequest(http.MethodPost, "/accounts", dataBytes).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

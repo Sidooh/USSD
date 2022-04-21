@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/utils"
 	"fmt"
 	"log"
+
 	"strconv"
 	"strings"
 )
@@ -33,19 +34,23 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
 	account, err := service.FetchAccount(s.Phone)
-	//Possible Usecases
+	fmt.Println(err)
+	//Possible Use-cases
 	//1. Error is thrown -> phone "", name "", balances 0
 	//2. Account has no user -> phone, name "", balances,
 	//3. Account and User -> phone, name, balances
 	if err != nil {
 		s.Vars["{voucher_balance}"] = "0"
-	} else if account.User.Name != "" {
-		s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
+		s.Vars["{phone}"] = s.Phone
+	} else {
+		s.Vars["{phone}"] = account.Phone
 		s.Vars["{voucher_balance}"] = account.Balances[0].Amount
-	}
+		s.Vars["{account_id}"] = strconv.Itoa(account.Id)
 
-	s.Vars["{account_id}"] = strconv.Itoa(account.Id)
-	s.Vars["{phone}"] = account.Phone
+		if account.User.Name != "" {
+			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
+		}
+	}
 }
 
 func (s *State) SetProduct(option int) {

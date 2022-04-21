@@ -2,9 +2,11 @@ package main
 
 import (
 	"USSD.sidooh/data"
+	"USSD.sidooh/logger"
 	"USSD.sidooh/state"
 	"USSD.sidooh/utils"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"strconv"
 	"time"
 )
@@ -12,16 +14,15 @@ import (
 var screens = map[string]*data.Screen{}
 
 func Process(code, phone, session, input string) *state.State {
-	fmt.Println("START ========================")
 	stateData := state.RetrieveState(code, phone, session)
 
 	// User is starting
 	if stateData.ScreenPath.Key == "" {
-		fmt.Println("User starting...")
+		log.Println(" - User (" + phone + ") starting... - ")
 		stateData.Init(screens)
 		stateData.SaveState()
 
-		fmt.Println("- Return GENESIS response.")
+		log.Println(" - Return GENESIS response.")
 		return stateData
 	}
 
@@ -30,7 +31,7 @@ func Process(code, phone, session, input string) *state.State {
 		stateData.NavigateBackOrHome(screens, input)
 		stateData.SaveState()
 
-		fmt.Println("- Return BACK/HOME response.")
+		log.Println(" - Return BACK/HOME response.")
 		return stateData
 	}
 
@@ -50,34 +51,41 @@ func Process(code, phone, session, input string) *state.State {
 		}
 	}
 
-	fmt.Println("- Return response.")
 	return stateData
 }
 
 func processAndRespond(code, phone, session, input string) string {
+	log.Println("START ========================", phone, session, input)
+
+	start := time.Now()
 	response := Process(code, phone, session, input)
+
+	log.Println("END ==========================", phone, time.Since(start))
+
 	return response.GetStringResponse()
 }
 
 func LoadScreens() {
 	loadedScreens, err := data.LoadData()
 	if err != nil {
-		fmt.Println(err)
+		log.Error(err)
 	}
-	fmt.Printf("Validated %v screens successfully\n", len(loadedScreens))
+	log.Printf("Validated %v screens successfully", len(loadedScreens))
 
 	screens = loadedScreens
 }
 
 func main() {
+	logger.Init()
+
 	LoadScreens()
 
 	paths := map[string][]string{
-		//	"about": {"", "1"},
+		//"about": {"", "1"},
 		//
 		"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"},
 		//	//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"},
-		//	//"airtime_self_20_mpesa_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
+		"airtime_self_20_mpesa_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
 		//
 		//	//"airtime_self_20_voucher_valid-pin-accept": {"", "2", "1", "20", "2", "1234", "1"},
 		//	//"airtime_self_20_voucher_invalid-pin-accept": {"", "2", "1", "20", "2", "123123", "1"},
@@ -96,12 +104,13 @@ func main() {
 	x := time.Now()
 	for path, inputs := range paths {
 		for _, input := range inputs {
-			start := time.Now()
-			fmt.Println(processAndRespond("*384*99#", "254714611696", path, input))
-			fmt.Println("LATENCY == ", time.Since(start))
-			fmt.Println("========================== END")
+			fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
+			//time.Sleep(300 * time.Millisecond)
+			fmt.Println(processAndRespond("*384*99#", "254764611696", "254764611696"+path, input))
+			//time.Sleep(200 * time.Millisecond)
+
 		}
 	}
 
-	fmt.Println(time.Since(x))
+	log.Println(time.Since(x))
 }
