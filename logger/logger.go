@@ -6,17 +6,36 @@ import (
 	"time"
 )
 
+var UssdLog = log.New()
+var ServiceLog = log.New()
+
 func Init() {
-	filename := "ussd-" + time.Now().Format("2006-01-02") + ".log"
+	// TODO: Ensure logs are rotated daily
+
+	// Set up default Log
+	filename := "logger/sidooh-" + time.Now().Format("2006-01-02") + ".log"
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.SetOutput(file)
-	//log.SetFormatter(&log.TextFormatter{})
 
-	//InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	//WarningLogger = log.New(file, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
-	//ErrorLogger = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+	// Set up USSD Log
+	filename = "logger/ussd-" + time.Now().Format("2006-01-02") + ".log"
+	file, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	UssdLog.SetOutput(file)
+
+	// Set up Service Log
+	filename = "logger/service-" + time.Now().Format("2006-01-02") + ".log"
+	file, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ServiceLog.SetOutput(file)
 }

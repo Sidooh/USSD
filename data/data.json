@@ -65,12 +65,12 @@
   },
   "airtime_other_number_select": {
     "key": "airtime_other_number_select",
-    "title": "Select other number",
+    "title": "Select or add other number",
     "options": {
-      "5": {
+      "9": {
         "label": "Add Other Number",
         "type": "int",
-        "value": "5",
+        "value": "9",
         "next": "airtime_other_number"
       }
     }
@@ -80,7 +80,7 @@
     "title": "Enter other number",
     "type": "OPEN",
     "next": "airtime_amount",
-    "option_type": "NUMBER"
+    "validations": "PHONE,DISALLOW_CURRENT"
   },
   "airtime_amount": {
     "key": "airtime_amount",

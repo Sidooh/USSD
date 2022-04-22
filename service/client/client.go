@@ -1,13 +1,12 @@
 package client
 
 import (
+	"USSD.sidooh/logger"
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
@@ -42,19 +41,18 @@ func (api *ApiClient) getUrl(endpoint string) string {
 func (api *ApiClient) send(data interface{}) error {
 	response, err := api.client.Do(api.request)
 	if err != nil {
-		log.Fatalf("Error sending request to API endpoint. %+v", err)
+		logger.ServiceLog.Fatalf("Error sending request to API endpoint. %+v", err)
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Fatalf("Couldn't parse response body. %+v", err)
+		logger.ServiceLog.Fatalf("Couldn't parse response body. %+v", err)
 	}
 
+	logger.ServiceLog.Println(response)
 	if response.StatusCode != 200 && response.StatusCode != 401 && response.StatusCode != 404 {
-
-		fmt.Println(response)
 		if response.StatusCode < 500 {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
@@ -65,9 +63,13 @@ func (api *ApiClient) send(data interface{}) error {
 		return errors.New(string(body))
 	}
 
+	if response.StatusCode == 404 {
+		return errors.New(string(body))
+	}
+
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		log.Fatalf("Couldn't parse response body. %+v", err)
+		logger.ServiceLog.Fatalf("Failed to unmarshall body. %+v", err)
 	}
 
 	return nil
@@ -82,19 +84,19 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 	endpoint = api.getUrl(endpoint)
 	request, err := http.NewRequest(method, endpoint, body)
 	if err != nil {
-		log.Fatalf("error creating HTTP request: %v", err)
+		logger.ServiceLog.Fatalf("error creating HTTP request: %v", err)
 	}
 
-	fmt.Println(body)
 	api.request = request
 	api.setDefaultHeaders()
+
+	logger.ServiceLog.Println(body)
 
 	return api
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
 	if token := cache.Get("token"); token != nil {
-		fmt.Println("Exp", token.ExpiresAt(), token.TTL())
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {
 		api.EnsureAuthenticated()
@@ -112,7 +114,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 
 	err = api.Authenticate(jsonData)
 	if err != nil {
-		log.Fatalf("error authenticating: %v", err)
+		logger.ServiceLog.Fatalf("error authenticating: %v", err)
 	}
 }
 

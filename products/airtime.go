@@ -1,10 +1,12 @@
 package products
 
 import (
+	"USSD.sidooh/data"
+	"USSD.sidooh/logger"
 	"USSD.sidooh/service"
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
-	log "github.com/sirupsen/logrus"
+	"encoding/json"
 	"strconv"
 )
 
@@ -14,7 +16,7 @@ type Airtime struct {
 }
 
 func (a *Airtime) Process(input string) {
-	log.Println(" -- AIRTIME: process", a.screen.Key, input)
+	logger.UssdLog.Println(" -- AIRTIME: process", a.screen.Key, input)
 	a.productRep = "airtime"
 
 	a.processScreen(input)
@@ -26,12 +28,14 @@ func (a *Airtime) processScreen(input string) {
 	case utils.AIRTIME:
 		a.vars["{product}"] = a.productRep
 		a.vars["{number}"] = a.vars["{phone}"]
+
+		a.setOtherNumberOptions(input)
 		break
 	case utils.AIRTIME_OTHER_NUMBER_SELECT:
-		// TODO: Get and Set other numbers
+		a.processOtherNumberSelection(input)
 		break
 	case utils.AIRTIME_OTHER_NUMBER:
-		// TODO: Get other number input
+		a.vars["{number}"] = input
 		break
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
@@ -49,39 +53,88 @@ func (a *Airtime) processScreen(input string) {
 			break
 		}
 		break
+	case utils.PAYMENT_OTHER_NUMBER_MPESA:
+		a.vars["{mpesa_number}"] = input
+		a.vars["{payment_method_text}"] = utils.MPESA + " " + a.vars["{mpesa_number}"]
+		break
 	}
 }
 
 func (a *Airtime) finalize() {
-	log.Println(" -- AIRTIME: finalize", a.screen.Next.Type)
+	logger.UssdLog.Println(" -- AIRTIME: finalize", a.screen.Next.Type)
 
 	if a.screen.Next.Type == utils.END {
-		account_id, _ := strconv.Atoi(a.vars["{account_id}"])
+		accountId, _ := strconv.Atoi(a.vars["{account_id}"])
 		amount, _ := strconv.Atoi(a.vars["{amount}"])
 		method := a.vars["{payment_method}"]
-		//mpesa_number := a.vars["{payment_method}"]
 
-		if account_id == 0 {
-			log.Println(" -- AIRTIME: creating acc")
+		if accountId == 0 {
+			logger.UssdLog.Println(" -- AIRTIME: creating acc")
 
 			account, err := service.CreateAccount(a.vars["{phone}"])
 			if err != nil {
 				// TODO: Send message to user
-				log.Error(err)
+				logger.UssdLog.Error(err)
 			}
 
-			account_id = account.Id
+			accountId = account.Id
 		}
 
 		request := client.AirtimePurchaseRequest{
 			Initiator: client.CONSUMER,
 			Amount:    amount,
 			Method:    method,
-			AccountId: account_id,
+			AccountId: accountId,
 		}
 
-		log.Println(" -- AIRTIME: purchase", request)
+		if a.vars["{number}"] != a.vars["{phone}"] {
+			request.TargetNumber = a.vars["{number}"]
+		}
+
+		if _, ok := a.vars["{mpesa_number}"]; ok {
+			request.DebitAccount = a.vars["{mpesa_number}"]
+		}
+
+		logger.UssdLog.Println(" -- AIRTIME: purchase", request)
 
 		service.PurchaseAirtime(request)
 	}
+}
+
+func (a *Airtime) setOtherNumberOptions(input string) {
+	logger.UssdLog.Println("   ++ AIRTIME: set other number options", input)
+
+	if input == "2" {
+		accountId := a.vars["{account_id}"]
+		accounts, _ := service.FetchAirtimeAccounts(accountId)
+
+		if accounts != nil {
+			airtimeAccountOptionVars := map[int]string{}
+
+			for i, account := range accounts[:5] {
+				a.screen.Next.Options[i+1] = &data.Option{
+					Label:   account.AccountNumber,
+					Value:   i + 1,
+					NextKey: utils.AIRTIME_AMOUNT,
+				}
+
+				airtimeAccountOptionVars[i+1] = account.AccountNumber
+			}
+			stringVars, _ := json.Marshal(airtimeAccountOptionVars)
+			a.vars["{airtime_account_options}"] = string(stringVars)
+		} else {
+			a.screen.Options[2].NextKey = utils.AIRTIME_OTHER_NUMBER
+		}
+	}
+}
+
+func (a *Airtime) processOtherNumberSelection(input string) {
+	logger.UssdLog.Println("   ++ AIRTIME: process other number selection", input)
+
+	selectedAirtimeAccount, _ := strconv.Atoi(input)
+	airtimeAccountOptionVars := map[int]string{}
+
+	_ = json.Unmarshal([]byte(a.vars["{airtime_account_options}"]), &airtimeAccountOptionVars)
+
+	a.vars["{number}"] = airtimeAccountOptionVars[selectedAirtimeAccount]
 }

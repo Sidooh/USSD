@@ -2,12 +2,10 @@ package state
 
 import (
 	"USSD.sidooh/data"
+	"USSD.sidooh/logger"
 	"USSD.sidooh/products"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
-	"fmt"
-	"log"
-
 	"strconv"
 	"strings"
 )
@@ -34,12 +32,12 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
 	account, err := service.FetchAccount(s.Phone)
-	fmt.Println(err)
 	//Possible Use-cases
 	//1. Error is thrown -> phone "", name "", balances 0
 	//2. Account has no user -> phone, name "", balances,
 	//3. Account and User -> phone, name, balances
 	if err != nil {
+		logger.UssdLog.Error(err)
 		s.Vars["{voucher_balance}"] = "0"
 		s.Vars["{phone}"] = s.Phone
 	} else {
@@ -82,7 +80,7 @@ func RetrieveState(code, phone, session string) *State {
 	}
 	err := data.UnmarshalFromFile(&stateData, session+utils.STATE_FILE)
 	if err != nil {
-		log.Default().Println(err)
+		logger.UssdLog.Error(err)
 	}
 
 	stateData.SetProduct(stateData.ProductKey)
@@ -112,7 +110,7 @@ func (s *State) unsetState() {
 }
 
 func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
-	fmt.Println("Processing open input: ", input)
+	logger.UssdLog.Println("Processing open input: ", input)
 	screens = m
 
 	s.ScreenPath.Screen.Next = getScreen(screens, s.ScreenPath.Screen.NextKey)
@@ -124,7 +122,7 @@ func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 }
 
 func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {
-	fmt.Println("Processing option input: ", option.Value)
+	logger.UssdLog.Println("Processing option input: ", option.Value)
 	screens = m
 
 	if s.ScreenPath.Type == utils.GENESIS {
@@ -147,16 +145,18 @@ func (s *State) SetPrevious() {
 	}
 
 	// TODO: Fully check and test this: What will happen if I go back and no screen exists?
-	s.ensurePathDepth(s.ScreenPath.Previous, 7)
+	i := s.ensurePathDepth(s.ScreenPath.Previous, 7)
+	logger.UssdLog.Println(" -- Depth", 7-i+1)
 }
 
-func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) {
-	fmt.Println(previous.Key, i)
+func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) int {
 	if previous.Previous != nil && i > 0 {
-		s.ensurePathDepth(previous.Previous, i-1)
+		return s.ensurePathDepth(previous.Previous, i-1)
 	} else {
 		previous.Previous = nil
 	}
+
+	return i
 }
 
 func (s *State) MoveNext(screenKey string) {
