@@ -1,5 +1,10 @@
 package utils
 
+var (
+	DATA_FILE      = "data.json"
+	DATA_DIRECTORY = "data"
+)
+
 // types of screens
 const (
 	GENESIS = "GENESIS"
@@ -10,11 +15,6 @@ const (
 
 const (
 	STATE_FILE = "_state.json"
-)
-
-var (
-	DATA_FILE      = "data.json"
-	DATA_DIRECTORY = "data"
 )
 
 // screen keys
@@ -33,11 +33,20 @@ const (
 	PAYMENT_END                = "payment_end"
 	PAYMENT_OTHER_NUMBER_MPESA = "payment_other_number_mpesa"
 
-	//	AIRTIME
+	// AIRTIME
 	AIRTIME                     = "airtime"
 	AIRTIME_OTHER_NUMBER_SELECT = "airtime_other_number_select"
 	AIRTIME_OTHER_NUMBER        = "airtime_other_number"
 	AIRTIME_AMOUNT              = "airtime_amount"
+
+	// PAY
+	PAY = "pay"
+
+	// UTILITY
+	UTILITY                = "utility"
+	UTILITY_ACCOUNT_SELECT = "utility_account_select"
+	UTILITY_OTHER_ACCOUNT  = "utility_other_account"
+	UTILITY_AMOUNT         = "utility_amount"
 )
 
 const (
@@ -47,6 +56,7 @@ const (
 	PHONE            = "PHONE"
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"
+	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
 )
 
 const (
@@ -69,4 +79,14 @@ const (
 	TELKOM_REGEX    = `^(\+?254|0)?(77[0-9]{7})$`
 	EQUITEL_REGEX   = `^(\+?254|0)?(76[3-6][0-9]{6})$`
 	FAIBA_REGEX     = `^(\+?254|0)?(747[0-9]{6})$`
+)
+
+const (
+	KPLC_PREPAID  = "KPLC_PREPAID"
+	KPLC_POSTPAID = "KPLC_POSTPAID"
+	NAIROBI_WTR   = "NAIROBI_WTR"
+	DSTV          = "DSTV"
+	ZUKU          = "ZUKU"
+	GOTV          = "GOTV"
+	STARTIMES     = "STARTIMES"
 )

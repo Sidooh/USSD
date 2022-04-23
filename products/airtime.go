@@ -111,7 +111,12 @@ func (a *Airtime) setOtherNumberOptions(input string) {
 		if accounts != nil {
 			airtimeAccountOptionVars := map[int]string{}
 
-			for i, account := range accounts[:5] {
+			maxAccounts := accounts
+			if len(accounts) > 5 {
+				maxAccounts = accounts[:5]
+			}
+
+			for i, account := range maxAccounts {
 				a.screen.Next.Options[i+1] = &data.Option{
 					Label:   account.AccountNumber,
 					Value:   i + 1,

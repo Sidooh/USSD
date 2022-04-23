@@ -2,7 +2,7 @@ package products
 
 import (
 	"USSD.sidooh/data"
-	"fmt"
+	"USSD.sidooh/logger"
 )
 
 type ProductI interface {
@@ -17,18 +17,15 @@ type Product struct {
 }
 
 func (p *Product) Initialize(vars map[string]string, screen *data.Screen) {
-	fmt.Println("\t - PRODUCT: initialize")
+	logger.UssdLog.Println(" - PRODUCT: initialize")
 	p.screen = screen
 	p.vars = vars
 }
 
 func (p *Product) Process(input string) {
-	fmt.Println("\t - PRODUCT: Process")
+	logger.UssdLog.Println(" - PRODUCT: Process")
 }
 
 func (p *Product) finalize() {
-	fmt.Println("\t - PRODUCT: finalize")
-
-	//	Final checks
-	fmt.Println("====", p.screen.Type)
+	logger.UssdLog.Println(" - PRODUCT: finalize")
 }

@@ -89,6 +89,94 @@
     "next": "payment_method",
     "validations": "INT,MIN:20,MAX:10000"
   },
+  "pay": {
+    "key": "pay",
+    "title": "What would you like to pay for?",
+    "super_product": 3,
+    "options": {
+      "1": {
+        "label": "Pay Utilities",
+        "value": "1",
+        "next": "utility"
+      },
+      "2": {
+        "label": "Voucher Top-up",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Pay Merchant (coming soon)",
+        "value": "3",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "utility": {
+    "key": "utility",
+    "title": "Select provider:",
+    "options": {
+      "1": {
+        "label": "KPLC Tokens",
+        "value": "1",
+        "next": "utility_account_select"
+      },
+      "2": {
+        "label": "KPLC Postpaid",
+        "value": "2",
+        "next": "utility_account_select"
+      },
+      "3": {
+        "label": "Nairobi Water",
+        "value": "3",
+        "next": "utility_account_select"
+      },
+      "4": {
+        "label": "DSTV",
+        "value": "4",
+        "next": "utility_account_select"
+      },
+      "5": {
+        "label": "ZUKU",
+        "value": "5",
+        "next": "utility_account_select"
+      },
+      "6": {
+        "label": "GOTV",
+        "value": "6",
+        "next": "utility_account_select"
+      },
+      "7": {
+        "label": "Startimes",
+        "value": "7",
+        "next": "utility_account_select"
+      }
+    }
+  },
+  "utility_account_select": {
+    "key": "utility_account_select",
+    "title": "Select or add account",
+    "options": {
+      "9": {
+        "label": "Add Other Account",
+        "value": "9",
+        "next": "utility_other_account"
+      }
+    }
+  },
+  "utility_other_account": {
+    "key": "utility_other_account",
+    "title": "Enter account number",
+    "type": "OPEN",
+    "next": "utility_amount",
+    "validations": "INT,MIN:4"
+  },
+  "utility_amount": {
+    "key": "utility_amount",
+    "title": "Enter amount (MIN: KES200)",
+    "type": "OPEN",
+    "next": "payment_method",
+    "validations": "INT,UTILITY_AMOUNTS"
+  },
   "payment_method": {
     "key": "payment_method",
     "title": "Pay Ksh{amount} {product} for {number} using:",
@@ -153,33 +241,6 @@
         "label": "Cancel",
         "value": "2",
         "next": "cancel"
-      }
-    }
-  },
-  "pay": {
-    "key": "pay",
-    "title": "What would you like to pay for?",
-    "super_product": 3,
-    "options": {
-      "1": {
-        "label": "Ksh365 Sidooh Agent Monthly Subscription Fee",
-        "value": "1",
-        "next": "coming_soon"
-      },
-      "2": {
-        "label": "Top Up Voucher",
-        "value": "2",
-        "next": "coming_soon"
-      },
-      "3": {
-        "label": "Pay Merchant (coming soon)",
-        "value": "3",
-        "next": "coming_soon"
-      },
-      "4": {
-        "label": "Pay Utilities",
-        "value": "4",
-        "next": "coming_soon"
       }
     }
   },

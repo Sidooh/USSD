@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD.sidooh/logger"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
 	"fmt"
@@ -132,8 +133,8 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 	return nil
 }
 
-func (screen *Screen) ValidateInput(input string, phone string) bool {
-	fmt.Println("\tValidating ", input, " against ", screen.Validations)
+func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
+	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")
 
@@ -141,8 +142,8 @@ func (screen *Screen) ValidateInput(input string, phone string) bool {
 	for _, s := range validations {
 		validation := strings.Split(s, ":")
 
-		if !screen.checkValidation(validation, input, phone) {
-			fmt.Println("\t*** ", input, " failed on ", validation)
+		if !screen.checkValidation(validation, input, vars) {
+			logger.UssdLog.Println("    *** ", input, " failed on ", validation)
 			currentValidationCheck = false
 			break
 		}
@@ -150,12 +151,12 @@ func (screen *Screen) ValidateInput(input string, phone string) bool {
 		currentValidationCheck = true
 	}
 
-	fmt.Println("\t*** Validation result ", currentValidationCheck)
+	logger.UssdLog.Println("    *** Validation result ", currentValidationCheck)
 
 	return currentValidationCheck
 }
 
-func (screen *Screen) checkValidation(v []string, input string, phone string) bool {
+func (screen *Screen) checkValidation(v []string, input string, vars map[string]string) bool {
 	var validateAgainst = 0
 	if len(v) > 1 {
 		if v, e := strconv.Atoi(v[1]); e == nil {
@@ -173,14 +174,31 @@ func (screen *Screen) checkValidation(v []string, input string, phone string) bo
 	case utils.PHONE:
 		return isValidPhone(input)
 	case utils.DISALLOW_CURRENT:
-		return !isCurrentPhone(input, phone)
+		return !isCurrentPhone(input, vars["{phone}"])
 	case utils.SAFARICOM:
 		return isValidPhoneAndProvider(input, utils.SAFARICOM)
 	case utils.PIN:
-		return checkPin(input, phone)
+		return checkPin(input, vars["{phone}"])
+	case utils.UTILITY_AMOUNTS:
+		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	}
 
 	return false
+}
+
+func isValidUtilityAmount(input string, utility string) bool {
+	min := 200
+	max := 10000
+
+	switch utility {
+	case utils.KPLC_POSTPAID, utils.KPLC_PREPAID:
+		max = 35000
+	}
+
+	val := getIntVal(input)
+	fmt.Println(min, val, max, utility)
+
+	return val <= max && val >= min
 }
 
 func checkPin(input string, phone string) bool {

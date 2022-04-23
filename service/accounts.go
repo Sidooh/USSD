@@ -15,7 +15,6 @@ type Account struct {
 		Name  string `json:"name"`
 	} `json:"user"`
 	Balances []Balance
-	Voucher  Balance
 }
 
 type Balance struct {

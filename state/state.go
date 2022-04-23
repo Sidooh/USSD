@@ -49,21 +49,29 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{voucher_balance}"] = account.Balances[0].Balance
 		}
 
-		if account.Voucher.Type != "" {
-			s.Vars["{voucher_balance}"] = account.Voucher.Balance
-		}
-
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 		}
 	}
 }
 
-func (s *State) SetProduct(option int) {
+func (s *State) setProduct(option int) {
 	switch option {
 	case products.AIRTIME:
 		s.product = &products.Airtime{}
 		s.ProductKey = products.AIRTIME
+	case products.PAY:
+		s.product = &products.Pay{}
+		s.ProductKey = products.PAY
+	case products.PAY_UTILITY:
+		s.product = &products.Utility{}
+		s.ProductKey = products.PAY_UTILITY
+	//case products.PAY_VOUCHER:
+	//	s.product = &products.Voucher{}
+	//	s.ProductKey = products.PAY_VOUCHER
+	//case products.PAY_MERCHANT:
+	//	s.product = &products.Merhcant{}
+	//	s.ProductKey = products.PAY_MERCHANT
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -74,6 +82,12 @@ func (s *State) getProduct() int {
 	switch s.product {
 	case &products.Airtime{}:
 		return products.AIRTIME
+	case &products.Pay{}:
+		return products.PAY
+	case &products.Utility{}:
+		return products.PAY_UTILITY
+	//case &products.Voucher{}:
+	//	return products.PAY_VOUCHER
 	default:
 		return 0
 	}
@@ -91,7 +105,7 @@ func RetrieveState(code, phone, session string) *State {
 		logger.UssdLog.Error(err)
 	}
 
-	stateData.SetProduct(stateData.ProductKey)
+	stateData.setProduct(stateData.ProductKey)
 
 	return &stateData
 }
@@ -134,7 +148,11 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 	screens = m
 
 	if s.ScreenPath.Type == utils.GENESIS {
-		s.SetProduct(option.Value)
+		s.setProduct(option.Value)
+	}
+
+	if s.ScreenPath.Key == utils.PAY {
+		s.setProduct(products.PAY*10 + option.Value)
 	}
 
 	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
@@ -181,7 +199,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 	if input == "00" {
 		s.ScreenPath.Screen = *getScreen(screens, utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
-		s.SetProduct(0)
+		s.setProduct(0)
 	}
 }
 

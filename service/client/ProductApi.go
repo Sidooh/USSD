@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"os"
 )
@@ -15,6 +16,12 @@ const (
 	MPESA    = "MPESA"
 	VOUCHER  = "VOUCHER"
 )
+
+type UtilityAccount struct {
+	Id            int
+	Provider      string
+	AccountNumber string `json:"account_number"`
+}
 
 func InitProductClient() *ProductApiClient {
 	client := ProductApiClient{}
@@ -35,8 +42,30 @@ func (p *ProductApiClient) BuyAirtime(request AirtimePurchaseRequest) error {
 	return nil
 }
 
+func (p *ProductApiClient) PayUtility(request UtilityPurchaseRequest) error {
+	jsonData, err := request.Marshal()
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	var response = Response{}
+	err = p.newRequest(http.MethodPost, "/products/utility", dataBytes).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *ProductApiClient) GetAirtimeAccounts(id string, response interface{}) error {
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(response)
+	apiResponse := new(Response)
+
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(apiResponse)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Can we get rid of this round trip?
+	dbByte, err := json.Marshal(apiResponse.Data)
+	err = json.Unmarshal(dbByte, &response)
 	if err != nil {
 		return err
 	}
@@ -45,7 +74,16 @@ func (p *ProductApiClient) GetAirtimeAccounts(id string, response interface{}) e
 }
 
 func (p *ProductApiClient) GetUtilityAccounts(id string, response interface{}) error {
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(response)
+	apiResponse := new(Response)
+
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Can we get rid of this round trip?
+	dbByte, err := json.Marshal(apiResponse.Data)
+	err = json.Unmarshal(dbByte, &response)
 	if err != nil {
 		return err
 	}

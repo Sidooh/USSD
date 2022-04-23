@@ -3,85 +3,56 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"fmt"
 )
-
-type AirtimeAccount struct {
-	Id            int
-	Provider      string
-	AccountNumber string
-}
 
 var productsClient = client.InitProductClient()
 
 func PurchaseAirtime(request client.AirtimePurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
 	if err != nil {
-		logger.ServiceLog.Panic(err)
+		logger.ServiceLog.Error(err)
 	}
 }
 
-func FetchAirtimeAccounts(id string) ([]AirtimeAccount, error) {
-	var accounts []AirtimeAccount
+func PurchaseUtility(request client.UtilityPurchaseRequest) {
+	err := productsClient.PayUtility(request)
+	if err != nil {
+		logger.ServiceLog.Error(err)
+	}
+}
 
-	account := AirtimeAccount{
-		Id:            1,
-		Provider:      "AIRTEL",
-		AccountNumber: "254780611696",
+func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
+	var accounts []client.UtilityAccount
+
+	err := productsClient.GetAirtimeAccounts(id, &accounts)
+	if err != nil {
+		logger.ServiceLog.Error(err)
+		return nil, err
 	}
 
-	accounts = append(accounts,
-		account,
-		AirtimeAccount{
-			Id:            1,
-			Provider:      "AIRTEL",
-			AccountNumber: "254781611696",
-		},
-		AirtimeAccount{
-			Id:            1,
-			Provider:      "AIRTEL",
-			AccountNumber: "254782611696",
-		},
-		AirtimeAccount{
-			Id:            1,
-			Provider:      "AIRTEL",
-			AccountNumber: "254783611696",
-		},
-		AirtimeAccount{
-			Id:            1,
-			Provider:      "AIRTEL",
-			AccountNumber: "254784611696",
-		},
-	)
-
-	//err := productsClient.GetAirtimeAccounts(id, &accounts)
-	//if err != nil {
-	//	return nil, err
-	//}
+	fmt.Println(accounts)
 
 	return accounts, nil
 }
 
-func FetchUtilityAccounts(id string) ([]AirtimeAccount, error) {
-	var accounts []AirtimeAccount
+func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, error) {
+	var accounts []client.UtilityAccount
 
-	account := AirtimeAccount{
-		Id:            1,
-		Provider:      "KPLC_POSTPAID",
-		AccountNumber: "2390423904",
+	err := productsClient.GetUtilityAccounts(id, &accounts)
+	if err != nil {
+		logger.ServiceLog.Error(err)
+		return nil, err
 	}
 
-	accounts = append(accounts,
-		account,
-		AirtimeAccount{
-			Id:            2,
-			Provider:      "KPLC_PREPAID",
-			AccountNumber: "0123912",
-		})
+	// TODO: Can we cache the data so we don't have to re-fetch full accounts
+	var providerAccounts []client.UtilityAccount
+	for _, account := range accounts {
 
-	//err := productsClient.GetUtilityAccounts(id, &accounts)
-	//if err != nil {
-	//	return nil, err
-	//}
+		if account.Provider == provider {
+			providerAccounts = append(providerAccounts, account)
+		}
+	}
 
-	return accounts, nil
+	return providerAccounts, nil
 }

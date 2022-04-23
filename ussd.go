@@ -35,7 +35,7 @@ func Process(code, phone, session, input string) *state.State {
 	}
 
 	if stateData.ScreenPath.Type == utils.OPEN {
-		if stateData.ScreenPath.ValidateInput(input, stateData.Phone) {
+		if stateData.ScreenPath.ValidateInput(input, stateData.Vars) {
 			stateData.ProcessOpenInput(screens, input)
 
 			stateData.SaveState()
@@ -89,24 +89,28 @@ func main() {
 		//	//"airtime_self_20_voucher_valid-pin-accept": {"", "2", "1", "20", "2", "1234", "1"},
 		//	//"airtime_self_20_voucher_invalid-pin-accept": {"", "2", "1", "20", "2", "123123", "1"},
 		//
-		//"airtime_other_existing_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"},
+		//"airtime_other_existing_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"}, // --- pass
+
 		//"airtime_other_new-acc_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"},
 		//"airtime_other_existing-new-acc_20_mpesa_accept": {"", "2", "2", "9", "254789611696", "20", "1", "1"},
 		//"airtime_other_existing_20_mpesa_other_254714611696_accept": {"", "2", "2", "1", "20", "1", "3", "254714611696", "1"},
 		//
-		"airtime_self_20_voucher_accept": {"", "2", "1", "20", "2", "1"},
+		//"airtime_self_20_voucher_accept": {"", "2", "1", "20", "2", "1"},
 		//	//"airtime_self_20_voucher_cancel": {"", "2", "1", "20", "1", "2"},
 		//	//"airtime_self_20_voucher_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
 		//	//"airtime_self_20_voucher_other_254714611696_cancel": {"", "2", "1", "20", "1", "3", "254715611696", "2"},
 		//
-		//	//"pay_utility_tokens_existing-acc_100_mpesa_accept": {"", "3", "4", "1", "100", "1", "1"},
+
+		// ############## UTILITY
+		// ... > Pay > Utility > provider > account > amount > payment > final
+		"pay_utility_tokens_existing-acc_100_mpesa_accept": {"", "3", "1", "2", "1", "200", "1", "1"},
 		//	//"pay_utility_tokens_new-acc_100_mpesa_accept": {"", "3", "4", "1", "100", "1", "1"},
 	}
 	x := time.Now()
 	for path, inputs := range paths {
 		for _, input := range inputs {
 			//254110039317
-			fmt.Println(processAndRespond("*384*99#", "254110039317", "254110039317"+path, input))
+			fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
 			//time.Sleep(300 * time.Millisecond)
 			//fmt.Println(processAndRespond("*384*99#", "254764611696", "254764611696"+path, input))
 			//time.Sleep(200 * time.Millisecond)
