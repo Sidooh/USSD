@@ -23,6 +23,11 @@ type AuthResponse struct {
 	Token string `json:"token"`
 }
 
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
 var (
 	cache = ttlcache.New[string, string](
 		ttlcache.WithTTL[string, string](14 * time.Minute),
@@ -39,16 +44,17 @@ func (api *ApiClient) getUrl(endpoint string) string {
 }
 
 func (api *ApiClient) send(data interface{}) error {
+	logger.ServiceLog.Println(api.request)
 	response, err := api.client.Do(api.request)
 	if err != nil {
-		logger.ServiceLog.Fatalf("Error sending request to API endpoint. %+v", err)
+		logger.ServiceLog.Error("Error sending request to API endpoint. %+v", err)
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		logger.ServiceLog.Fatalf("Couldn't parse response body. %+v", err)
+		logger.ServiceLog.Error("Couldn't parse response body. %+v", err)
 	}
 
 	logger.ServiceLog.Println(response)
@@ -69,7 +75,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	err = json.Unmarshal(body, &data)
 	if err != nil {
-		logger.ServiceLog.Fatalf("Failed to unmarshall body. %+v", err)
+		logger.ServiceLog.Error("Failed to unmarshall body. %+v", err)
 	}
 
 	return nil

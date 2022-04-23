@@ -16,11 +16,6 @@ const (
 	VOUCHER  = "VOUCHER"
 )
 
-type Response struct {
-	Status  string `json:"status"`
-	Message string `json:"message"`
-}
-
 func InitProductClient() *ProductApiClient {
 	client := ProductApiClient{}
 	client.ApiClient.init(os.Getenv("PRODUCTS_URL"))

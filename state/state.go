@@ -29,6 +29,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
 
 	s.Vars["{name}"] = ""
+	s.Vars["{voucher_balance}"] = "0"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
 	account, err := service.FetchAccount(s.Phone)
@@ -41,9 +42,16 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		s.Vars["{voucher_balance}"] = "0"
 		s.Vars["{phone}"] = s.Phone
 	} else {
-		s.Vars["{phone}"] = account.Phone
-		s.Vars["{voucher_balance}"] = account.Balances[0].Amount
 		s.Vars["{account_id}"] = strconv.Itoa(account.Id)
+		s.Vars["{phone}"] = account.Phone
+
+		if len(account.Balances) != 0 {
+			s.Vars["{voucher_balance}"] = account.Balances[0].Balance
+		}
+
+		if account.Voucher.Type != "" {
+			s.Vars["{voucher_balance}"] = account.Voucher.Balance
+		}
 
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]

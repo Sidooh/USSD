@@ -89,12 +89,12 @@ func main() {
 		//	//"airtime_self_20_voucher_valid-pin-accept": {"", "2", "1", "20", "2", "1234", "1"},
 		//	//"airtime_self_20_voucher_invalid-pin-accept": {"", "2", "1", "20", "2", "123123", "1"},
 		//
-		"airtime_other_existing_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"},
+		//"airtime_other_existing_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"},
 		//"airtime_other_new-acc_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"},
 		//"airtime_other_existing-new-acc_20_mpesa_accept": {"", "2", "2", "9", "254789611696", "20", "1", "1"},
-		//"airtime_other_existing_20_mpesa_other_254715611696_accept": {"", "2", "2", "1", "20", "1", "3", "254715611696", "1"},
+		//"airtime_other_existing_20_mpesa_other_254714611696_accept": {"", "2", "2", "1", "20", "1", "3", "254714611696", "1"},
 		//
-		//	//"airtime_self_20_voucher_accept": {"", "2", "1", "20", "1", "1"},
+		"airtime_self_20_voucher_accept": {"", "2", "1", "20", "2", "1"},
 		//	//"airtime_self_20_voucher_cancel": {"", "2", "1", "20", "1", "2"},
 		//	//"airtime_self_20_voucher_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
 		//	//"airtime_self_20_voucher_other_254714611696_cancel": {"", "2", "1", "20", "1", "3", "254715611696", "2"},
@@ -105,7 +105,8 @@ func main() {
 	x := time.Now()
 	for path, inputs := range paths {
 		for _, input := range inputs {
-			fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
+			//254110039317
+			fmt.Println(processAndRespond("*384*99#", "254110039317", "254110039317"+path, input))
 			//time.Sleep(300 * time.Millisecond)
 			//fmt.Println(processAndRespond("*384*99#", "254764611696", "254764611696"+path, input))
 			//time.Sleep(200 * time.Millisecond)

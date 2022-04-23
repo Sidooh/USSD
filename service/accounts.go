@@ -1,7 +1,9 @@
 package service
 
 import (
+	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"strconv"
 )
 
 type Account struct {
@@ -13,25 +15,31 @@ type Account struct {
 		Name  string `json:"name"`
 	} `json:"user"`
 	Balances []Balance
+	Voucher  Balance
 }
 
 type Balance struct {
-	Type   string
-	Amount string
+	Type    string
+	Balance string
 }
 
 var accountsClient = client.InitAccountClient()
+var paymentsClient = client.InitPaymentClient()
 
 func FetchAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
 	err := accountsClient.GetAccount(phone, &account)
 	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch account", err)
 		return nil, err
 	}
 
-	account.Balances = []Balance{
-		{"VOUCHER", "10"},
+	if account != nil {
+		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
+		if err != nil {
+			logger.ServiceLog.Error("Failed to fetch voucher balances", err)
+		}
 	}
 
 	return account, nil
