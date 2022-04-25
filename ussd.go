@@ -17,7 +17,7 @@ func Process(code, phone, session, input string) *state.State {
 
 	// User is starting
 	if stateData.ScreenPath.Key == "" {
-		logger.UssdLog.Println(" - User (" + phone + ") starting... - ")
+		logger.UssdLog.Println("START ========================", session)
 		stateData.Init(screens)
 		stateData.SaveState()
 
@@ -54,12 +54,14 @@ func Process(code, phone, session, input string) *state.State {
 }
 
 func processAndRespond(code, phone, session, input string) string {
-	logger.UssdLog.Println("START ========================", phone, session, input)
-
 	start := time.Now()
 	response := Process(code, phone, session, input)
 
-	logger.UssdLog.Println("END ==========================", phone, time.Since(start))
+	if response.Status == utils.END {
+		logger.UssdLog.Println(utils.END+" ==========================", session, time.Since(start))
+	} else {
+		logger.UssdLog.Println(response.Status+" --------------------------", session, time.Since(start))
+	}
 
 	return response.GetStringResponse()
 }
@@ -80,18 +82,32 @@ func main() {
 	LoadScreens()
 
 	paths := map[string][]string{
-		//"about": {"", "1"},
+		// ############## ABOUT
+		// ... > About
+		//"about": {"", "1"}, // --- valid
 		//
-		//"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"},
-		//	//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"},
-		//"airtime_self_20_mpesa_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
-		//
-		//	//"airtime_self_20_voucher_valid-pin-accept": {"", "2", "1", "20", "2", "1234", "1"},
-		//	//"airtime_self_20_voucher_invalid-pin-accept": {"", "2", "1", "20", "2", "123123", "1"},
-		//
-		//"airtime_other_existing_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"}, // --- pass
 
-		//"airtime_other_new-acc_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"},
+		// ############## AIRTIME
+		// ... > Airtime > self > amount > mpesa > final
+		//"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"}, // --- valid
+		//
+		// ... > Airtime > self > amount > other mpesa > final
+		//"airtime_self_20_other-mpesa_254714611696_accept": {"", "2", "1", "20", "1", "3", "254714611696", "1"}, // --- valid
+		//
+		// ... > Airtime > self > amount > voucher > final
+		"airtime_self_20_voucher_pin_accept": {"", "2", "1", "20", "2", "1234", "1"},
+		//
+		// ... > Airtime > other > new phone > amount > payment > final
+		//"airtime_other_new-phone_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"},
+		//
+		// ... > Airtime > other > phone > amount > payment > final
+		//"airtime_other_phone_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"}, // --- pass
+
+		//
+		//	... > Extra paths
+		//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"},
+		//"airtime_self_20_voucher_invalid-pin_accept": {"", "2", "1", "20", "2", "123123", "1"},
+
 		//"airtime_other_existing-new-acc_20_mpesa_accept": {"", "2", "2", "9", "254789611696", "20", "1", "1"},
 		//"airtime_other_existing_20_mpesa_other_254714611696_accept": {"", "2", "2", "1", "20", "1", "3", "254714611696", "1"},
 		//
@@ -102,17 +118,22 @@ func main() {
 		//
 
 		// ############## UTILITY
-		// ... > Pay > Utility > provider > account > amount > payment > final
-		"pay_utility_tokens_existing-acc_100_mpesa_accept": {"", "3", "1", "2", "1", "200", "1", "1"},
-		//	//"pay_utility_tokens_new-acc_100_mpesa_accept": {"", "3", "4", "1", "100", "1", "1"},
+		// ... > Pay > Utility > provider > select account > amount > payment > final
+		//"pay_utility_kplc_existing-acc_200_mpesa_accept": {"", "3", "1", "2", "1", "200", "1", "1"},
+		//
+		// ... > Pay > Utility > provider > no account > amount > payment > final
+		//"pay_utility_dstv_new-acc_200_mpesa_accept": {"", "3", "1", "4", "1234567", "200", "1", "1"},
+		//
+		// ... > Pay > Utility > provider > existing but new account > amount > payment > final
+		//"pay_utility_kplc_new-acc_200_mpesa_accept": {"", "3", "1", "9", "1234567", "200", "1", "1"},
 	}
 	x := time.Now()
 	for path, inputs := range paths {
 		for _, input := range inputs {
 			//254110039317
-			fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
+			//fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
 			//time.Sleep(300 * time.Millisecond)
-			//fmt.Println(processAndRespond("*384*99#", "254764611696", "254764611696"+path, input))
+			fmt.Println(processAndRespond("*384*99#", "254110039317", "254110039317"+path, input))
 			//time.Sleep(200 * time.Millisecond)
 
 		}

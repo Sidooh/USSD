@@ -9,8 +9,8 @@ type AirtimePurchaseRequest struct {
 	Amount       int    `json:"amount"`
 	Method       string `json:"method"`
 	AccountId    int    `json:"account_id"`
-	TargetNumber string `json:"target_number"`
-	DebitAccount string `json:"debit_account"`
+	TargetNumber string `json:"target_number,omitempty"`
+	DebitAccount string `json:"debit_account,omitempty"`
 }
 
 type UtilityPurchaseRequest struct {
@@ -35,7 +35,7 @@ func (r *AirtimePurchaseRequest) Marshal() ([]byte, error) {
 		request["debit_account"] = r.DebitAccount
 	}
 
-	return json.Marshal(request)
+	return json.Marshal(r)
 }
 
 func (r *UtilityPurchaseRequest) Marshal() ([]byte, error) {

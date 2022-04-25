@@ -8,17 +8,17 @@ import (
 
 var productsClient = client.InitProductClient()
 
-func PurchaseAirtime(request client.AirtimePurchaseRequest) {
+func PurchaseAirtime(request *client.AirtimePurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
 	if err != nil {
-		logger.ServiceLog.Error(err)
+		logger.ServiceLog.Error("Failed to buy airtime: ", err)
 	}
 }
 
 func PurchaseUtility(request client.UtilityPurchaseRequest) {
 	err := productsClient.PayUtility(request)
 	if err != nil {
-		logger.ServiceLog.Error(err)
+		logger.ServiceLog.Error("Failed to pay utility: ", err)
 	}
 }
 
@@ -27,7 +27,7 @@ func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 
 	err := productsClient.GetAirtimeAccounts(id, &accounts)
 	if err != nil {
-		logger.ServiceLog.Error(err)
+		logger.ServiceLog.Error("Failed to fetch airtime accounts: ", err)
 		return nil, err
 	}
 
@@ -39,9 +39,10 @@ func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, error) {
 	var accounts []client.UtilityAccount
 
+	// TODO: Add stack traces for easier log tracing
 	err := productsClient.GetUtilityAccounts(id, &accounts)
 	if err != nil {
-		logger.ServiceLog.Error(err)
+		logger.ServiceLog.Error("Failed to fetch utility accounts: ", err)
 		return nil, err
 	}
 

@@ -102,6 +102,7 @@ func RetrieveState(code, phone, session string) *State {
 	}
 	err := data.UnmarshalFromFile(&stateData, session+utils.STATE_FILE)
 	if err != nil {
+		// TODO: Get the actual error and decide whether log is info or error
 		logger.UssdLog.Error(err)
 	}
 

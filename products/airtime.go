@@ -74,7 +74,7 @@ func (a *Airtime) finalize() {
 			account, err := service.CreateAccount(a.vars["{phone}"])
 			if err != nil {
 				// TODO: Send message to user
-				logger.UssdLog.Error(err)
+				logger.UssdLog.Error("Failed to create account: ", err)
 			}
 
 			accountId = account.Id
@@ -97,7 +97,7 @@ func (a *Airtime) finalize() {
 
 		logger.UssdLog.Println(" -- AIRTIME: purchase", request)
 
-		service.PurchaseAirtime(request)
+		service.PurchaseAirtime(&request)
 	}
 }
 

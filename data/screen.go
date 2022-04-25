@@ -178,7 +178,9 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.SAFARICOM:
 		return isValidPhoneAndProvider(input, utils.SAFARICOM)
 	case utils.PIN:
-		return checkPin(input, vars["{phone}"])
+		// TODO: Handle both -no pin set- and -invalid pin-
+		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
+		return checkPin(input, vars["{account_id}"])
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	}
@@ -196,13 +198,12 @@ func isValidUtilityAmount(input string, utility string) bool {
 	}
 
 	val := getIntVal(input)
-	fmt.Println(min, val, max, utility)
 
 	return val <= max && val >= min
 }
 
-func checkPin(input string, phone string) bool {
-	return service.CheckPin(phone, input)
+func checkPin(input string, id string) bool {
+	return service.CheckPin(id, input)
 }
 
 func isCurrentPhone(input string, phone string) bool {

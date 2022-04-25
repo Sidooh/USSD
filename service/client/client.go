@@ -49,16 +49,17 @@ func (api *ApiClient) send(data interface{}) error {
 	response, err := api.client.Do(api.request)
 	if err != nil {
 		logger.ServiceLog.Error("Error sending request to API endpoint: ", err)
+		return err
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.Println(response)
+	logger.ServiceLog.Println("API_RESP - raw: ", response)
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
-	logger.ServiceLog.Println(string(body))
+	logger.ServiceLog.Println("API_RESP - body: ", string(body))
 
 	if response.StatusCode != 200 && response.StatusCode != 401 && response.StatusCode != 404 && response.StatusCode != 422 {
 		if response.StatusCode < 500 {

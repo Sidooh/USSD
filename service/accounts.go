@@ -37,7 +37,7 @@ func FetchAccount(phone string) (*Account, error) {
 	if account != nil {
 		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
 		if err != nil {
-			logger.ServiceLog.Error("Failed to fetch voucher balances", err)
+			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 		}
 	}
 

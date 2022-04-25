@@ -29,8 +29,8 @@ func InitProductClient() *ProductApiClient {
 	return &client
 }
 
-func (p *ProductApiClient) BuyAirtime(request AirtimePurchaseRequest) error {
-	jsonData, err := request.Marshal()
+func (p *ProductApiClient) BuyAirtime(request *AirtimePurchaseRequest) error {
+	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = Response{}
