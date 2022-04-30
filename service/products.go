@@ -56,5 +56,16 @@ func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, 
 		}
 	}
 
+	if len(providerAccounts) == 0 {
+		return nil, nil
+	}
+
 	return providerAccounts, nil
+}
+
+func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
+	err := productsClient.PurchaseVoucher(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to purchase voucher: ", err)
+	}
 }

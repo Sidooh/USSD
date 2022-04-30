@@ -18,6 +18,7 @@ func (u *Utility) Process(input string) {
 	logger.UssdLog.Println(" -- PAY_UTILITY: process", u.screen.Key, input)
 	u.productRep = "pay_utility"
 
+	u.Product.Process(input)
 	u.processScreen(input)
 	u.finalize()
 }
@@ -95,7 +96,7 @@ func (u *Utility) setUtilityAccountOptions(input string) {
 		stringVars, _ := json.Marshal(utilityAccountOptionVars)
 		u.vars["{utility_account_options}"] = string(stringVars)
 	} else {
-		u.screen.Options[1].NextKey = utils.UTILITY_OTHER_ACCOUNT
+		u.screen.Options[integerInput].NextKey = utils.UTILITY_OTHER_ACCOUNT
 	}
 
 }

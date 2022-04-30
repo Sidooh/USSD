@@ -92,13 +92,13 @@ func main() {
 	LoadScreens()
 
 	paths := map[string][]string{
-		// ############## ABOUT
+		// 1. ########## ABOUT
 		// ... > About
 		//"about": {"", "1"}, // --- valid
 		//
 		//############## ABOUT END
 
-		// ############## AIRTIME
+		// 2. ########## AIRTIME
 		// ... > Airtime > self > amount > mpesa > final
 		//"airtime_self_20_mpesa_accept": {"", "2", "1", "20", "1", "1"}, // --- valid
 		//
@@ -124,15 +124,29 @@ func main() {
 		//
 		// ############## AIRTIME END
 
-		// ############## UTILITY
+		// 3.1 ########## UTILITY
 		// ... > Pay > Utility > provider > select account > amount > payment > final
-		//"pay_utility_kplc_existing-acc_200_mpesa_accept": {"", "3", "1", "2", "1", "200", "1", "1"},
+		//"pay_utility_kplc_existing-acc_200_mpesa_accept": {"", "3", "1", "2", "1", "200", "1", "1"}, // --- valid
 		//
 		// ... > Pay > Utility > provider > no account > amount > payment > final
-		//"pay_utility_dstv_new-acc_200_mpesa_accept": {"", "3", "1", "4", "1234567", "200", "1", "1"},
+		//"pay_utility_dstv_new-acc_200_mpesa_accept": {"", "3", "1", "4", "1234567", "200", "1", "1"}, // --- valid
 		//
 		// ... > Pay > Utility > provider > existing but new account > amount > payment > final
-		//"pay_utility_kplc_new-acc_200_mpesa_accept": {"", "3", "1", "9", "1234567", "200", "1", "1"},
+		//"pay_utility_kplc_new-acc_200_mpesa_accept": {"", "3", "1", "2", "9", "1234567", "200", "1", "1"},
+		//
+		// ############## UTILITY END
+
+		// 3.2 ########## VOUCHER
+		// ... > Pay > Voucher > self > amount > payment > final
+		//"voucher_self_100_mpesa_accept": {"", "3", "2", "1", "100", "1", "1"}, // --- valid
+		//
+		// ... > Pay > Voucher > other > account > amount > mpesa > final
+		//"voucher_other_phone_100_mpesa_accept": {"", "3", "2", "2", "110039317", "100", "1", "1"}, // --- valid
+		//
+		// ... > Pay > Voucher > other > account > amount > voucher > final
+		//"voucher_other_phone_100_voucher_accept": {"", "3", "2", "2", "110039317", "100", "2", "1234", "1"}, // --- valid
+		//
+		// ############## VOUCHER END
 	}
 	x := time.Now()
 	for path, inputs := range paths {

@@ -44,6 +44,18 @@ func FetchAccount(phone string) (*Account, error) {
 	return account, nil
 }
 
+func CheckAccount(phone string) (*Account, error) {
+	var account = new(Account)
+
+	err := accountsClient.GetAccount(phone, &account)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch account", err)
+		return nil, err
+	}
+
+	return account, nil
+}
+
 func CheckPin(id string, pin string) bool {
 	var valid map[string]string
 

@@ -7,7 +7,6 @@ import (
 
 type Pay struct {
 	Product
-	productRep string
 }
 
 func (p *Pay) Process(input string) {

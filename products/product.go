@@ -15,8 +15,9 @@ type ProductI interface {
 }
 
 type Product struct {
-	vars   map[string]string
-	screen *data.Screen
+	vars       map[string]string
+	screen     *data.Screen
+	productRep string
 }
 
 func (p *Product) Initialize(vars map[string]string, screen *data.Screen) {
@@ -47,8 +48,11 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
+	fmt.Println(p.productRep, p.vars["{number}"] == p.vars["{phone}"])
+	// Delete voucher option if balance is not enough or buying voucher for self
 	if int(voucherBalance) < amount {
-		// Delete voucher option if balance is not enough
+		delete(p.screen.Next.Options, 2)
+	} else if p.productRep == "Voucher" && p.vars["{number}"] == p.vars["{phone}"] {
 		delete(p.screen.Next.Options, 2)
 	}
 }

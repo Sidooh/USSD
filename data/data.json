@@ -84,7 +84,7 @@
   },
   "airtime_amount": {
     "key": "airtime_amount",
-    "title": "Please input airtime amount (MIN: KES20)",
+    "title": "Enter airtime amount (MIN: KES20)",
     "type": "OPEN",
     "next": "payment_method",
     "validations": "INT,MIN:20,MAX:10000"
@@ -102,7 +102,7 @@
       "2": {
         "label": "Voucher Top-up",
         "value": "2",
-        "next": "coming_soon"
+        "next": "voucher"
       },
       "3": {
         "label": "Pay Merchant (coming soon)",
@@ -176,6 +176,36 @@
     "type": "OPEN",
     "next": "payment_method",
     "validations": "INT,UTILITY_AMOUNTS"
+  },
+  "voucher": {
+    "key": "voucher",
+    "title": "Buy Voucher",
+    "options": {
+      "1": {
+        "label": "Self {phone}",
+        "value": "1",
+        "next": "voucher_amount"
+      },
+      "2": {
+        "label": "Other Sidooh Account",
+        "value": "2",
+        "next": "voucher_other_account"
+      }
+    }
+  },
+  "voucher_other_account": {
+    "key": "voucher_other_account",
+    "title": "Enter phone number",
+    "type": "OPEN",
+    "next": "voucher_amount",
+    "validations": "SAFARICOM,DISALLOW_CURRENT,EXISTING_ACCOUNT"
+  },
+  "voucher_amount": {
+    "key": "voucher_amount",
+    "title": "Enter voucher amount (MIN: KES100)",
+    "type": "OPEN",
+    "next": "payment_method",
+    "validations": "INT,MIN:100,MAX:70000"
   },
   "payment_method": {
     "key": "payment_method",

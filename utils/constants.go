@@ -13,6 +13,7 @@ const (
 	END     = "END"
 )
 
+// file that stores session state
 const (
 	STATE_FILE = "_state.json"
 )
@@ -49,8 +50,15 @@ const (
 	UTILITY_ACCOUNT_SELECT = "utility_account_select"
 	UTILITY_OTHER_ACCOUNT  = "utility_other_account"
 	UTILITY_AMOUNT         = "utility_amount"
+
+	//TODO: Improve constants naming or find way to do enums to avoid conflicts
+	// VOUCHER
+	PAY_VOUCHER           = "voucher"
+	VOUCHER_AMOUNT        = "voucher_amount"
+	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
 )
 
+// validation keys
 const (
 	INT              = "INT"
 	MIN              = "MIN"
@@ -60,13 +68,16 @@ const (
 	PIN              = "PIN"
 	PIN_LENGTH       = "PIN_LENGTH"
 	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
+	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
 )
 
+// payment methods
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
 )
 
+// telco providers
 const (
 	SAFARICOM = "SAFARICOM"
 	AIRTEL    = "AIRTEL"
@@ -84,6 +95,7 @@ const (
 	FAIBA_REGEX     = `^(\+?254|0)?(747[0-9]{6})$`
 )
 
+// utility providers
 const (
 	KPLC_PREPAID  = "KPLC_PREPAID"
 	KPLC_POSTPAID = "KPLC_POSTPAID"

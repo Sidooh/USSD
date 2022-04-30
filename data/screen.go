@@ -189,6 +189,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return !isCurrentPhone(input, vars["{phone}"])
 	case utils.SAFARICOM:
 		return isValidPhoneAndProvider(input, utils.SAFARICOM)
+	case utils.EXISTING_ACCOUNT:
+		return screen.isSidoohAccount(input)
 	case utils.PIN_LENGTH:
 		return screen.checkPinLength(input)
 	case utils.PIN:
@@ -214,6 +216,20 @@ func isValidUtilityAmount(input string, utility string) bool {
 	val := getIntVal(input)
 
 	return val <= max && val >= min
+}
+
+func (screen *Screen) isSidoohAccount(input string) bool {
+	account, err := service.CheckAccount(input)
+	if err != nil {
+		screen.Title = "Account not found, please try again."
+		return false
+	}
+
+	if account != nil {
+		return true
+	}
+
+	return false
 }
 
 func (screen *Screen) checkPinLength(input string) bool {

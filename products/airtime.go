@@ -12,7 +12,6 @@ import (
 
 type Airtime struct {
 	Product
-	productRep string
 }
 
 func (a *Airtime) Process(input string) {

@@ -43,7 +43,7 @@ func (p *ProductApiClient) BuyAirtime(request *AirtimePurchaseRequest) error {
 }
 
 func (p *ProductApiClient) PayUtility(request UtilityPurchaseRequest) error {
-	jsonData, err := request.Marshal()
+	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = Response{}
@@ -84,6 +84,19 @@ func (p *ProductApiClient) GetUtilityAccounts(id string, response interface{}) e
 	// TODO: Can we get rid of this round trip?
 	dbByte, err := json.Marshal(apiResponse.Data)
 	err = json.Unmarshal(dbByte, &response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *ProductApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	var response = Response{}
+	err = p.newRequest(http.MethodPost, "/products/voucher/top-up", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}

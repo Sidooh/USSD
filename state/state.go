@@ -67,9 +67,9 @@ func (s *State) setProduct(option int) {
 	case products.PAY_UTILITY:
 		s.product = &products.Utility{}
 		s.ProductKey = products.PAY_UTILITY
-	//case products.PAY_VOUCHER:
-	//	s.product = &products.Voucher{}
-	//	s.ProductKey = products.PAY_VOUCHER
+	case products.PAY_VOUCHER:
+		s.product = &products.Voucher{}
+		s.ProductKey = products.PAY_VOUCHER
 	//case products.PAY_MERCHANT:
 	//	s.product = &products.Merhcant{}
 	//	s.ProductKey = products.PAY_MERCHANT
@@ -87,8 +87,8 @@ func (s *State) getProduct() int {
 		return products.PAY
 	case &products.Utility{}:
 		return products.PAY_UTILITY
-	//case &products.Voucher{}:
-	//	return products.PAY_VOUCHER
+	case &products.Voucher{}:
+		return products.PAY_VOUCHER
 	default:
 		return 0
 	}
