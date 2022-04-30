@@ -33,6 +33,8 @@ const (
 	PAYMENT_END                = "payment_end"
 	PAYMENT_OTHER_NUMBER_MPESA = "payment_other_number_mpesa"
 
+	PIN_BLOCKED = "pin_blocked"
+
 	// AIRTIME
 	AIRTIME                     = "airtime"
 	AIRTIME_OTHER_NUMBER_SELECT = "airtime_other_number_select"
@@ -56,6 +58,7 @@ const (
 	PHONE            = "PHONE"
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"
+	PIN_LENGTH       = "PIN_LENGTH"
 	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
 )
 

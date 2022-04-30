@@ -179,7 +179,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay Ksh{amount} {product} for {number} using:",
+    "title": "Pay KES{amount} {product} for {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -187,7 +187,7 @@
         "next": "payment_confirmation"
       },
       "2": {
-        "label": "VOUCHER ({voucher_balance})",
+        "label": "VOUCHER (KES{voucher_balance})",
         "value": "2",
         "next": "payment_pin_confirmation"
       }
@@ -202,7 +202,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "Ksh{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",
@@ -230,7 +230,7 @@
   },
   "payment_confirmation_final": {
     "key": "payment_confirmation_final",
-    "title": "Ksh{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",
@@ -243,6 +243,11 @@
         "next": "cancel"
       }
     }
+  },
+  "pin_blocked": {
+    "key": "pin_blocked",
+    "title": "Your pin is blocked.\nPlease email us at {customer_support_email} if you need further assistance.",
+    "type": "END"
   },
   "refer_pin": {
     "key": "refer_pin",
@@ -265,7 +270,7 @@
   },
   "payment_end": {
     "key": "payment_end",
-    "title": "Your request has been received and is being processed. {method_instruction}. Thank you.",
+    "title": "Your request has been received and is being processed. {payment_method_instruction}. Thank you.",
     "type": "END"
   },
   "coming_soon": {

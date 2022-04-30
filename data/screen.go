@@ -30,6 +30,11 @@ var nextExceptionScreens = map[string]bool{
 	"refer_end": true,
 }
 
+var dynamicOptionScreens = map[string]bool{
+	utils.AIRTIME_OTHER_NUMBER_SELECT: true,
+	utils.UTILITY_ACCOUNT_SELECT:      true,
+}
+
 func (screen *Screen) setNext(s *Screen) {
 	screen.Next = s
 }
@@ -37,6 +42,7 @@ func (screen *Screen) setNext(s *Screen) {
 func (screen *Screen) GetStringRep() string {
 	// The below is needed in order to iterate over options in order.
 	// Can be updated when go 1.18 is stable using generics
+	// TODO: Check on this now that 1.18 is GA
 	var keys []int
 	for k := range screen.Options {
 		keys = append(keys, k)
@@ -45,6 +51,11 @@ func (screen *Screen) GetStringRep() string {
 
 	optionsString := ""
 	for _, k := range keys {
+		// Add new line between dynamic options and static one
+		if _, ok := dynamicOptionScreens[screen.Key]; ok && k == 9 {
+			optionsString += "\n"
+		}
+
 		optionsString += screen.Options[k].GetStringRep() + "\n"
 	}
 	return fmt.Sprintf("%v\n\n%v", screen.Title, optionsString)
@@ -134,6 +145,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 }
 
 func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
+	// TODO: Sanitize input to be logged? e.g. pins, etc. just replace with **** and use same length as input
 	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")
@@ -177,10 +189,12 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return !isCurrentPhone(input, vars["{phone}"])
 	case utils.SAFARICOM:
 		return isValidPhoneAndProvider(input, utils.SAFARICOM)
+	case utils.PIN_LENGTH:
+		return screen.checkPinLength(input)
 	case utils.PIN:
 		// TODO: Handle both -no pin set- and -invalid pin-
 		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
-		return checkPin(input, vars["{account_id}"])
+		return screen.checkPin(input, vars)
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	}
@@ -202,8 +216,38 @@ func isValidUtilityAmount(input string, utility string) bool {
 	return val <= max && val >= min
 }
 
-func checkPin(input string, id string) bool {
-	return service.CheckPin(id, input)
+func (screen *Screen) checkPinLength(input string) bool {
+	if len(input) == 4 {
+		return true
+	}
+
+	screen.Title = "Please enter a valid pin (4 digits)"
+
+	return false
+}
+
+func (screen *Screen) checkPin(input string, vars map[string]string) bool {
+	if screen.checkPinLength(input) {
+		id := vars["{account_id}"]
+		pinTries, _ := strconv.Atoi(vars["{pin_tries}"])
+
+		if pinTries > 2 {
+			screen.NextKey = utils.PIN_BLOCKED
+			//	TODO: Inform accounts, or use accounts to determine blockage
+			// Notify relevant parties e.g. support...
+		}
+
+		isValid := service.CheckPin(id, input)
+
+		if !isValid {
+			vars["{pin_tries}"] = strconv.Itoa(pinTries + 1)
+			screen.Title = "Invalid Pin!\nPlease try again."
+		}
+
+		return isValid
+	}
+
+	return false
 }
 
 func isCurrentPhone(input string, phone string) bool {

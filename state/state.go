@@ -30,6 +30,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 	s.Vars["{name}"] = ""
 	s.Vars["{voucher_balance}"] = "0"
+	s.Vars["{customer_support_email}"] = "customersupport@sidooh.co.ke"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
 	account, err := service.FetchAccount(s.Phone)
@@ -46,7 +47,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		s.Vars["{phone}"] = account.Phone
 
 		if len(account.Balances) != 0 {
-			s.Vars["{voucher_balance}"] = account.Balances[0].Balance
+			s.Vars["{voucher_balance}"] = strings.TrimSuffix(account.Balances[0].Balance, ".00")
 		}
 
 		if account.User.Name != "" {
@@ -193,8 +194,13 @@ func (s *State) MoveNext(screenKey string) {
 
 func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
 	if input == "0" && s.ScreenPath.Previous != nil {
-		s.ScreenPath.Screen = s.ScreenPath.Previous.Screen
-		s.ScreenPath.Previous = s.ScreenPath.Previous.Previous
+		if s.ScreenPath.Previous.Validations == utils.PIN {
+			s.ScreenPath.Screen = s.ScreenPath.Previous.Previous.Screen
+			s.ScreenPath.Previous = s.ScreenPath.Previous.Previous.Previous
+		} else {
+			s.ScreenPath.Screen = s.ScreenPath.Previous.Screen
+			s.ScreenPath.Previous = s.ScreenPath.Previous.Previous
+		}
 	}
 
 	if input == "00" {

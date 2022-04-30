@@ -3,7 +3,6 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
-	"fmt"
 )
 
 var productsClient = client.InitProductClient()
@@ -31,7 +30,9 @@ func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 		return nil, err
 	}
 
-	fmt.Println(accounts)
+	if len(accounts) == 0 {
+		return nil, nil
+	}
 
 	return accounts, nil
 }

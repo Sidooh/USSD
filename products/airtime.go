@@ -19,6 +19,7 @@ func (a *Airtime) Process(input string) {
 	logger.UssdLog.Println(" -- AIRTIME: process", a.screen.Key, input)
 	a.productRep = "airtime"
 
+	a.Product.Process(input)
 	a.processScreen(input)
 	a.finalize()
 }
@@ -39,23 +40,7 @@ func (a *Airtime) processScreen(input string) {
 		break
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
-		break
-	case utils.PAYMENT_METHOD:
-		switch input {
-		case "1":
-			a.vars["{payment_method}"] = utils.MPESA
-			a.vars["{payment_method_text}"] = utils.MPESA + " " + a.vars["{phone}"]
-			a.vars["{method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
-			break
-		case "2":
-			a.vars["{payment_method}"] = utils.VOUCHER
-			a.vars["{payment_method_text}"] = utils.VOUCHER + "(" + a.vars["{voucher_balance}"] + ")"
-			break
-		}
-		break
-	case utils.PAYMENT_OTHER_NUMBER_MPESA:
-		a.vars["{mpesa_number}"] = input
-		a.vars["{payment_method_text}"] = utils.MPESA + " " + a.vars["{mpesa_number}"]
+		a.setPaymentMethods(input)
 		break
 	}
 }
@@ -97,6 +82,7 @@ func (a *Airtime) finalize() {
 
 		logger.UssdLog.Println(" -- AIRTIME: purchase", request)
 
+		// TODO: Make into goroutine if applicable
 		service.PurchaseAirtime(&request)
 	}
 }

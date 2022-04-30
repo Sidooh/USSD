@@ -40,6 +40,16 @@ func Process(code, phone, session, input string) *state.State {
 
 			stateData.SaveState()
 		}
+
+		// Cater for pin screen tries which are updated in the validator
+		// Alternatively, check pin in the products themselves
+		// TODO: Check which is more performant
+		if stateData.ScreenPath.Validations == "PIN" {
+			if stateData.ScreenPath.NextKey == utils.PIN_BLOCKED {
+				stateData.MoveNext(stateData.ScreenPath.NextKey)
+			}
+			stateData.SaveState()
+		}
 	} else {
 		if v, e := strconv.Atoi(input); e == nil {
 			if option, ok := stateData.ScreenPath.Options[v]; ok {
@@ -86,6 +96,7 @@ func main() {
 		// ... > About
 		//"about": {"", "1"}, // --- valid
 		//
+		//############## ABOUT END
 
 		// ############## AIRTIME
 		// ... > Airtime > self > amount > mpesa > final
@@ -95,27 +106,23 @@ func main() {
 		//"airtime_self_20_other-mpesa_254714611696_accept": {"", "2", "1", "20", "1", "3", "254714611696", "1"}, // --- valid
 		//
 		// ... > Airtime > self > amount > voucher > final
-		"airtime_self_20_voucher_pin_accept": {"", "2", "1", "20", "2", "1234", "1"},
+		//"airtime_self_20_voucher_pin_accept": {"", "2", "1", "31", "2", "1234", "1"}, // --- valid
 		//
 		// ... > Airtime > other > new phone > amount > payment > final
-		//"airtime_other_new-phone_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"},
+		//"airtime_other_new-phone_20_mpesa_accept": {"", "2", "2", "780611696", "20", "1", "1"}, // --- valid
 		//
 		// ... > Airtime > other > phone > amount > payment > final
-		//"airtime_other_phone_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"}, // --- pass
-
+		//"airtime_other_phone_20_mpesa_accept": {"", "2", "2", "1", "20", "1", "1"}, // --- valid
 		//
 		//	... > Extra paths
-		//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"},
-		//"airtime_self_20_voucher_invalid-pin_accept": {"", "2", "1", "20", "2", "123123", "1"},
-
-		//"airtime_other_existing-new-acc_20_mpesa_accept": {"", "2", "2", "9", "254789611696", "20", "1", "1"},
-		//"airtime_other_existing_20_mpesa_other_254714611696_accept": {"", "2", "2", "1", "20", "1", "3", "254714611696", "1"},
+		//"airtime_self_20_mpesa_cancel": {"", "2", "1", "20", "1", "2"}, // --- valid
+		//"airtime_self_20_voucher_invalid-pin_blocked": {"", "2", "1", "20", "2", "123123", "1231", "1232", "7667", "3245"}, // --- valid
+		//"airtime_other_existing-new-phone_20_mpesa_accept": {"", "2", "2", "9", "254780611696", "20", "1", "1"}, // --- valid
+		//"airtime_other_existing_20_mpesa_other_254714611696_accept": {"", "2", "2", "1", "20", "1", "3", "254110039317", "1"}, // --- valid
 		//
-		//"airtime_self_20_voucher_accept": {"", "2", "1", "20", "2", "1"},
-		//	//"airtime_self_20_voucher_cancel": {"", "2", "1", "20", "1", "2"},
-		//	//"airtime_self_20_voucher_other_254714611696_accept": {"", "2", "1", "20", "1", "3", "254715611696", "1"},
-		//	//"airtime_self_20_voucher_other_254714611696_cancel": {"", "2", "1", "20", "1", "3", "254715611696", "2"},
+		//"airtime_self_20_voucher_back": {"", "2", "1", "20", "2", "1234", "3", "0"}, // --- valid
 		//
+		// ############## AIRTIME END
 
 		// ############## UTILITY
 		// ... > Pay > Utility > provider > select account > amount > payment > final
@@ -131,9 +138,9 @@ func main() {
 	for path, inputs := range paths {
 		for _, input := range inputs {
 			//254110039317
-			//fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
+			fmt.Println(processAndRespond("*384*99#", "254714611696", "254714611696"+path, input))
 			//time.Sleep(300 * time.Millisecond)
-			fmt.Println(processAndRespond("*384*99#", "254110039317", "254110039317"+path, input))
+			//fmt.Println(processAndRespond("*384*99#", "254110039317", "254110039317"+path, input))
 			//time.Sleep(200 * time.Millisecond)
 
 		}

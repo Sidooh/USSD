@@ -36,23 +36,6 @@ func (u *Utility) processScreen(input string) {
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input
 		break
-	case utils.PAYMENT_METHOD:
-		switch input {
-		case "1":
-			u.vars["{payment_method}"] = utils.MPESA
-			u.vars["{payment_method_text}"] = utils.MPESA + " " + u.vars["{phone}"]
-			u.vars["{method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
-			break
-		case "2":
-			u.vars["{payment_method}"] = utils.VOUCHER
-			u.vars["{payment_method_text}"] = utils.VOUCHER + "(" + u.vars["{voucher_balance}"] + ")"
-			break
-		}
-		break
-	case utils.PAYMENT_OTHER_NUMBER_MPESA:
-		u.vars["{mpesa_number}"] = input
-		u.vars["{payment_method_text}"] = utils.MPESA + " " + u.vars["{mpesa_number}"]
-		break
 	}
 }
 

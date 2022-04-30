@@ -36,6 +36,7 @@ var (
 )
 
 func (api *ApiClient) init(baseUrl string) {
+	// TODO: Review switching t0 http2
 	api.client = &http.Client{Timeout: 10 * time.Second}
 	api.baseUrl = baseUrl
 }
