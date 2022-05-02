@@ -46,7 +46,7 @@ func decodeData(r *http.Request) *Data {
 }
 
 func ussdHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/api/ussd" {
+	if r.URL.Path != "/api/v1/ussd" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
 	}
@@ -61,6 +61,31 @@ func ussdHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, processAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
 }
 
+func Recovery() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		defer func() {
+			err := recover()
+			if err != nil {
+
+				jsonBody, _ := json.Marshal(map[string]string{
+					"error": "There was an internal server error",
+				})
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write(jsonBody)
+
+				panic(err) // May be log this error? Send to sentry?
+			}
+
+		}()
+
+		ussdHandler(w, r)
+
+	})
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -69,9 +94,9 @@ func main() {
 
 	initUssd()
 
-	fmt.Printf("Starting server at port %v\n", port)
+	fmt.Printf("Starting USSD server at port %v\n", port)
 
-	http.HandleFunc("/api/ussd", ussdHandler)
+	http.Handle("/api/v1/ussd", Recovery())
 
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)

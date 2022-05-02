@@ -1,6 +1,7 @@
 package client
 
 import (
+	"USSD.sidooh/cache"
 	"USSD.sidooh/logger"
 	"bytes"
 	"encoding/json"
@@ -9,8 +10,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
-
-	"github.com/jellydator/ttlcache/v3"
 )
 
 type ApiClient struct {
@@ -29,14 +28,10 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-var (
-	cache = ttlcache.New[string, string](
-		ttlcache.WithTTL[string, string](14 * time.Minute),
-	)
-)
-
 func (api *ApiClient) init(baseUrl string) {
-	// TODO: Review switching t0 http2
+	logger.ServiceLog.Println("Init client: ", baseUrl)
+
+	// TODO: Review switching to http2
 	api.client = &http.Client{Timeout: 10 * time.Second}
 	api.baseUrl = baseUrl
 }
@@ -46,6 +41,7 @@ func (api *ApiClient) getUrl(endpoint string) string {
 }
 
 func (api *ApiClient) send(data interface{}) error {
+	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
 	logger.ServiceLog.Println(api.request)
 	response, err := api.client.Do(api.request)
 	if err != nil {
@@ -106,12 +102,12 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	if token := cache.Get("token"); token != nil {
+	if token := cache.Instance.Get("token"); token != nil {
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {
 		api.EnsureAuthenticated()
 
-		token = cache.Get("token")
+		token = cache.Instance.Get("token")
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	}
 
@@ -124,7 +120,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 
 	err = api.Authenticate(jsonData)
 	if err != nil {
-		logger.ServiceLog.Fatalf("error authenticating: %v", err)
+		logger.ServiceLog.Errorf("error authenticating: %v", err)
 	}
 }
 
@@ -136,13 +132,7 @@ func (api *ApiClient) Authenticate(data []byte) error {
 		return err
 	}
 
-	cache.Set("token", response.Token, 14*time.Minute)
-	go func() {
-		for {
-			time.Sleep(14 * time.Minute)
-			cache.Delete("token")
-		}
-	}()
+	cache.Instance.Set("token", response.Token, 14*time.Minute)
 
 	return nil
 }
