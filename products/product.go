@@ -48,7 +48,6 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
-	fmt.Println(p.productRep, p.vars["{number}"] == p.vars["{phone}"])
 	// Delete voucher option if balance is not enough or buying voucher for self
 	if int(voucherBalance) < amount {
 		delete(p.screen.Next.Options, 2)
