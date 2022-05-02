@@ -8,6 +8,7 @@ import (
 	"USSD.sidooh/utils"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -66,7 +67,10 @@ func Process(code, phone, session, input string) *state.State {
 
 func processAndRespond(code, phone, session, input string) string {
 	start := time.Now()
-	response := Process(code, phone, session, input)
+	//TODO: Update ussd session in table here
+
+	text := strings.Split(input, "*")
+	response := Process(code, phone, session, text[len(text)-1])
 
 	if response.Status == utils.END {
 		logger.UssdLog.Println(utils.END+" ==========================", session, time.Since(start))
