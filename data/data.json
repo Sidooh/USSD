@@ -22,12 +22,12 @@
       "4": {
         "label": "Save",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save"
       },
       "5": {
         "label": "Invite",
         "value": "5",
-        "next": "refer_pin"
+        "next": "invite_pin"
       },
       "6": {
         "label": "Become an Agent",
@@ -41,12 +41,14 @@
       }
     }
   },
+
   "about": {
     "key": "about",
     "type": "OPEN",
     "title": "Sidooh is a cashback rewards platform that gives you cash refunds on every item you purchase through the platform. The earned cashback is then automatically saved and invested in financial assets like Treasury Bills and Bonds, Fixed Deposits, etc. so as to generate extra income for you.",
     "paginated": true
   },
+
   "airtime": {
     "key": "airtime",
     "title": "Buy airtime",
@@ -207,6 +209,55 @@
     "next": "payment_method",
     "validations": "INT,MIN:100,MAX:70000"
   },
+  "save": {
+    "key": "save",
+    "title": "Save",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Personal",
+        "value": "1",
+        "next": "personal_savings"
+      },
+      "2": {
+        "label": "Group",
+        "value": "2",
+        "next": "group_savings"
+      }
+    }
+  },
+  "personal_savings": {
+    "key": "personal_savings",
+    "title": "Personal Savings Screen",
+    "type": "OPEN",
+    "next": "coming_soon"
+  },
+  "group_savings": {
+    "key": "group_savings",
+    "title": "Group Savings Screen",
+    "type": "OPEN",
+    "next": "coming_soon"
+  },
+  "invite_pin": {
+    "key": "invite_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "invite",
+    "validations": "PIN"
+  },
+  "invite": {
+    "key": "invite",
+    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {enrollment_time}hrs. Enter no:",
+    "type": "OPEN",
+    "next": "invite_end",
+    "validations": "SAFARICOM,DISALLOW_CURRENT,NOT_INVITED_OR_EXISTING_ACCOUNT"
+  },
+  "invite_end": {
+    "key": "invite_end",
+    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
+    "type": "OPEN",
+    "next": "cancel"
+  },
   "payment_method": {
     "key": "payment_method",
     "title": "Pay KES{amount} {product} for {number} using:",
@@ -274,33 +325,14 @@
       }
     }
   },
-  "pin_blocked": {
-    "key": "pin_blocked",
-    "title": "Your pin is blocked.\nPlease email us at {customer_support_email} if you need further assistance.",
-    "type": "END"
-  },
-  "refer_pin": {
-    "key": "refer_pin",
-    "title": "Please enter your Sidooh PIN",
-    "type": "OPEN",
-    "next": "refer",
-    "option_type": "PIN"
-  },
-  "refer": {
-    "key": "refer",
-    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {enrollment_time}hrs. Enter no:",
-    "type": "OPEN",
-    "next": "refer_end",
-    "option_type": "PHONE"
-  },
-  "refer_end": {
-    "key": "refer_end",
-    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
-    "type": "OPEN"
-  },
   "payment_end": {
     "key": "payment_end",
     "title": "Your request has been received and is being processed. {payment_method_instruction}. Thank you.",
+    "type": "END"
+  },
+  "pin_blocked": {
+    "key": "pin_blocked",
+    "title": "Your pin is blocked.\nPlease email us at {customer_support_email} if you need further assistance.",
     "type": "END"
   },
   "coming_soon": {

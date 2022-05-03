@@ -8,7 +8,7 @@ const (
 	PAY_VOUCHER  = 32
 	PAY_MERCHANT = 33
 	SAVE         = 4
-	REFER        = 5
+	INVITE       = 5
 	SUBSCRIPTION = 6
 	ACCOUNT      = 7
 )

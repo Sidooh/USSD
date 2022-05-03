@@ -186,11 +186,13 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.PHONE:
 		return isValidPhone(input)
 	case utils.DISALLOW_CURRENT:
-		return !isCurrentPhone(input, vars["{phone}"])
+		return screen.isNotCurrentPhone(input, vars["{phone}"])
 	case utils.SAFARICOM:
-		return isValidPhoneAndProvider(input, utils.SAFARICOM)
+		return screen.isValidPhoneAndProvider(input, utils.SAFARICOM)
 	case utils.EXISTING_ACCOUNT:
 		return screen.isSidoohAccount(input)
+	case utils.NOT_INVITED_OR_EXISTING_ACCOUNT:
+		return screen.isUninvitedAndNonExistent(input)
 	case utils.PIN_LENGTH:
 		return screen.checkPinLength(input)
 	case utils.PIN:
@@ -232,6 +234,15 @@ func (screen *Screen) isSidoohAccount(input string) bool {
 	return false
 }
 
+func (screen *Screen) isUninvitedAndNonExistent(input string) bool {
+	exists := service.InviteOrAccountExists(input)
+	if exists {
+		screen.Title = "Sorry, this number is not eligible for invite at the moment."
+	}
+
+	return !exists
+}
+
 func (screen *Screen) checkPinLength(input string) bool {
 	if len(input) == 4 {
 		return true
@@ -266,7 +277,16 @@ func (screen *Screen) checkPin(input string, vars map[string]string) bool {
 	return false
 }
 
-func isCurrentPhone(input string, phone string) bool {
+func (screen *Screen) isNotCurrentPhone(input string, phone string) bool {
+	valid := !screen.isCurrentPhone(input, phone)
+	if !valid {
+		screen.Title = "Invalid phone.\nPlease use a number different from yours"
+	}
+
+	return valid
+}
+
+func (screen *Screen) isCurrentPhone(input string, phone string) bool {
 	s, err := utils.FormatPhone(input)
 	if err != nil {
 		return false
@@ -275,10 +295,15 @@ func isCurrentPhone(input string, phone string) bool {
 	return s == phone
 }
 
-func isValidPhoneAndProvider(input string, requiredProvider string) bool {
+func (screen *Screen) isValidPhoneAndProvider(input string, requiredProvider string) bool {
 	provider, err := utils.GetPhoneProvider(input)
 	if err != nil {
 		return false
+	}
+
+	valid := provider == requiredProvider
+	if !valid {
+		screen.Title = "Invalid phone.\nPlease try again with a valid " + requiredProvider + " number."
 	}
 
 	return provider == requiredProvider

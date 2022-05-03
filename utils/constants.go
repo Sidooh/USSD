@@ -56,6 +56,14 @@ const (
 	PAY_VOUCHER           = "voucher"
 	VOUCHER_AMOUNT        = "voucher_amount"
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
+
+	// SAVE
+	SAVE = "save"
+
+	// INVITE
+	INVITE     = "invite"
+	INVITE_PIN = "invite_pin"
+	INVITE_END = "invite_end"
 )
 
 // validation keys
@@ -69,6 +77,8 @@ const (
 	PIN_LENGTH       = "PIN_LENGTH"
 	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
 	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
+
+	NOT_INVITED_OR_EXISTING_ACCOUNT = "NOT_INVITED_OR_EXISTING_ACCOUNT"
 )
 
 // payment methods

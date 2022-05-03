@@ -63,6 +63,14 @@ func (api *ApiClient) send(data interface{}) error {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
 
+			if len(errorMessage["errors"]) == 0 {
+				var errorMessage map[string]string
+				err = json.Unmarshal(body, &errorMessage)
+				logger.ServiceLog.Error("API_ERR - body: ", errorMessage)
+
+				return errors.New(errorMessage["message"])
+			}
+
 			return errors.New(errorMessage["errors"][0]["message"])
 		}
 
@@ -107,6 +115,7 @@ func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader)
 	} else {
 		api.EnsureAuthenticated()
 
+		//TODO: What will happen to client if cache fails to store token? E.g. when account srv is not reachable?
 		token = cache.Instance.Get("token")
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	}
