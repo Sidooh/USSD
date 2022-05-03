@@ -32,7 +32,7 @@
       "6": {
         "label": "Become an Agent",
         "value": "6",
-        "next": "coming_soon"
+        "next": "subscription"
       },
       "7": {
         "label": "My Account",
@@ -91,6 +91,7 @@
     "next": "payment_method",
     "validations": "INT,MIN:20,MAX:10000"
   },
+
   "pay": {
     "key": "pay",
     "title": "What would you like to pay for?",
@@ -113,6 +114,7 @@
       }
     }
   },
+
   "utility": {
     "key": "utility",
     "title": "Select provider:",
@@ -211,7 +213,7 @@
   },
   "save": {
     "key": "save",
-    "title": "Save",
+    "title": "Select option",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -223,18 +225,91 @@
         "label": "Group",
         "value": "2",
         "next": "group_savings"
+      },
+      "3": {
+        "label": "Club Sidooh",
+        "value": "3",
+        "next": "club_sidooh_savings"
       }
     }
   },
   "personal_savings": {
     "key": "personal_savings",
-    "title": "Personal Savings Screen",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Retirement",
+        "value": "1",
+        "next": "personal_savings_amount"
+      },
+      "2": {
+        "label": "Emergency",
+        "value": "2",
+        "next": "personal_savings_amount"
+      },
+      "3": {
+        "label": "Monthly Income",
+        "value": "3",
+        "next": "monthly_income"
+      },
+      "4": {
+        "label": "Goal",
+        "value": "4",
+        "next": "goals"
+      },
+      "9": {
+        "label": "Statement",
+        "value": "9",
+        "next": "statement"
+      }
+    }
+  },
+  "personal_savings_amount": {
+    "key": "personal_savings_amount",
+    "title": "Enter amount (MIN: KES20)",
     "type": "OPEN",
-    "next": "coming_soon"
+    "next": "coming_soon",
+    "validations": "INT,MIN:20"
+  },
+  "monthly_income": {
+    "key": "monthly_income",
+    "title": "How much would you like to earn?",
+    "type": "CLOSED",
+    "options": {
+      "9": {
+        "label": "Other amount",
+        "value": "9",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "goals": {
+    "key": "goals",
+    "title": "Select or create goal",
+    "type": "CLOSED",
+    "options": {
+      "9": {
+        "label": "Create Goal",
+        "value": "9",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "statement": {
+    "key": "statement",
+    "title": "Your statement is being processed and will be sent to you.",
+    "type": "END"
   },
   "group_savings": {
     "key": "group_savings",
     "title": "Group Savings Screen",
+    "type": "OPEN",
+    "next": "coming_soon"
+  },
+  "club_sidooh_savings": {
+    "key": "club_sidooh_savings",
+    "title": "Club Sidooh Savings Screen",
     "type": "OPEN",
     "next": "coming_soon"
   },
@@ -257,6 +332,55 @@
     "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
     "type": "OPEN",
     "next": "cancel"
+  },
+  "subscription": {
+    "key": "subscription",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Subscribe as an agent",
+        "value": "1",
+        "next": "subscription_register"
+      }
+    }
+  },
+  "subscription_register": {
+    "key": "subscription_register",
+    "title": "By subscribing as a {subscription_type} through paying a fee ({subscription_amount}/{duration}), you will earn sales commissions on every airtime purchased from the platform by your invited customers.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to subscribe as an Agent",
+        "value": "1",
+        "next": "subscription_agent_name"
+      }
+    },
+    "paginated": true
+  },
+  "subscription_agent_name": {
+    "key": "subscription_agent_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "subscription_agent_confirm",
+    "validations": "NAME"
+  },
+  "subscription_agent_confirm": {
+    "key": "subscription_agent_confirm",
+    "title": "Please confirm your details.\n\nName: {name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Confirm",
+        "value": "1",
+        "next": "payment_method"
+      },
+      "2": {
+        "label": "Change Details",
+        "value": "2",
+        "next": "subscription_agent_name",
+        "acyclic": true
+      }
+    }
   },
   "payment_method": {
     "key": "payment_method",

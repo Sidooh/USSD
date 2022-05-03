@@ -79,6 +79,9 @@ func (s *State) setProduct(option int) {
 	case products.INVITE:
 		s.product = &products.Invite{}
 		s.ProductKey = products.INVITE
+	case products.SUBSCRIPTION:
+		s.product = &products.Subscription{}
+		s.ProductKey = products.SUBSCRIPTION
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -99,6 +102,8 @@ func (s *State) getProduct() int {
 		return products.SAVE
 	case &products.Invite{}:
 		return products.INVITE
+	case &products.Subscription{}:
+		return products.SUBSCRIPTION
 	default:
 		return 0
 	}

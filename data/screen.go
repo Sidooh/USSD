@@ -5,6 +5,7 @@ import (
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -117,7 +118,6 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 				}
 			}
 		} else {
-
 			if _, ok := nextExceptionScreens[screen.Key]; ok != true {
 				return fmt.Errorf("next is not set for screen " + screen.Key + " of type " + screen.Type)
 			}
@@ -201,9 +201,17 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return screen.checkPin(input, vars)
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
+	case utils.NAME:
+		return isValidName(input)
 	}
 
 	return false
+}
+
+func isValidName(input string) bool {
+	nameRegx := regexp.MustCompile(`^[A-z .'-]{3,}$`)
+
+	return nameRegx.MatchString(input)
 }
 
 func isValidUtilityAmount(input string, utility string) bool {

@@ -64,6 +64,11 @@ const (
 	INVITE     = "invite"
 	INVITE_PIN = "invite_pin"
 	INVITE_END = "invite_end"
+
+	// SUBSCRIPTION
+	SUBSCRIPTION               = "subscription"
+	SUBSCRIPTION_REGISTER      = "subscription_register"
+	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
 )
 
 // validation keys
@@ -79,6 +84,8 @@ const (
 	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
 
 	NOT_INVITED_OR_EXISTING_ACCOUNT = "NOT_INVITED_OR_EXISTING_ACCOUNT"
+
+	NAME = "NAME"
 )
 
 // payment methods
