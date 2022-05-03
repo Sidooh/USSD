@@ -189,15 +189,15 @@ func main() {
 
 		// 6 ########## SUBSCRIPTION
 		// ... > Subscription > info > name > confirm > payment > final
-		"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "1", "1"},
-		//
-		// ... > Subscription > Pin > phone [existing invite] > final
-		//"invite_pin_718611696_end": {"", "5", "1234", "718611696"}, // --- valid
-		//
-		// ... > Subscription > Pin > phone [existing account] > final
-		//"invite_pin_110039317_end": {"", "5", "1234", "110039317"}, // --- valid
+		//"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "1", "1"},
 		//
 		// ############## SUBSCRIPTION END
+
+		// 7 ########## ACCOUNT
+		// ... > Account > info > name > confirm > payment > final
+		//"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "1", "1"},
+		//
+		// ############## ACCOUNT END
 	}
 	x := time.Now()
 	for path, inputs := range paths {

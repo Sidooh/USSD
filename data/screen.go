@@ -99,7 +99,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 				//	Check if option already exists in list
 				_, ok := existingOptions[option.Label]
 				if ok {
-					return fmt.Errorf("screen options contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
+					return fmt.Errorf("screen options for screen " + screen.Key + " contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
 				} else {
 					existingOptions[option.Label] = struct{}{}
 				}

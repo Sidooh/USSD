@@ -2,7 +2,9 @@ package products
 
 import (
 	"USSD.sidooh/logger"
+	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
+	"strconv"
 )
 
 type Subscription struct {
@@ -32,5 +34,27 @@ func (s *Subscription) processScreen(input string) {
 
 	case utils.SUBSCRIPTION_AGENT_CONFIRM:
 		s.setPaymentMethods(input)
+	}
+}
+
+func (s *Subscription) finalize() {
+	logger.UssdLog.Println(" -- SUBSCRIPTION: finalize", s.screen.Next.Type)
+
+	if s.screen.Next.Type == utils.END {
+		accountId, _ := strconv.Atoi(s.vars["{account_id}"])
+		amount, _ := strconv.Atoi(s.vars["{amount}"])
+		method := s.vars["{payment_method}"]
+
+		request := client.AirtimePurchaseRequest{
+			Initiator: client.CONSUMER,
+			Amount:    amount,
+			Method:    method,
+			AccountId: accountId,
+		}
+
+		logger.UssdLog.Println(" -- SUBSCRIPTION: purchase", request)
+
+		// TODO: Make into goroutine if applicable
+		//service.PurchaseSubscription(&request)
 	}
 }

@@ -37,7 +37,7 @@
       "7": {
         "label": "My Account",
         "value": "7",
-        "next": "coming_soon"
+        "next": "account"
       }
     }
   },
@@ -381,6 +381,124 @@
         "acyclic": true
       }
     }
+  },
+  "account": {
+    "key": "account",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Profile",
+        "value": "1",
+        "next": "account_profile"
+      },
+      "2": {
+        "label": "Balances",
+        "value": "2",
+        "next": "account_balances_pin"
+      },
+      "3": {
+        "label": "Withdraw",
+        "value": "3",
+        "next": "account_withdraw_pin"
+      }
+    }
+  },
+  "account_profile": {
+    "key": "account_profile",
+    "title": "Your details are as follows\n\nName: {name}\nNumber: {phone}\n\nSubscription: {subscription}\n",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Sidooh Pin",
+        "value": "1",
+        "next": "profile_pin"
+      },
+      "2": {
+        "label": "Update Profile",
+        "value": "2",
+        "next": "profile_update_name"
+      }
+    }
+  },
+  "profile_pin": {
+    "key": "profile_pin",
+    "title": "What would you like to do?",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Set new PIN",
+        "value": "1",
+        "next": "coming_soon"
+      },
+      "2": {
+        "label": "Change current PIN",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Set Security Questions",
+        "value": "3",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "profile_update_name": {
+    "key": "profile_update_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "coming_soon",
+    "validations": "NAME"
+  },
+  "account_balances_pin": {
+    "key": "account_balances_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_balances",
+    "validations": "PIN"
+  },
+  "account_balances": {
+    "key": "account_balances",
+    "title": "Select an option below:",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Voucher",
+        "value": "1",
+        "next": "voucher_balance"
+      },
+      "2": {
+        "label": "Earnings",
+        "value": "2",
+        "next": "earnings"
+      }
+    }
+  },
+  "earnings": {
+    "key": "earnings",
+    "title": "Your earnings breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {$saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
+    "type": "OPEN",
+    "paginated": true,
+    "next": "cancel"
+  },
+  "voucher_balance": {
+    "key": "voucher_balance",
+    "title": "Your voucher balance is:\n {voucher_balance}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+  "account_withdraw_pin": {
+    "key": "account_withdraw_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_withdraw",
+    "validations": "PIN"
+  },
+  "account_withdraw": {
+    "key": "account_withdraw",
+    "title": "Enter points you wish to withdraw (MIN. 10):\n\n- Available Points: {available_points}\n- Withdrawable Points: {withdrawable_points}",
+    "type": "OPEN",
+    "next": "coming_soon",
+    "validations": "WITHDRAW_LIMITS"
   },
   "payment_method": {
     "key": "payment_method",
