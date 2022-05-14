@@ -7,7 +7,7 @@ import (
 
 var productsClient = client.InitProductClient()
 
-func PurchaseAirtime(request *client.AirtimePurchaseRequest) {
+func PurchaseAirtime(request *client.PurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to buy airtime: ", err)
@@ -67,5 +67,24 @@ func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
 	err := productsClient.PurchaseVoucher(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase voucher: ", err)
+	}
+}
+
+func FetchSubscription(id string) (client.Subscription, error) {
+	var subscription client.Subscription
+
+	err := productsClient.GetSubscription(id, &subscription)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch subscription: ", err)
+		return client.Subscription{}, err
+	}
+
+	return subscription, nil
+}
+
+func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
+	err := productsClient.PurchaseSubscription(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
 }

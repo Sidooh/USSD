@@ -7,14 +7,16 @@ import (
 )
 
 type Account struct {
-	Id     int    `json:"id,omitempty"`
-	Phone  string `json:"phone"`
-	Active bool   `json:"active"`
-	User   *struct {
-		Email string `json:"email"`
-		Name  string `json:"name"`
-	} `json:"user"`
+	Id       int    `json:"id,omitempty"`
+	Phone    string `json:"phone"`
+	Active   bool   `json:"active"`
+	User     `json:"user"`
 	Balances []Balance
+}
+
+type User struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
 type Balance struct {
@@ -102,6 +104,17 @@ func CheckPin(id string, pin string) bool {
 	return valid["message"] == "ok"
 }
 
+func CheckHasPin(id string) bool {
+	var valid map[string]string
+
+	err := accountsClient.CheckHasPin(id, &valid)
+	if err != nil {
+		return false
+	}
+
+	return valid["message"] == "ok"
+}
+
 func CreateAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
@@ -122,4 +135,26 @@ func CreateInvite(id string, phone string) (*Invite, error) {
 	}
 
 	return invite, nil
+}
+
+func SetPin(id string, pin string) bool {
+	var valid map[string]string
+
+	err := accountsClient.SetPin(id, pin, &valid)
+	if err != nil {
+		return false
+	}
+
+	return valid["message"] == "ok"
+}
+
+func UpdateProfile(id string, details client.ProfileDetails) (User, error) {
+	var user = User{}
+
+	err := accountsClient.UpdateProfile(id, details, &user)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

@@ -43,6 +43,7 @@ func (api *ApiClient) getUrl(endpoint string) string {
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
 	logger.ServiceLog.Println(api.request)
+	start := time.Now()
 	response, err := api.client.Do(api.request)
 	if err != nil {
 		logger.ServiceLog.Error("Error sending request to API endpoint: ", err)
@@ -50,7 +51,7 @@ func (api *ApiClient) send(data interface{}) error {
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.Println("API_RESP - raw: ", response)
+	logger.ServiceLog.Println("API_RESP - raw: ", response, time.Since(start))
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -103,8 +104,6 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 
 	api.request = request
 	api.setDefaultHeaders()
-
-	logger.ServiceLog.Println(body)
 
 	return api
 }

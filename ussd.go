@@ -84,7 +84,7 @@ func processAndRespond(code, phone, session, input string) string {
 func LoadScreens() {
 	loadedScreens, err := data.LoadData()
 	if err != nil {
-		logger.UssdLog.Error(err)
+		logger.UssdLog.Fatal(err)
 	}
 	logger.UssdLog.Printf("Validated %v screens successfully", len(loadedScreens))
 
@@ -189,13 +189,31 @@ func main() {
 
 		// 6 ########## SUBSCRIPTION
 		// ... > Subscription > info > name > confirm > payment > final
-		//"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "1", "1"},
+		//"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "2", "1234" /*, "1"*/},
+		//
+		// ... > Subscription > renew > payment > final
+		//"subscription_renew_payment_end": {"", "6", "1", "1", "1"},
 		//
 		// ############## SUBSCRIPTION END
 
 		// 7 ########## ACCOUNT
-		// ... > Account > info > name > confirm > payment > final
-		//"subscription_info_Dr-H_confirm_payment_end": {"", "6", "1", "1", "Dr H", "1", "1", "1"},
+		// ... > Account > Profile > view
+		//"account_profile_end": {"", "7", "1"},
+		//
+		// ... > Account > Profile > pin > set > name > new > confirm
+		//"account_profile_pin_new": {"", "7", "1", "1", "1", "Dr H", "1000", "1000"},
+		//
+		// ... > Account > Profile > pin > change > use pin > new > confirm
+		//"account_profile_pin_change_use_pin": {"", "7", "1", "1", "2", "1", "1234", "1001", "1001"},
+		//
+		// ... > Account > Profile > pin > change > use sec qns > new > confirm
+		//"account_profile_pin_change_use_qns": {"", "7", "1", "1", "2", "2", "Blue", "1001", "1001"},
+		//
+		// ... > Account > Profile > sec qn > option 1 > choice 1 > ...
+		//"account_profile_security_questions": {"", "7", "1", "1", "3", "1", "Blue"},
+		//
+		// ... > Account > Profile > update > pin > name > end
+		//"account_profile_update_name": {"", "7", "1", "2", "1234", "Jack Dabber"},
 		//
 		// ############## ACCOUNT END
 	}

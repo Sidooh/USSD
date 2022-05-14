@@ -57,7 +57,7 @@ func (v *Voucher) finalize() {
 		}
 
 		request := client.VoucherPurchaseRequest{
-			AirtimePurchaseRequest: client.AirtimePurchaseRequest{
+			PurchaseRequest: client.PurchaseRequest{
 				Initiator: client.CONSUMER,
 				Amount:    amount,
 				Method:    method,

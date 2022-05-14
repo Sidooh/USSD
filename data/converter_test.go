@@ -1,7 +1,7 @@
 package data
 
 import (
-	"USSD/utils"
+	"USSD.sidooh/utils"
 	"os"
 	"testing"
 )

@@ -57,6 +57,28 @@ func (a *AccountApiClient) CheckPin(id string, pin string, response interface{})
 	return nil
 }
 
+func (a *AccountApiClient) CheckHasPin(id string, response interface{}) error {
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *AccountApiClient) SetPin(id string, pin string, response interface{}) error {
+	values := map[string]string{"pin": pin}
+	jsonData, err := json.Marshal(values)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (a *AccountApiClient) CreateAccount(phone string, response interface{}) error {
 	values := map[string]string{"phone": phone}
 	jsonData, err := json.Marshal(values)
@@ -76,6 +98,18 @@ func (a *AccountApiClient) CreateInvite(id string, phone string, response interf
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	err = a.newRequest(http.MethodPost, "/invites", dataBytes).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *AccountApiClient) UpdateProfile(id string, request ProfileDetails, response interface{}) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}

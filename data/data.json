@@ -336,6 +336,7 @@
   "subscription": {
     "key": "subscription",
     "title": "Select option",
+    "type": "CLOSED",
     "options": {
       "1": {
         "label": "Subscribe as an agent",
@@ -343,6 +344,23 @@
         "next": "subscription_register"
       }
     }
+  },
+  "subscription_renew": {
+    "key": "subscription_renew",
+    "title": "Dear {name}, Your subscription to {subscription_type} expires/expired on {subscription_end_date}.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Renew Subscription",
+        "value": "1",
+        "next": "payment_method"
+      }
+    }
+  },
+  "subscription_active": {
+    "key": "subscription_active",
+    "title": "Dear {name}, you are already subscribed to {subscription_type} valid until {subscription_end_date}.",
+    "type": "OPEN"
   },
   "subscription_register": {
     "key": "subscription_register",
@@ -405,22 +423,41 @@
   },
   "account_profile": {
     "key": "account_profile",
-    "title": "Your details are as follows\n\nName: {name}\nNumber: {phone}\n\nSubscription: {subscription}\n",
+    "title": "Your details are as follows\n\nName: {full_name}\nNumber: {phone}\n\nSubscription: {subscription_type}",
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Sidooh Pin",
+        "label": "Account Pin & Security",
         "value": "1",
-        "next": "profile_pin"
+        "next": "profile_security"
       },
       "2": {
         "label": "Update Profile",
         "value": "2",
-        "next": "profile_update_name"
+        "next": "profile_update_name_pin"
       }
     }
   },
-  "profile_pin": {
+  "profile_update_name_pin": {
+    "key": "profile_update_name_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_update_name",
+    "validations": "PIN"
+  },
+  "profile_update_name": {
+    "key": "profile_update_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "profile_update_end",
+    "validations": "NAME"
+  },
+  "profile_update_end": {
+    "key": "profile_update_end",
+    "title": "Congratulations, You have updated your profile. New details are as follows\n\nName: {full_name}",
+    "type": "OPEN"
+  },
+  "profile_security": {
     "key": "profile_pin",
     "title": "What would you like to do?",
     "type": "CLOSED",
@@ -428,26 +465,96 @@
       "1": {
         "label": "Set new PIN",
         "value": "1",
-        "next": "coming_soon"
+        "next": "profile_name"
       },
       "2": {
         "label": "Change current PIN",
         "value": "2",
-        "next": "coming_soon"
+        "next": "profile_change_pin_methods"
       },
       "3": {
-        "label": "Set Security Questions",
+        "label": "Security Questions",
         "value": "3",
-        "next": "coming_soon"
+        "next": "profile_security_questions_pin"
       }
     }
   },
-  "profile_update_name": {
-    "key": "profile_update_name",
-    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+  "profile_security_questions_pin": {
+    "key": "profile_security_questions_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_security_questions_first_options",
+    "validations": "PIN"
+  },
+  "profile_security_questions_first_options": {
+    "key": "profile_security_questions_first_options",
+    "title": "Select question",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "profile_security_questions_first_choice": {
+    "key": "profile_security_questions_first_choice",
+    "title": "{security_question_1}",
     "type": "OPEN",
     "next": "coming_soon",
+    "validations": "SECURITY_QUESTION"
+  },
+  "profile_change_pin_methods": {
+    "key": "profile_change_pin_methods",
+    "title": "Select method to use",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Use Old Pin",
+        "value": "1",
+        "next": "profile_change_pin_using_pin"
+      },
+      "2": {
+        "label": "Use Security Questions",
+        "value": "2",
+        "next": "profile_change_pin_using_questions"
+      }
+    }
+  },
+  "profile_change_pin_using_questions": {
+    "key": "profile_change_pin_using_questions",
+    "title": "{security_question_1}",
+    "type": "OPEN",
+    "next": "coming_soon",
+    "validations": "SECURITY_QUESTION"
+  },
+  "profile_change_pin_using_pin": {
+    "key": "profile_change_pin_using_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_new_pin",
+    "validations": "PIN"
+  },
+  "profile_name": {
+    "key": "profile_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "profile_new_pin",
     "validations": "NAME"
+  },
+  "profile_new_pin": {
+    "key": "profile_new_pin",
+    "title": "Enter new four-digit Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "profile_new_pin_confirm": {
+    "key": "profile_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_pin_end",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "profile_pin_end": {
+    "key": "profile_pin_end",
+    "title": "Your new Sidooh PIN is {confirm_pin}. Please keep your PIN number safe. Do not share it with anyone.",
+    "type": "END"
   },
   "account_balances_pin": {
     "key": "account_balances_pin",
@@ -585,6 +692,16 @@
   "cancel": {
     "key": "cancel",
     "title": "Thank you for using Sidooh. Sidooh, Makes You Money on Every Purchase.",
+    "type": "OPEN"
+  },
+  "not_transacted": {
+    "key": "not_transacted",
+    "title": "This seems to be your first time on Sidooh. Kindly buy airtime or pay for utility first before proceeding.\nSidooh, Makes You Money on Every Purchase.",
+    "type": "OPEN"
+  },
+  "pin_not_set": {
+    "key": "pin_not_set",
+    "title": "Please set a PIN first in order to proceed.",
     "type": "OPEN"
   }
 }

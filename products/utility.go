@@ -135,7 +135,7 @@ func (u *Utility) finalize() {
 		}
 
 		request := client.UtilityPurchaseRequest{
-			AirtimePurchaseRequest: client.AirtimePurchaseRequest{
+			PurchaseRequest: client.PurchaseRequest{
 				Initiator: client.CONSUMER,
 				Amount:    amount,
 				Method:    method,

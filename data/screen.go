@@ -27,13 +27,23 @@ type ScreenPath struct {
 }
 
 var nextExceptionScreens = map[string]bool{
-	"about": true, "cancel": true, "coming_soon": true,
-	"refer_end": true,
+	utils.ABOUT:               true,
+	utils.CANCEL:              true,
+	utils.COMING_SOON:         true,
+	utils.INVITE_END:          true,
+	utils.NOT_TRANSACTED:      true,
+	utils.SUBSCRIPTION_ACTIVE: true,
+	utils.PIN_NOT_SET:         true,
+	utils.PROFILE_UPDATE_END:  true,
 }
 
 var dynamicOptionScreens = map[string]bool{
 	utils.AIRTIME_OTHER_NUMBER_SELECT: true,
 	utils.UTILITY_ACCOUNT_SELECT:      true,
+}
+
+var optionsExceptionScreens = map[string]bool{
+	utils.PROFILE_SECURITY_QUESTIONS_FIRST_OPTIONS: true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -82,7 +92,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 		}
 
 		// Validate that options exist
-		if len(screen.Options) == 0 {
+		if _, ok := optionsExceptionScreens[screen.Key]; !ok && len(screen.Options) == 0 {
 			return fmt.Errorf("screen options are not set for screen " + screen.Key + " of type " + screen.Type)
 		}
 
@@ -195,6 +205,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return screen.isUninvitedAndNonExistent(input)
 	case utils.PIN_LENGTH:
 		return screen.checkPinLength(input)
+	case utils.PIN_CONFIRMED:
+		return screen.confirmPin(input, vars)
 	case utils.PIN:
 		// TODO: Handle both -no pin set- and -invalid pin-
 		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
@@ -252,11 +264,24 @@ func (screen *Screen) isUninvitedAndNonExistent(input string) bool {
 }
 
 func (screen *Screen) checkPinLength(input string) bool {
-	if len(input) == 4 {
+	// TODO: Should we also check for consecutive e.g. 1234, 5678
+	actualVal := strconv.Itoa(getIntVal(input))
+	if len(actualVal) == 4 {
 		return true
 	}
 
-	screen.Title = "Please enter a valid pin (4 digits)"
+	screen.Title = "Please enter a valid pin (4 digits; Can't start with 0)"
+
+	return false
+}
+
+func (screen *Screen) confirmPin(input string, vars map[string]string) bool {
+	pin := vars["{pin}"]
+
+	if pin == input {
+		return true
+	}
+	screen.Title = "The PIN entered does not seem to match. Please try again."
 
 	return false
 }

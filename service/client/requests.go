@@ -1,6 +1,6 @@
 package client
 
-type AirtimePurchaseRequest struct {
+type PurchaseRequest struct {
 	Initiator    string `json:"initiator"`
 	Amount       int    `json:"amount"`
 	Method       string `json:"method"`
@@ -10,14 +10,23 @@ type AirtimePurchaseRequest struct {
 }
 
 type UtilityPurchaseRequest struct {
-	AirtimePurchaseRequest
+	PurchaseRequest
 	Provider      string
 	AccountNumber string `json:"account_number"`
 }
 
 type VoucherPurchaseRequest struct {
-	AirtimePurchaseRequest
+	PurchaseRequest
 	TargetAccountId int `json:"target_account_id,omitempty"`
+}
+
+type SubscriptionPurchaseRequest struct {
+	PurchaseRequest
+	SubscriptionTypeId int `json:"subscription_type_id,omitempty"`
+}
+
+type ProfileDetails struct {
+	Name string
 }
 
 //TODO: Remove these once verified not needed

@@ -27,6 +27,9 @@ const (
 	COMING_SOON = "coming_soon"
 	BETA        = "beta"
 	CANCEL      = "cancel"
+	PIN_NOT_SET = "pin_not_set"
+
+	NOT_TRANSACTED = "not_transacted"
 
 	// global
 	PAYMENT_METHOD             = "payment_method"
@@ -67,8 +70,20 @@ const (
 
 	// SUBSCRIPTION
 	SUBSCRIPTION               = "subscription"
+	SUBSCRIPTION_RENEW         = "subscription_renew"
+	SUBSCRIPTION_ACTIVE        = "subscription_active"
 	SUBSCRIPTION_REGISTER      = "subscription_register"
 	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
+
+	// ACCOUNT
+	ACCOUNT_PROFILE                          = "account_profile"
+	PROFILE_NAME                             = "profile_name"
+	PROFILE_NEW_PIN                          = "profile_new_pin"
+	PROFILE_NEW_PIN_CONFIRM                  = "profile_new_pin_confirm"
+	PROFILE_SECURITY_QUESTIONS_FIRST_OPTIONS = "profile_security_questions_first_options"
+	PROFILE_SECURITY_QUESTIONS_FIRST_CHOICE  = "profile_security_questions_first_choice"
+	PROFILE_UPDATE_NAME                      = "profile_update_name"
+	PROFILE_UPDATE_END                       = "profile_update_end"
 )
 
 // validation keys
@@ -80,6 +95,7 @@ const (
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"
 	PIN_LENGTH       = "PIN_LENGTH"
+	PIN_CONFIRMED    = "PIN_CONFIRMED"
 	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
 	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
 
@@ -121,4 +137,10 @@ const (
 	ZUKU          = "ZUKU"
 	GOTV          = "GOTV"
 	STARTIMES     = "STARTIMES"
+)
+
+// states
+const (
+	ACTIVE  = "ACTIVE"
+	EXPIRED = "EXPIRED"
 )

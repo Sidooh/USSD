@@ -52,6 +52,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
+			s.Vars["{full_name}"] = account.User.Name
 		}
 	}
 }
@@ -71,7 +72,7 @@ func (s *State) setProduct(option int) {
 		s.product = &products.Voucher{}
 		s.ProductKey = products.PAY_VOUCHER
 	//case products.PAY_MERCHANT:
-	//	s.product = &products.Merhcant{}
+	//	s.product = &products.Merchant{}
 	//	s.ProductKey = products.PAY_MERCHANT
 	case products.SAVE:
 		s.product = &products.Save{}
@@ -82,6 +83,9 @@ func (s *State) setProduct(option int) {
 	case products.SUBSCRIPTION:
 		s.product = &products.Subscription{}
 		s.ProductKey = products.SUBSCRIPTION
+	case products.ACCOUNT:
+		s.product = &products.Account{}
+		s.ProductKey = products.ACCOUNT
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -104,6 +108,8 @@ func (s *State) getProduct() int {
 		return products.INVITE
 	case &products.Subscription{}:
 		return products.SUBSCRIPTION
+	case &products.Account{}:
+		return products.ACCOUNT
 	default:
 		return 0
 	}
@@ -166,6 +172,15 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
+
+		// Unauthorized screens for first time users
+		keys := []int{5, 6, 7}
+		_, ok := s.Vars["{account_id}"]
+		if !ok {
+			for _, k := range keys {
+				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
+			}
+		}
 	}
 
 	if s.ScreenPath.Key == utils.PAY {
