@@ -43,7 +43,7 @@ var dynamicOptionScreens = map[string]bool{
 }
 
 var optionsExceptionScreens = map[string]bool{
-	utils.PROFILE_SECURITY_QUESTIONS_FIRST_OPTIONS: true,
+	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS: true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -215,9 +215,17 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	case utils.NAME:
 		return isValidName(input)
+	case utils.SECURITY_QUESTION:
+		return isValidSecurityQuestionAnswer(input)
 	}
 
 	return false
+}
+
+func isValidSecurityQuestionAnswer(input string) bool {
+	ansRegx := regexp.MustCompile(`^[A-z]{3,}$`)
+
+	return ansRegx.MatchString(input)
 }
 
 func isValidName(input string) bool {

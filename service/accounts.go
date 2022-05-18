@@ -105,14 +105,14 @@ func CheckPin(id string, pin string) bool {
 }
 
 func CheckHasPin(id string) bool {
-	var valid map[string]string
+	var valid map[string]bool
 
 	err := accountsClient.CheckHasPin(id, &valid)
 	if err != nil {
 		return false
 	}
 
-	return valid["message"] == "ok"
+	return valid["message"]
 }
 
 func CreateAccount(phone string) (*Account, error) {
@@ -157,4 +157,43 @@ func UpdateProfile(id string, details client.ProfileDetails) (User, error) {
 	}
 
 	return user, nil
+}
+
+var securityQuestions []client.SecurityQuestion
+
+func FetchSecurityQuestions() ([]client.SecurityQuestion, error) {
+	var questions []client.SecurityQuestion
+
+	if len(securityQuestions) > 0 {
+		return securityQuestions, nil
+	}
+
+	err := accountsClient.FetchSecurityQuestions(&questions)
+	if err != nil {
+		return nil, err
+	}
+
+	securityQuestions = questions
+
+	return questions, nil
+}
+
+func SetSecurityQuestions(id string, answers map[string]string) error {
+	var results []interface{}
+
+	for i, answer := range answers {
+		var res interface{}
+		err := accountsClient.SetSecurityQuestion(id, client.SecurityQuestionRequest{
+			QuestionId: i,
+			Answer:     answer,
+		}, &res)
+		if err != nil {
+			return err
+		} else {
+			results = append(results, res)
+		}
+	}
+
+	logger.ServiceLog.Println("Security Questions Request: ", results)
+	return nil
 }

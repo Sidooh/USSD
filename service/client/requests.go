@@ -29,6 +29,11 @@ type ProfileDetails struct {
 	Name string
 }
 
+type SecurityQuestionRequest struct {
+	QuestionId string `json:"question_id"`
+	Answer     string
+}
+
 //TODO: Remove these once verified not needed
 //func (r *AirtimePurchaseRequest) Marshal() ([]byte, error) {
 //	request := map[string]interface{}{

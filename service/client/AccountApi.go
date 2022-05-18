@@ -11,6 +11,11 @@ type AccountApiClient struct {
 	ApiClient
 }
 
+type SecurityQuestion struct {
+	Id       uint
+	Question string
+}
+
 func InitAccountClient() *AccountApiClient {
 	client := AccountApiClient{}
 	client.ApiClient.init(os.Getenv("ACCOUNTS_URL"))
@@ -110,6 +115,27 @@ func (a *AccountApiClient) UpdateProfile(id string, request ProfileDetails, resp
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *AccountApiClient) FetchSecurityQuestions(response interface{}) error {
+	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *AccountApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest, response interface{}) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}

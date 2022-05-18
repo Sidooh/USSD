@@ -483,21 +483,26 @@
     "key": "profile_security_questions_pin",
     "title": "Please enter your Sidooh PIN",
     "type": "OPEN",
-    "next": "profile_security_questions_first_options",
+    "next": "profile_security_questions_options",
     "validations": "PIN"
   },
-  "profile_security_questions_first_options": {
-    "key": "profile_security_questions_first_options",
+  "profile_security_questions_options": {
+    "key": "profile_security_questions_options",
     "title": "Select question",
     "type": "CLOSED",
     "options": {}
   },
-  "profile_security_questions_first_choice": {
-    "key": "profile_security_questions_first_choice",
-    "title": "{security_question_1}",
+  "profile_security_questions_answer": {
+    "key": "profile_security_questions_answer",
+    "title": "{security_question}",
     "type": "OPEN",
-    "next": "coming_soon",
+    "next": "profile_security_questions_options",
     "validations": "SECURITY_QUESTION"
+  },
+  "profile_security_questions_end": {
+    "key": "profile_security_questions_end",
+    "title": "{profile_security_questions_end_title}",
+    "type": "END"
   },
   "profile_change_pin_methods": {
     "key": "profile_change_pin_methods",

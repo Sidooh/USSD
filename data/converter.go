@@ -75,7 +75,7 @@ func LoadData() (map[string]*Screen, error) {
 	setNextScreens(screens, screens[utils.MAIN_MENU])
 	// The below screens are hanging screens, i.e. have no parent
 	setNextScreens(screens, screens[utils.SUBSCRIPTION_RENEW])
-	setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_FIRST_CHOICE])
+	setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_ANSWER])
 
 	err = validateScreens(screens)
 	if err != nil {

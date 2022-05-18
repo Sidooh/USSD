@@ -34,18 +34,18 @@ type Subscription struct {
 
 const timeFormat = `2006-01-02 15:04:05`
 
-type Time struct {
-	time.Time
-}
-
-func (t Time) UnmarshalJSON(b []byte) error {
-	ret, err := time.Parse(timeFormat, string(b))
-	if err != nil {
-		return err
-	}
-	t = Time{ret}
-	return nil
-}
+//type Time struct {
+//	time.Time
+//}
+//
+//func (t Time) UnmarshalJSON(b []byte) error {
+//	ret, err := time.Parse(timeFormat, string(b))
+//	if err != nil {
+//		return err
+//	}
+//	t = Time{ret}
+//	return nil
+//}
 
 func InitProductClient() *ProductApiClient {
 	client := ProductApiClient{}

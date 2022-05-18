@@ -210,10 +210,10 @@ func main() {
 		//"account_profile_pin_change_use_qns": {"", "7", "1", "1", "2", "2", "Blue", "1001", "1001"},
 		//
 		// ... > Account > Profile > sec qn > option 1 > choice 1 > ...
-		//"account_profile_security_questions": {"", "7", "1", "1", "3", "1", "Blue"},
+		"account_profile_security_questions": {"", "7", "1", "1", "3", "1234", "2", "Blue", "1", "Jack", "1", "Dabber"},
 		//
 		// ... > Account > Profile > update > pin > name > end
-		//"account_profile_update_name": {"", "7", "1", "2", "1234", "Jack Dabber"},
+		//"account_profile_update_name": {"", "7", "1", "2", "1234", "Jack Dabbs"},
 		//
 		// ############## ACCOUNT END
 	}

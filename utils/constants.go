@@ -76,14 +76,16 @@ const (
 	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
 
 	// ACCOUNT
-	ACCOUNT_PROFILE                          = "account_profile"
-	PROFILE_NAME                             = "profile_name"
-	PROFILE_NEW_PIN                          = "profile_new_pin"
-	PROFILE_NEW_PIN_CONFIRM                  = "profile_new_pin_confirm"
-	PROFILE_SECURITY_QUESTIONS_FIRST_OPTIONS = "profile_security_questions_first_options"
-	PROFILE_SECURITY_QUESTIONS_FIRST_CHOICE  = "profile_security_questions_first_choice"
-	PROFILE_UPDATE_NAME                      = "profile_update_name"
-	PROFILE_UPDATE_END                       = "profile_update_end"
+	ACCOUNT_PROFILE                    = "account_profile"
+	PROFILE_NAME                       = "profile_name"
+	PROFILE_NEW_PIN                    = "profile_new_pin"
+	PROFILE_NEW_PIN_CONFIRM            = "profile_new_pin_confirm"
+	PROFILE_SECURITY_QUESTIONS_PIN     = "profile_security_questions_pin"
+	PROFILE_SECURITY_QUESTIONS_OPTIONS = "profile_security_questions_options"
+	PROFILE_SECURITY_QUESTIONS_ANSWER  = "profile_security_questions_answer"
+	PROFILE_UPDATE_NAME                = "profile_update_name"
+	PROFILE_UPDATE_END                 = "profile_update_end"
+	PROFILE_SECURITY_QUESTIONS_END     = "profile_security_questions_end"
 )
 
 // validation keys
@@ -102,6 +104,8 @@ const (
 	NOT_INVITED_OR_EXISTING_ACCOUNT = "NOT_INVITED_OR_EXISTING_ACCOUNT"
 
 	NAME = "NAME"
+
+	SECURITY_QUESTION = "SECURITY_QUESTION"
 )
 
 // payment methods
