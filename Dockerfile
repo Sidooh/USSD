@@ -7,7 +7,7 @@ COPY go.* ./
 RUN go mod download
 
 COPY ./ ./
-RUN rm -rf ussd_sim
+RUN rm -rf ussd_sim.go
 
 RUN go build -o /server
 
