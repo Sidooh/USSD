@@ -17,6 +17,8 @@ var screens = map[string]*data.Screen{}
 func Process(code, phone, session, input string) *state.State {
 	stateData := state.RetrieveState(code, phone, session)
 
+	// TODO: Add pagination capability
+
 	// User is starting
 	if stateData.ScreenPath.Key == "" {
 		logger.UssdLog.Println("START ========================", session)
