@@ -36,6 +36,7 @@ func (a *Account) processScreen(input string) {
 		break
 	case utils.ACCOUNT_PROFILE:
 		a.checkHasPin()
+		a.checkHasSecurityQuestions()
 
 	case utils.PROFILE_NAME, utils.PROFILE_UPDATE_NAME:
 		a.vars["{full_name}"] = input
@@ -45,6 +46,12 @@ func (a *Account) processScreen(input string) {
 
 	case utils.PROFILE_NEW_PIN_CONFIRM:
 		a.vars["{confirm_pin}"] = input
+
+	case utils.PROFILE_CHANGE_PIN_METHODS:
+		a.fetchUserSecurityQuestionOptions()
+
+	case utils.PROFILE_CHANGE_PIN_QUESTION:
+		a.processUserAnswer(input)
 
 	case utils.PROFILE_SECURITY_QUESTIONS_PIN:
 		a.fetchSecurityQuestionOptions()
@@ -61,6 +68,7 @@ func (a *Account) processScreen(input string) {
 func (a *Account) finalize() {
 	logger.UssdLog.Println(" -- ACCOUNT: finalize", a.screen.Next.Type)
 
+	// User has just created a new pin
 	if a.screen.Key == utils.PROFILE_NEW_PIN_CONFIRM {
 		accountId, _ := a.vars["{account_id}"]
 		pin := a.vars["{confirm_pin}"]
@@ -75,6 +83,7 @@ func (a *Account) finalize() {
 		}
 	}
 
+	// User has just updated their name/profile
 	if a.screen.Key == utils.PROFILE_UPDATE_NAME {
 		accountId, _ := a.vars["{account_id}"]
 		name := a.vars["{full_name}"]
@@ -91,6 +100,7 @@ func (a *Account) finalize() {
 		}
 	}
 
+	// User has just created security questions
 	if a.screen.NextKey == utils.PROFILE_SECURITY_QUESTIONS_END {
 		accountId, _ := a.vars["{account_id}"]
 
@@ -107,6 +117,25 @@ func (a *Account) finalize() {
 			a.vars["{profile_security_questions_end_title}"] = "Your security questions and answers have been recorded. Please remember them as you will need them if and when resetting your Sidooh PIN."
 		}
 	}
+
+	// User has just input their security question answers which need verification
+	if a.screen.NextKey == utils.PROFILE_NEW_PIN && a.screen.Key == utils.PROFILE_CHANGE_PIN_QUESTION {
+		accountId, _ := a.vars["{account_id}"]
+
+		questionAnswerVars := map[string]string{}
+
+		_ = json.Unmarshal([]byte(a.vars["{question_answers}"]), &questionAnswerVars)
+
+		// TODO: Make into goroutine if applicable
+		// TODO: Should we check returned value? Or should we make it a void function?
+		valid := service.CheckSecurityQuestionAnswers(accountId, questionAnswerVars)
+
+		if !valid {
+			a.screen.NextKey = utils.PROFILE_SECURITY_QUESTIONS_END
+			a.vars["{profile_security_questions_end_title}"] = "Sorry. We failed to verify your security questions, please try again later."
+		}
+	}
+
 }
 
 func (a *Account) fetchUserSubscription() {
@@ -137,6 +166,20 @@ func (a *Account) checkHasPin() {
 
 		if option, ok := a.screen.Next.Options[3]; ok {
 			option.NextKey = utils.PIN_NOT_SET
+		}
+	}
+}
+
+func (a *Account) checkHasSecurityQuestions() {
+	accountId := a.vars["{account_id}"]
+
+	hasSecurityQuestions := service.CheckHasSecurityQuestions(accountId)
+
+	if hasSecurityQuestions {
+		a.screen.Next.Options[3].NextKey = utils.HAS_SECURITY_QUESTIONS
+	} else {
+		if option, ok := a.screen.Next.Options[2]; ok {
+			option.NextKey = utils.SECURITY_QUESTIONS_NOT_SET
 		}
 	}
 }
@@ -180,7 +223,6 @@ func (a *Account) fetchSecurityQuestionOptions() {
 	} else {
 		a.screen.Options[3].NextKey = utils.COMING_SOON
 	}
-
 }
 
 func (a *Account) processQuestionSelection(input string) {
@@ -213,5 +255,63 @@ func (a *Account) processAnswer(input string) {
 		a.screen.NextKey = utils.PROFILE_SECURITY_QUESTIONS_END
 	} else {
 		a.fetchSecurityQuestionOptions()
+	}
+}
+
+func (a *Account) fetchUserSecurityQuestionOptions() {
+	logger.UssdLog.Println("   ++ ACCOUNT: fetch user security question options")
+
+	// Check if user already has questions in state
+	var userQuestions []client.UserSecurityQuestion
+	_ = json.Unmarshal([]byte(a.vars["{user_questions}"]), &userQuestions)
+
+	// Fetch from API otherwise
+	if len(userQuestions) == 0 {
+		accountId := a.vars["{account_id}"]
+		userQuestions, _ = service.FetchUserSecurityQuestions(accountId)
+
+		stringVars, _ := json.Marshal(userQuestions)
+		a.vars["{user_questions}"] = string(stringVars)
+	}
+
+	// Get the answered questions
+	questionAnswerVars := map[uint]string{}
+	_ = json.Unmarshal([]byte(a.vars["{question_answers}"]), &questionAnswerVars)
+
+	// Filter only unanswered questions so we pick from them
+	var unansweredQuestions []client.UserSecurityQuestion
+	for _, question := range userQuestions {
+		if _, ok := questionAnswerVars[question.Question.Id]; !ok {
+			unansweredQuestions = append(unansweredQuestions, question)
+		}
+	}
+
+	// Ensure there are still unanswered questions, otherwise proceed to verify them
+	if len(unansweredQuestions) != 0 {
+		a.vars["{security_question}"] = unansweredQuestions[0].Question.Question
+		a.vars["{security_question_id}"] = strconv.Itoa(int(unansweredQuestions[0].Question.Id))
+	} else {
+		a.screen.Options[3].NextKey = utils.COMING_SOON
+	}
+
+}
+
+func (a *Account) processUserAnswer(input string) {
+	logger.UssdLog.Println("   ++ ACCOUNT: process user answer", input)
+
+	questionAnswerVars := map[string]string{}
+
+	_ = json.Unmarshal([]byte(a.vars["{question_answers}"]), &questionAnswerVars)
+
+	questionAnswerVars[a.vars["{security_question_id}"]] = input
+
+	stringVars, _ := json.Marshal(questionAnswerVars)
+
+	a.vars["{question_answers}"] = string(stringVars)
+
+	if len(questionAnswerVars) == 3 {
+		a.screen.NextKey = utils.PROFILE_NEW_PIN
+	} else {
+		a.fetchUserSecurityQuestionOptions()
 	}
 }

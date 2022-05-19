@@ -517,16 +517,17 @@
       "2": {
         "label": "Use Security Questions",
         "value": "2",
-        "next": "profile_change_pin_using_questions"
+        "next": "profile_change_pin_question"
       }
     }
   },
-  "profile_change_pin_using_questions": {
-    "key": "profile_change_pin_using_questions",
-    "title": "{security_question_1}",
+  "profile_change_pin_question": {
+    "key": "profile_change_pin_question",
+    "title": "{security_question}",
     "type": "OPEN",
-    "next": "coming_soon",
-    "validations": "SECURITY_QUESTION"
+    "next": "profile_change_pin_question",
+    "validations": "SECURITY_QUESTION",
+    "acyclic": true
   },
   "profile_change_pin_using_pin": {
     "key": "profile_change_pin_using_pin",
@@ -707,6 +708,16 @@
   "pin_not_set": {
     "key": "pin_not_set",
     "title": "Please set a PIN first in order to proceed.",
+    "type": "OPEN"
+  },
+  "security_questions_not_set": {
+    "key": "security_questions_not_set",
+    "title": "Please set your security questions first in order to proceed or contact us at {customer_support_email} for further assistance.",
+    "type": "OPEN"
+  },
+  "has_security_questions": {
+    "key": "has_security_questions",
+    "title": "Please contact us at {customer_support_email} if you have forgotten your security questions or answers.",
     "type": "OPEN"
   }
 }

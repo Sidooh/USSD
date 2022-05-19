@@ -19,6 +19,7 @@ type Screen struct {
 	NextKey     string          `json:"next"`
 	Next        *Screen         `json:"-"`
 	Validations string          `json:"validations"`
+	Acyclic     bool            `json:"acyclic,omitempty"`
 }
 
 type ScreenPath struct {
@@ -27,14 +28,16 @@ type ScreenPath struct {
 }
 
 var nextExceptionScreens = map[string]bool{
-	utils.ABOUT:               true,
-	utils.CANCEL:              true,
-	utils.COMING_SOON:         true,
-	utils.INVITE_END:          true,
-	utils.NOT_TRANSACTED:      true,
-	utils.SUBSCRIPTION_ACTIVE: true,
-	utils.PIN_NOT_SET:         true,
-	utils.PROFILE_UPDATE_END:  true,
+	utils.ABOUT:                      true,
+	utils.CANCEL:                     true,
+	utils.COMING_SOON:                true,
+	utils.INVITE_END:                 true,
+	utils.NOT_TRANSACTED:             true,
+	utils.SUBSCRIPTION_ACTIVE:        true,
+	utils.PIN_NOT_SET:                true,
+	utils.PROFILE_UPDATE_END:         true,
+	utils.HAS_SECURITY_QUESTIONS:     true,
+	utils.SECURITY_QUESTIONS_NOT_SET: true,
 }
 
 var dynamicOptionScreens = map[string]bool{
@@ -119,9 +122,9 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 
 	if screen.Type == utils.OPEN {
 		// Validate that Next must be set
-		// exceptions about,
+		// exceptions about, acyclic screens...
 		if screen.Next != nil {
-			if recursive {
+			if recursive && !screen.Acyclic {
 				err := screen.Next.Validate(withOptions, recursive)
 				if err != nil {
 					panic(err)
@@ -155,7 +158,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 }
 
 func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
-	// TODO: Sanitize input to be logged? e.g. pins, etc. just replace with **** and use same length as input
+	// TODO: Sanitize input to be logged? e.g. pins, sec qns, etc. just replace with **** and use same length as input
 	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")

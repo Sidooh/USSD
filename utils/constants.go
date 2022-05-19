@@ -23,11 +23,12 @@ const (
 	MAIN_MENU = "main_menu"
 
 	// static
-	ABOUT       = "about"
-	COMING_SOON = "coming_soon"
-	BETA        = "beta"
-	CANCEL      = "cancel"
-	PIN_NOT_SET = "pin_not_set"
+	ABOUT                      = "about"
+	COMING_SOON                = "coming_soon"
+	BETA                       = "beta"
+	CANCEL                     = "cancel"
+	PIN_NOT_SET                = "pin_not_set"
+	SECURITY_QUESTIONS_NOT_SET = "security_questions_not_set"
 
 	NOT_TRANSACTED = "not_transacted"
 
@@ -80,12 +81,16 @@ const (
 	PROFILE_NAME                       = "profile_name"
 	PROFILE_NEW_PIN                    = "profile_new_pin"
 	PROFILE_NEW_PIN_CONFIRM            = "profile_new_pin_confirm"
+	PROFILE_CHANGE_PIN_METHODS         = "profile_change_pin_methods"
+	PROFILE_CHANGE_PIN_QUESTION        = "profile_change_pin_question"
 	PROFILE_SECURITY_QUESTIONS_PIN     = "profile_security_questions_pin"
 	PROFILE_SECURITY_QUESTIONS_OPTIONS = "profile_security_questions_options"
 	PROFILE_SECURITY_QUESTIONS_ANSWER  = "profile_security_questions_answer"
 	PROFILE_UPDATE_NAME                = "profile_update_name"
 	PROFILE_UPDATE_END                 = "profile_update_end"
 	PROFILE_SECURITY_QUESTIONS_END     = "profile_security_questions_end"
+
+	HAS_SECURITY_QUESTIONS = "has_security_questions"
 )
 
 // validation keys

@@ -115,6 +115,17 @@ func CheckHasPin(id string) bool {
 	return valid["message"]
 }
 
+func CheckHasSecurityQuestions(id string) bool {
+	var valid map[string]bool
+
+	err := accountsClient.CheckHasSecurityQuestions(id, &valid)
+	if err != nil {
+		return false
+	}
+
+	return valid["message"]
+}
+
 func CreateAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
@@ -196,4 +207,34 @@ func SetSecurityQuestions(id string, answers map[string]string) error {
 
 	logger.ServiceLog.Println("Security Questions Request: ", results)
 	return nil
+}
+
+func FetchUserSecurityQuestions(id string) ([]client.UserSecurityQuestion, error) {
+	var questions []client.UserSecurityQuestion
+
+	err := accountsClient.FetchUserSecurityQuestions(id, &questions)
+	if err != nil {
+		return nil, err
+	}
+
+	return questions, nil
+}
+
+func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
+	var valid = false
+
+	for i, answer := range answers {
+		var res map[string]bool
+		err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
+			QuestionId: i,
+			Answer:     answer,
+		}, &res)
+		if err != nil {
+			return false
+		} else {
+			valid = res["message"]
+		}
+	}
+
+	return valid
 }
