@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -32,11 +33,12 @@ func (a *Account) processScreen(input string) {
 			a.vars["{full_name}"] = ""
 		}
 
-		a.fetchUserSubscription()
 		break
+	case utils.ACCOUNT:
+		a.setAccountOptions()
+
 	case utils.ACCOUNT_PROFILE:
-		a.checkHasPin()
-		a.checkHasSecurityQuestions()
+		a.setAccountProfileOptions()
 
 	case utils.PROFILE_NAME, utils.PROFILE_UPDATE_NAME:
 		a.vars["{full_name}"] = input
@@ -62,6 +64,8 @@ func (a *Account) processScreen(input string) {
 	case utils.PROFILE_SECURITY_QUESTIONS_ANSWER:
 		a.processAnswer(input)
 
+	case utils.ACCOUNT_BALANCES:
+		a.getAccountBalances(input)
 	}
 }
 
@@ -141,47 +145,42 @@ func (a *Account) finalize() {
 func (a *Account) fetchUserSubscription() {
 	logger.UssdLog.Println("   ++ ACCOUNT: fetch user subscription")
 
-	accountId := a.vars["{account_id}"]
+	if accountId, ok := a.vars["{account_id}"]; ok {
 
-	subscription, _ := service.FetchSubscription(accountId)
+		subscription, _ := service.FetchSubscription(accountId)
 
-	if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
-		a.vars["{subscription_type}"] = "Sidooh Agent"
-	} else {
-		a.vars["{subscription_type}"] = "None"
-	}
-}
-
-func (a *Account) checkHasPin() {
-	accountId := a.vars["{account_id}"]
-
-	hasPin := service.CheckHasPin(accountId)
-
-	if hasPin {
-		delete(a.screen.Next.Options, 1)
-	} else {
-		if option, ok := a.screen.Next.Options[2]; ok {
-			option.NextKey = utils.PIN_NOT_SET
-		}
-
-		if option, ok := a.screen.Next.Options[3]; ok {
-			option.NextKey = utils.PIN_NOT_SET
+		if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
+			a.vars["{subscription_type}"] = "Sidooh Agent"
+		} else {
+			a.vars["{subscription_type}"] = "None"
 		}
 	}
 }
 
-func (a *Account) checkHasSecurityQuestions() {
+func (a *Account) checkHasPin() bool {
 	accountId := a.vars["{account_id}"]
 
-	hasSecurityQuestions := service.CheckHasSecurityQuestions(accountId)
-
-	if hasSecurityQuestions {
-		a.screen.Next.Options[3].NextKey = utils.HAS_SECURITY_QUESTIONS
-	} else {
-		if option, ok := a.screen.Next.Options[2]; ok {
-			option.NextKey = utils.SECURITY_QUESTIONS_NOT_SET
-		}
+	// Check if user already has_pin in state else fetch from service
+	var hasPin bool
+	err := json.Unmarshal([]byte(a.vars["{has_pin}"]), &hasPin)
+	if err != nil {
+		hasPin = service.CheckHasPin(accountId)
 	}
+
+	return hasPin
+}
+
+func (a *Account) checkHasSecurityQuestions() bool {
+	accountId := a.vars["{account_id}"]
+
+	// Check if user already has_pin in state else fetch from service
+	var hasSecurityQuestions bool
+	err := json.Unmarshal([]byte(a.vars["{has_security_questions}"]), &hasSecurityQuestions)
+	if err != nil {
+		hasSecurityQuestions = service.CheckHasSecurityQuestions(accountId)
+	}
+
+	return hasSecurityQuestions
 }
 
 func (a *Account) fetchSecurityQuestionOptions() {
@@ -313,5 +312,104 @@ func (a *Account) processUserAnswer(input string) {
 		a.screen.NextKey = utils.PROFILE_NEW_PIN
 	} else {
 		a.fetchUserSecurityQuestionOptions()
+	}
+}
+
+func (a *Account) setAccountOptions() {
+	logger.UssdLog.Println("   ++ ACCOUNT: set account options")
+
+	hasPin := a.checkHasPin()
+
+	if !hasPin {
+		// Account Balances option
+		if option, ok := a.screen.Options[2]; ok {
+			option.NextKey = utils.PIN_NOT_SET
+		}
+		// Account Withdrawal option
+		if option, ok := a.screen.Options[3]; ok {
+			option.NextKey = utils.PIN_NOT_SET
+		}
+	}
+
+	a.fetchUserSubscription()
+}
+
+func (a *Account) setAccountProfileOptions() {
+	logger.UssdLog.Println("   ++ ACCOUNT: set account profile options")
+
+	hasPin := a.checkHasPin()
+
+	if hasPin {
+		delete(a.screen.Next.Options, 1)
+
+		hasSecurityQuestions := a.checkHasSecurityQuestions()
+
+		if hasSecurityQuestions {
+			if option, ok := a.screen.Next.Options[3]; ok {
+				option.NextKey = utils.HAS_SECURITY_QUESTIONS
+			}
+		} else {
+			if option, ok := a.screen.Next.Options[2]; ok {
+				option.NextKey = utils.SECURITY_QUESTIONS_NOT_SET
+			}
+		}
+	} else {
+		// Update Profile option
+		if option, ok := a.screen.Options[2]; ok {
+			option.NextKey = utils.PIN_NOT_SET
+		}
+
+		// Change Pin option
+		if option, ok := a.screen.Next.Options[2]; ok {
+			option.NextKey = utils.PIN_NOT_SET
+		}
+		// Security Questions option
+		if option, ok := a.screen.Next.Options[3]; ok {
+			option.NextKey = utils.PIN_NOT_SET
+		}
+	}
+
+}
+
+func (a *Account) getAccountBalances(input string) {
+	if input == "2" {
+		accountId := a.vars["{account_id}"]
+
+		earnings, err := service.FetchEarningBalances(accountId)
+		if err != nil {
+			a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
+			logger.UssdLog.Error(err)
+			return
+		}
+
+		var currentAccount client.EarningAccount
+		var lockedAccount client.EarningAccount
+		for _, earning := range earnings {
+			if earning.Type == "CURRENT" {
+				currentAccount = earning
+			}
+			if earning.Type == "LOCKED" {
+				lockedAccount = earning
+			}
+		}
+
+		cBal, _ := strconv.ParseFloat(currentAccount.Balance, 64)
+		lBal, _ := strconv.ParseFloat(lockedAccount.Balance, 64)
+
+		cInt, _ := strconv.ParseFloat(currentAccount.Interest, 64)
+		lInt, _ := strconv.ParseFloat(lockedAccount.Interest, 64)
+
+		wBal := float64(0)
+		if cBal > 100 {
+			wBal = cBal - 50
+		} else {
+			wBal = 0
+		}
+
+		a.vars["{sidooh_points}"] = fmt.Sprintf("%.4f", cBal+lBal)
+		a.vars["{available_points}"] = fmt.Sprintf("%.4f", cBal)
+		a.vars["{saved_points}"] = fmt.Sprintf("%.4f", lBal)
+		a.vars["{interest}"] = fmt.Sprintf("%.4f", cInt+lInt)
+		a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wBal)
 	}
 }

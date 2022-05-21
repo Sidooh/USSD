@@ -77,6 +77,7 @@ const (
 	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
 
 	// ACCOUNT
+	ACCOUNT                            = "account"
 	ACCOUNT_PROFILE                    = "account_profile"
 	PROFILE_NAME                       = "profile_name"
 	PROFILE_NEW_PIN                    = "profile_new_pin"
@@ -91,6 +92,9 @@ const (
 	PROFILE_SECURITY_QUESTIONS_END     = "profile_security_questions_end"
 
 	HAS_SECURITY_QUESTIONS = "has_security_questions"
+
+	ACCOUNT_BALANCES     = "account_balances"
+	ACCOUNT_BALANCES_PIN = "account_balances_pin"
 )
 
 // validation keys
@@ -111,6 +115,11 @@ const (
 	NAME = "NAME"
 
 	SECURITY_QUESTION = "SECURITY_QUESTION"
+)
+
+// initiator types
+const (
+	CONSUMER = "CONSUMER"
 )
 
 // payment methods

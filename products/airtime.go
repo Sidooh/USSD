@@ -65,7 +65,7 @@ func (a *Airtime) finalize() {
 		}
 
 		request := client.PurchaseRequest{
-			Initiator: client.CONSUMER,
+			Initiator: utils.CONSUMER,
 			Amount:    amount,
 			Method:    method,
 			AccountId: accountId,

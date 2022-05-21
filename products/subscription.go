@@ -54,7 +54,7 @@ func (s *Subscription) finalize() {
 		// TODO: Make subscription_type dynamic with api fetch
 		request := client.SubscriptionPurchaseRequest{
 			PurchaseRequest: client.PurchaseRequest{
-				Initiator: client.CONSUMER,
+				Initiator: utils.CONSUMER,
 				Amount:    amount,
 				Method:    method,
 				AccountId: accountId,
@@ -72,25 +72,24 @@ func (s *Subscription) finalize() {
 func (s *Subscription) fetchUserSubscription() {
 	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch user subscription")
 
-	accountId := s.vars["{account_id}"]
+	if accountId, ok := s.vars["{account_id}"]; ok {
+		subscription, _ := service.FetchSubscription(accountId)
 
-	subscription, _ := service.FetchSubscription(accountId)
+		if subscription.Id != 0 {
 
-	if subscription.Id != 0 {
+			endDate := strings.Split(subscription.EndDate, " ")[0]
+			s.vars["{subscription_end_date}"] = endDate
 
-		endDate := strings.Split(subscription.EndDate, " ")[0]
-		s.vars["{subscription_end_date}"] = endDate
+			if subscription.Status == utils.ACTIVE {
+				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_ACTIVE
+			}
 
-		if subscription.Status == utils.ACTIVE {
-			s.screen.Options[6].NextKey = utils.SUBSCRIPTION_ACTIVE
+			expiryTime, err := time.Parse(`2006-01-02 15:04:05`, subscription.EndDate)
+
+			if subscription.Status == utils.EXPIRED || (time.Until(expiryTime) < 3*24*time.Hour && err == nil) {
+				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
+			}
+
 		}
-
-		expiryTime, err := time.Parse(`2006-01-02 15:04:05`, subscription.EndDate)
-
-		if subscription.Status == utils.EXPIRED || (time.Until(expiryTime) < 3*24*time.Hour && err == nil) {
-			s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
-		}
-
 	}
-
 }

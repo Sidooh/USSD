@@ -8,15 +8,9 @@ import (
 	"time"
 )
 
-type ProductApiClient struct {
+type ProductsApiClient struct {
 	ApiClient
 }
-
-const (
-	CONSUMER = "CONSUMER"
-	MPESA    = "MPESA"
-	VOUCHER  = "VOUCHER"
-)
 
 type UtilityAccount struct {
 	Id            int
@@ -32,7 +26,7 @@ type Subscription struct {
 	EndDate   string `json:"end_date"`
 }
 
-const timeFormat = `2006-01-02 15:04:05`
+//const timeFormat = `2006-01-02 15:04:05`
 
 //type Time struct {
 //	time.Time
@@ -47,14 +41,14 @@ const timeFormat = `2006-01-02 15:04:05`
 //	return nil
 //}
 
-func InitProductClient() *ProductApiClient {
-	client := ProductApiClient{}
+func InitProductClient() *ProductsApiClient {
+	client := ProductsApiClient{}
 	client.ApiClient.init(os.Getenv("PRODUCTS_URL"))
 	client.client.Timeout = 40 * time.Second
 	return &client
 }
 
-func (p *ProductApiClient) BuyAirtime(request *PurchaseRequest) error {
+func (p *ProductsApiClient) BuyAirtime(request *PurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
@@ -67,7 +61,7 @@ func (p *ProductApiClient) BuyAirtime(request *PurchaseRequest) error {
 	return nil
 }
 
-func (p *ProductApiClient) PayUtility(request UtilityPurchaseRequest) error {
+func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
@@ -80,7 +74,7 @@ func (p *ProductApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	return nil
 }
 
-func (p *ProductApiClient) GetAirtimeAccounts(id string, response interface{}) error {
+func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) error {
 	apiResponse := new(Response)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(apiResponse)
@@ -98,7 +92,7 @@ func (p *ProductApiClient) GetAirtimeAccounts(id string, response interface{}) e
 	return nil
 }
 
-func (p *ProductApiClient) GetUtilityAccounts(id string, response interface{}) error {
+func (p *ProductsApiClient) GetUtilityAccounts(id string, response interface{}) error {
 	apiResponse := new(Response)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
@@ -116,7 +110,7 @@ func (p *ProductApiClient) GetUtilityAccounts(id string, response interface{}) e
 	return nil
 }
 
-func (p *ProductApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) error {
+func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
@@ -129,7 +123,7 @@ func (p *ProductApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) erro
 	return nil
 }
 
-func (p *ProductApiClient) GetSubscription(id string, response interface{}) error {
+func (p *ProductsApiClient) GetSubscription(id string, response interface{}) error {
 	apiResponse := new(Response)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
@@ -147,7 +141,7 @@ func (p *ProductApiClient) GetSubscription(id string, response interface{}) erro
 	return nil
 }
 
-func (p *ProductApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
+func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 

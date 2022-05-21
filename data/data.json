@@ -588,14 +588,14 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {$saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
+    "title": "Your earnings breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
   },
   "voucher_balance": {
     "key": "voucher_balance",
-    "title": "Your voucher balance is:\n {voucher_balance}",
+    "title": "Your voucher balance is:\nKES {voucher_balance}",
     "type": "OPEN",
     "next": "cancel"
   },

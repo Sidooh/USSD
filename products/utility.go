@@ -136,7 +136,7 @@ func (u *Utility) finalize() {
 
 		request := client.UtilityPurchaseRequest{
 			PurchaseRequest: client.PurchaseRequest{
-				Initiator: client.CONSUMER,
+				Initiator: utils.CONSUMER,
 				Amount:    amount,
 				Method:    method,
 				AccountId: accountId,

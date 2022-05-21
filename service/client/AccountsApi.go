@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type AccountApiClient struct {
+type AccountsApiClient struct {
 	ApiClient
 }
 
@@ -21,13 +21,39 @@ type UserSecurityQuestion struct {
 	Question SecurityQuestion
 }
 
-func InitAccountClient() *AccountApiClient {
-	client := AccountApiClient{}
+type EarningAccount struct {
+	Id       string
+	Type     string
+	Balance  string
+	Interest string
+}
+
+// TODO: Understand and use custom unmarshalers
+//type Money struct {
+//	float64
+//}
+//
+//func (m Money) UnmarshalJSON(b []byte) error {
+//	strippedBytes := b[1 : len(b)-1]
+//
+//	val, err := strconv.ParseFloat(string(strippedBytes), 64)
+//	fmt.Println(val, err)
+//
+//	if err != nil {
+//		return err
+//	}
+//
+//	m = Money{val}
+//	return nil
+//}
+
+func InitAccountClient() *AccountsApiClient {
+	client := AccountsApiClient{}
 	client.ApiClient.init(os.Getenv("ACCOUNTS_URL"))
 	return &client
 }
 
-func (a *AccountApiClient) GetAccount(phone string, response interface{}) error {
+func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(response)
 	if err != nil {
 		return err
@@ -36,7 +62,7 @@ func (a *AccountApiClient) GetAccount(phone string, response interface{}) error 
 	return nil
 }
 
-func (a *AccountApiClient) GetAccountWithUser(phone string, response interface{}) error {
+func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(response)
 	if err != nil {
 		return err
@@ -45,7 +71,7 @@ func (a *AccountApiClient) GetAccountWithUser(phone string, response interface{}
 	return nil
 }
 
-func (a *AccountApiClient) CheckInvite(phone string, response interface{}) error {
+func (a *AccountsApiClient) CheckInvite(phone string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(response)
 	if err != nil {
 		return err
@@ -54,7 +80,7 @@ func (a *AccountApiClient) CheckInvite(phone string, response interface{}) error
 	return nil
 }
 
-func (a *AccountApiClient) CheckPin(id string, pin string, response interface{}) error {
+func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}) error {
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
@@ -67,7 +93,7 @@ func (a *AccountApiClient) CheckPin(id string, pin string, response interface{})
 	return nil
 }
 
-func (a *AccountApiClient) CheckHasPin(id string, response interface{}) error {
+func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(response)
 	if err != nil {
 		return err
@@ -76,7 +102,7 @@ func (a *AccountApiClient) CheckHasPin(id string, response interface{}) error {
 	return nil
 }
 
-func (a *AccountApiClient) CheckHasSecurityQuestions(id string, response interface{}) error {
+func (a *AccountsApiClient) CheckHasSecurityQuestions(id string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(response)
 	if err != nil {
 		return err
@@ -85,7 +111,7 @@ func (a *AccountApiClient) CheckHasSecurityQuestions(id string, response interfa
 	return nil
 }
 
-func (a *AccountApiClient) SetPin(id string, pin string, response interface{}) error {
+func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) error {
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
@@ -98,7 +124,7 @@ func (a *AccountApiClient) SetPin(id string, pin string, response interface{}) e
 	return nil
 }
 
-func (a *AccountApiClient) CreateAccount(phone string, response interface{}) error {
+func (a *AccountsApiClient) CreateAccount(phone string, response interface{}) error {
 	values := map[string]string{"phone": phone}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
@@ -111,7 +137,7 @@ func (a *AccountApiClient) CreateAccount(phone string, response interface{}) err
 	return nil
 }
 
-func (a *AccountApiClient) CreateInvite(id string, phone string, response interface{}) error {
+func (a *AccountsApiClient) CreateInvite(id string, phone string, response interface{}) error {
 	values := map[string]string{"inviter_id": id, "phone": phone}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
@@ -124,7 +150,7 @@ func (a *AccountApiClient) CreateInvite(id string, phone string, response interf
 	return nil
 }
 
-func (a *AccountApiClient) UpdateProfile(id string, request ProfileDetails, response interface{}) error {
+func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails, response interface{}) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
@@ -136,7 +162,7 @@ func (a *AccountApiClient) UpdateProfile(id string, request ProfileDetails, resp
 	return nil
 }
 
-func (a *AccountApiClient) FetchSecurityQuestions(response interface{}) error {
+func (a *AccountsApiClient) FetchSecurityQuestions(response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(response)
 	if err != nil {
 		return err
@@ -145,7 +171,7 @@ func (a *AccountApiClient) FetchSecurityQuestions(response interface{}) error {
 	return nil
 }
 
-func (a *AccountApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest, response interface{}) error {
+func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest, response interface{}) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
@@ -157,7 +183,7 @@ func (a *AccountApiClient) SetSecurityQuestion(id string, request SecurityQuesti
 	return nil
 }
 
-func (a *AccountApiClient) FetchUserSecurityQuestions(id string, response interface{}) error {
+func (a *AccountsApiClient) FetchUserSecurityQuestions(id string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(response)
 	if err != nil {
 		return err
@@ -166,7 +192,7 @@ func (a *AccountApiClient) FetchUserSecurityQuestions(id string, response interf
 	return nil
 }
 
-func (a *AccountApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest, response interface{}) error {
+func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest, response interface{}) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 

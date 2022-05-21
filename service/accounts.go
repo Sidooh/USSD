@@ -33,6 +33,7 @@ type Invite struct {
 
 var accountsClient = client.InitAccountClient()
 var paymentsClient = client.InitPaymentClient()
+var savingsClient = client.InitSavingsClient()
 
 func FetchAccount(phone string) (*Account, error) {
 	var account = new(Account)
@@ -237,4 +238,15 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 	}
 
 	return valid
+}
+
+func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
+	var earnings []client.EarningAccount
+
+	err := savingsClient.FetchAccountEarnings(id, &earnings)
+	if err != nil {
+		return nil, err
+	}
+
+	return earnings, nil
 }
