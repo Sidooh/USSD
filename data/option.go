@@ -22,6 +22,10 @@ func (option *Option) GetStringRep() string {
 }
 
 func (option *Option) Validate() error {
+	if option.Label == "" {
+		return fmt.Errorf("label is not set for option with value " + strconv.Itoa(option.Value))
+	}
+
 	if option.Next == nil {
 		return fmt.Errorf("next is not set for option " + option.Label + " with value " + strconv.Itoa(option.Value))
 	} else if option.Acyclic {

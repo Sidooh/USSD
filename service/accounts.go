@@ -250,3 +250,13 @@ func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
 
 	return earnings, nil
 }
+
+func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error {
+	err := savingsClient.WithdrawEarnings(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to withdraw earnings: ", err)
+		return err
+	}
+
+	return nil
+}

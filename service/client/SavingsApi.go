@@ -1,6 +1,8 @@
 package client
 
 import (
+	"bytes"
+	"encoding/json"
 	"net/http"
 	"os"
 )
@@ -15,10 +17,23 @@ func InitSavingsClient() *SavingsApiClient {
 	return &client
 }
 
-func (p *SavingsApiClient) FetchAccountEarnings(id string, response interface{}) error {
+func (s *SavingsApiClient) FetchAccountEarnings(id string, response interface{}) error {
 	endpoint := "/accounts/" + id + "/earnings"
 
-	err := p.newRequest(http.MethodGet, endpoint, nil).send(&response)
+	err := s.newRequest(http.MethodGet, endpoint, nil).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SavingsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	var response = Response{}
+	err = s.newRequest(http.MethodPost, "/personal-accounts/withdraw", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}

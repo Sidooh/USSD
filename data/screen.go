@@ -220,9 +220,22 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return isValidName(input)
 	case utils.SECURITY_QUESTION:
 		return isValidSecurityQuestionAnswer(input)
+	case utils.WITHDRAW_LIMITS:
+		return isValidWithdrawalAmount(input, vars["{withdrawable_points}"])
+
 	}
 
 	return false
+}
+
+func isValidWithdrawalAmount(input string, points string) bool {
+	min := 50
+	max := 1000
+
+	val := getIntVal(input)
+	pointsVal := getIntVal(points)
+
+	return val <= max && val >= min && val <= pointsVal
 }
 
 func isValidSecurityQuestionAnswer(input string) bool {

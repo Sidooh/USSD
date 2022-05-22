@@ -34,6 +34,13 @@ type SecurityQuestionRequest struct {
 	Answer     string
 }
 
+type EarningsWithdrawalRequest struct {
+	Amount       int    `json:"amount"`
+	Method       string `json:"method"`
+	AccountId    int    `json:"account_id"`
+	TargetNumber string `json:"target_number,omitempty"`
+}
+
 //TODO: Remove these once verified not needed
 //func (r *AirtimePurchaseRequest) Marshal() ([]byte, error) {
 //	request := map[string]interface{}{

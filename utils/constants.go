@@ -77,8 +77,11 @@ const (
 	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
 
 	// ACCOUNT
-	ACCOUNT                            = "account"
-	ACCOUNT_PROFILE                    = "account_profile"
+	ACCOUNT          = "account"
+	ACCOUNT_PROFILE  = "account_profile"
+	ACCOUNT_BALANCES = "account_balances"
+	ACCOUNT_WITHDRAW = "account_withdraw"
+
 	PROFILE_NAME                       = "profile_name"
 	PROFILE_NEW_PIN                    = "profile_new_pin"
 	PROFILE_NEW_PIN_CONFIRM            = "profile_new_pin_confirm"
@@ -93,8 +96,14 @@ const (
 
 	HAS_SECURITY_QUESTIONS = "has_security_questions"
 
-	ACCOUNT_BALANCES     = "account_balances"
-	ACCOUNT_BALANCES_PIN = "account_balances_pin"
+	ACCOUNT_BALANCES_PIN = "balances_pin"
+
+	ACCOUNT_WITHDRAW_PIN        = "account_withdraw_pin"
+	WITHDRAW_DESTINATION        = "withdraw_destination"
+	WITHDRAW_MPESA              = "withdraw_mpesa"
+	WITHDRAW_OTHER_NUMBER_MPESA = "withdraw_other_number_mpesa"
+	WITHDRAW_CONFIRM_PIN        = "withdraw_confirm_pin"
+	WITHDRAW_END                = "withdraw_end"
 )
 
 // validation keys
@@ -115,6 +124,7 @@ const (
 	NAME = "NAME"
 
 	SECURITY_QUESTION = "SECURITY_QUESTION"
+	WITHDRAW_LIMITS   = "WITHDRAW_LIMITS"
 )
 
 // initiator types
@@ -126,6 +136,7 @@ const (
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
+	BANK    = "BANK"
 )
 
 // telco providers

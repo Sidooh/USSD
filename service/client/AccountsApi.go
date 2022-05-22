@@ -22,10 +22,10 @@ type UserSecurityQuestion struct {
 }
 
 type EarningAccount struct {
-	Id       string
+	Id       uint `json:"id,string"`
 	Type     string
-	Balance  string
-	Interest string
+	Balance  float64 `json:"balance,string"`
+	Interest float64 `json:"interest,string"`
 }
 
 // TODO: Understand and use custom unmarshalers

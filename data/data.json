@@ -608,10 +608,88 @@
   },
   "account_withdraw": {
     "key": "account_withdraw",
-    "title": "Enter points you wish to withdraw (MIN. 10):\n\n- Available Points: {available_points}\n- Withdrawable Points: {withdrawable_points}",
+    "title": "Enter points you wish to withdraw (MIN. KES50):\n\n- Withdrawable Points: {withdrawable_points}",
     "type": "OPEN",
-    "next": "coming_soon",
+    "next": "withdraw_destination",
     "validations": "WITHDRAW_LIMITS"
+  },
+  "withdraw_destination": {
+    "key": "withdraw_destination",
+    "title": "Where would you like us to send the money?",
+    "options": {
+      "1": {
+        "label": "MPESA Account",
+        "value": "1",
+        "next": "withdraw_mpesa"
+      },
+      "2": {
+        "label": "Voucher",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Bank Account",
+        "value": "3",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "withdraw_mpesa": {
+    "key": "withdraw_mpesa",
+    "title": "Select the account to send the funds to:",
+    "options": {
+      "1": {
+        "label": "Self {phone}",
+        "value": "1",
+        "next": "withdraw_confirm"
+      },
+      "2": {
+        "label": "Other MPESA number",
+        "value": "2",
+        "next": "withdraw_other_number_mpesa"
+      }
+    }
+  },
+  "withdraw_other_number_mpesa": {
+    "key": "withdraw_other_number_mpesa",
+    "title": "Enter MPESA number",
+    "type": "OPEN",
+    "next": "withdraw_confirm",
+    "validations": "SAFARICOM"
+  },
+  "withdraw_confirm": {
+    "key": "withdraw_confirm",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES{amount}\nTo {account_type}: {account_number}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "withdraw_confirm_pin"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      },
+      "3": {
+        "label": "Change Details",
+        "value": "3",
+        "next": "account_withdraw",
+        "acyclic": true
+      }
+    }
+  },
+  "withdraw_confirm_pin": {
+    "key": "withdraw_confirm_pin",
+    "title": "Please enter your Sidooh PIN again to confirm this transaction.",
+    "type": "OPEN",
+    "next": "withdraw_end",
+    "validations": "PIN"
+  },
+  "withdraw_end": {
+    "key": "withdraw_end",
+    "title": "Your request has been received and is being processed. You will receive a confirmation SMS shortly. Thank you.",
+    "type": "END"
   },
   "payment_method": {
     "key": "payment_method",

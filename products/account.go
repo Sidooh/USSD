@@ -29,6 +29,7 @@ func (a *Account) processScreen(input string) {
 	case utils.MAIN_MENU:
 		//a.vars["{product}"] = a.productRep
 		//a.vars["{number}"] = a.vars["{phone}"]
+
 		if _, ok := a.vars["{full_name}"]; !ok {
 			a.vars["{full_name}"] = ""
 		}
@@ -66,6 +67,30 @@ func (a *Account) processScreen(input string) {
 
 	case utils.ACCOUNT_BALANCES:
 		a.getAccountBalances(input)
+
+	case utils.ACCOUNT_WITHDRAW_PIN:
+		a.fetchEarnings()
+
+	case utils.ACCOUNT_WITHDRAW:
+		a.vars["{points}"] = input
+		a.vars["{amount}"] = input
+
+	case utils.WITHDRAW_DESTINATION:
+		switch input {
+		case "1":
+			a.vars["{account_type}"] = utils.MPESA
+		case "2":
+			a.vars["{account_type}"] = utils.VOUCHER
+		case "3":
+			a.vars["{account_type}"] = utils.BANK
+		}
+
+	case utils.WITHDRAW_MPESA:
+		a.vars["{account_number}"] = a.vars["{phone}"]
+
+	case utils.WITHDRAW_OTHER_NUMBER_MPESA:
+		a.vars["{account_number}"] = input
+
 	}
 }
 
@@ -140,6 +165,24 @@ func (a *Account) finalize() {
 		}
 	}
 
+	// User has just requested a withdrawal
+	if a.screen.Key == utils.WITHDRAW_CONFIRM_PIN {
+		accountId, _ := strconv.Atoi(a.vars["{account_id}"])
+		amount, _ := strconv.Atoi(a.vars["{account_id}"])
+
+		request := &client.EarningsWithdrawalRequest{
+			AccountId: accountId,
+			Amount:    amount,
+		}
+
+		// TODO: Make into goroutine if applicable
+		// TODO: Should we check returned value? Or should we make it a void function?
+		err := service.RequestEarningsWithdrawal(request)
+		if err != nil {
+			a.screen.Next.Title = "Sorry. We failed to process your withdrawal request, please try again later."
+		}
+	}
+
 }
 
 func (a *Account) fetchUserSubscription() {
@@ -165,6 +208,8 @@ func (a *Account) checkHasPin() bool {
 	err := json.Unmarshal([]byte(a.vars["{has_pin}"]), &hasPin)
 	if err != nil {
 		hasPin = service.CheckHasPin(accountId)
+		stringVars, _ := json.Marshal(hasPin)
+		a.vars["{has_pin}"] = string(stringVars)
 	}
 
 	return hasPin
@@ -178,6 +223,8 @@ func (a *Account) checkHasSecurityQuestions() bool {
 	err := json.Unmarshal([]byte(a.vars["{has_security_questions}"]), &hasSecurityQuestions)
 	if err != nil {
 		hasSecurityQuestions = service.CheckHasSecurityQuestions(accountId)
+		stringVars, _ := json.Marshal(hasSecurityQuestions)
+		a.vars["{has_security_questions}"] = string(stringVars)
 	}
 
 	return hasSecurityQuestions
@@ -372,44 +419,51 @@ func (a *Account) setAccountProfileOptions() {
 }
 
 func (a *Account) getAccountBalances(input string) {
+	logger.UssdLog.Println("   ++ ACCOUNT: get account balances")
+
 	if input == "2" {
-		accountId := a.vars["{account_id}"]
-
-		earnings, err := service.FetchEarningBalances(accountId)
-		if err != nil {
-			a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
-			logger.UssdLog.Error(err)
-			return
-		}
-
-		var currentAccount client.EarningAccount
-		var lockedAccount client.EarningAccount
-		for _, earning := range earnings {
-			if earning.Type == "CURRENT" {
-				currentAccount = earning
-			}
-			if earning.Type == "LOCKED" {
-				lockedAccount = earning
-			}
-		}
-
-		cBal, _ := strconv.ParseFloat(currentAccount.Balance, 64)
-		lBal, _ := strconv.ParseFloat(lockedAccount.Balance, 64)
-
-		cInt, _ := strconv.ParseFloat(currentAccount.Interest, 64)
-		lInt, _ := strconv.ParseFloat(lockedAccount.Interest, 64)
-
-		wBal := float64(0)
-		if cBal > 100 {
-			wBal = cBal - 50
-		} else {
-			wBal = 0
-		}
-
-		a.vars["{sidooh_points}"] = fmt.Sprintf("%.4f", cBal+lBal)
-		a.vars["{available_points}"] = fmt.Sprintf("%.4f", cBal)
-		a.vars["{saved_points}"] = fmt.Sprintf("%.4f", lBal)
-		a.vars["{interest}"] = fmt.Sprintf("%.4f", cInt+lInt)
-		a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wBal)
+		a.fetchEarnings()
 	}
+}
+
+func (a *Account) fetchEarnings() {
+	accountId := a.vars["{account_id}"]
+
+	earnings, err := service.FetchEarningBalances(accountId)
+	if err != nil {
+		a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
+		logger.UssdLog.Error(err)
+		return
+	}
+
+	var currentAccount client.EarningAccount
+	var lockedAccount client.EarningAccount
+	for _, earning := range earnings {
+		if earning.Type == "CURRENT" {
+			currentAccount = earning
+		}
+		if earning.Type == "LOCKED" {
+			lockedAccount = earning
+		}
+	}
+
+	cBal := currentAccount.Balance
+	lBal := lockedAccount.Balance
+
+	cInt := currentAccount.Interest
+	lInt := lockedAccount.Interest
+
+	wBal := float64(0)
+	if cBal > 100 {
+		wBal = cBal - 50
+	} else {
+		wBal = 0
+	}
+
+	a.vars["{sidooh_points}"] = fmt.Sprintf("%.4f", cBal+lBal)
+	a.vars["{available_points}"] = fmt.Sprintf("%.4f", cBal)
+	a.vars["{saved_points}"] = fmt.Sprintf("%.4f", lBal)
+	a.vars["{interest}"] = fmt.Sprintf("%.4f", cInt+lInt)
+	a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wBal)
+
 }
