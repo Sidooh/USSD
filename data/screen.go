@@ -223,6 +223,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.WITHDRAW_LIMITS:
 		return isValidWithdrawalAmount(input, vars["{withdrawable_points}"])
 
+	case utils.INVITE_CODE_VALIDATION:
+		return screen.isSidoohAccountIdOrPhone(input, vars)
 	}
 
 	return false
@@ -272,6 +274,22 @@ func (screen *Screen) isSidoohAccount(input string) bool {
 	}
 
 	if account != nil {
+		return true
+	}
+
+	return false
+}
+
+func (screen *Screen) isSidoohAccountIdOrPhone(input string, vars map[string]string) bool {
+	account, err := service.CheckAccountByIdOrPhone(input)
+	if err != nil {
+		screen.Title = "Invalid Code, please try again."
+		return false
+	}
+
+	if account != nil {
+		vars["{invite_code}"] = strconv.Itoa(account.Id)
+		_, _ = service.CreateInvite(vars["{invite_code}"], vars["{phone}"])
 		return true
 	}
 

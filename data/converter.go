@@ -72,7 +72,8 @@ func LoadData() (map[string]*Screen, error) {
 		return nil, errors.New("data file is empty")
 	}
 
-	setNextScreens(screens, screens[utils.MAIN_MENU])
+	// TODO: Reset to MAIN_MENU when done with invite_code beta
+	setNextScreens(screens, screens[utils.INVITE_CODE])
 	// The below screens are hanging screens, i.e. have no parent
 	setNextScreens(screens, screens[utils.SUBSCRIPTION_RENEW])
 	setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_ANSWER])

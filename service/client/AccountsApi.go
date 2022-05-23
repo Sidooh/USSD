@@ -62,6 +62,15 @@ func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error
 	return nil
 }
 
+func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interface{}) error {
+	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{}) error {
 	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(response)
 	if err != nil {

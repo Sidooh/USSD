@@ -1,4 +1,11 @@
 {
+  "invite_code": {
+    "key": "invite_code",
+    "title": "Enter Invite Code:",
+    "type": "OPEN",
+    "next": "main_menu",
+    "validations": "INVITE_CODE_VALIDATION"
+  },
   "main_menu": {
     "key": "main_menu",
     "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",

@@ -20,7 +20,8 @@ const (
 
 // screen keys
 const (
-	MAIN_MENU = "main_menu"
+	MAIN_MENU   = "main_menu"
+	INVITE_CODE = "invite_code"
 
 	// static
 	ABOUT                      = "about"
@@ -123,8 +124,9 @@ const (
 
 	NAME = "NAME"
 
-	SECURITY_QUESTION = "SECURITY_QUESTION"
-	WITHDRAW_LIMITS   = "WITHDRAW_LIMITS"
+	SECURITY_QUESTION      = "SECURITY_QUESTION"
+	WITHDRAW_LIMITS        = "WITHDRAW_LIMITS"
+	INVITE_CODE_VALIDATION = "INVITE_CODE_VALIDATION"
 )
 
 // initiator types

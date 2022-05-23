@@ -6,6 +6,7 @@ import (
 	"USSD.sidooh/products"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -39,15 +40,22 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	//2. Account has no user -> phone, name "", balances,
 	//3. Account and User -> phone, name, balances
 	if err != nil {
-		logger.UssdLog.Error(err)
+		logger.UssdLog.Error("FetchAccount: ", err)
 		s.Vars["{voucher_balance}"] = "0"
 		s.Vars["{phone}"] = s.Phone
+
+		_, err := service.FetchInvite(s.Phone)
+		if err != nil {
+			logger.UssdLog.Error("FetchInvite: ", err)
+
+			s.ScreenPath.Screen = *screens[utils.INVITE_CODE]
+		}
 	} else {
 		s.Vars["{account_id}"] = strconv.Itoa(account.Id)
 		s.Vars["{phone}"] = account.Phone
 
 		if len(account.Balances) != 0 {
-			s.Vars["{voucher_balance}"] = strings.TrimSuffix(account.Balances[0].Balance, ".00")
+			s.Vars["{voucher_balance}"] = strings.TrimSuffix(fmt.Sprintf("%.0f", account.Balances[0].Balance), ".00")
 		}
 
 		if account.User.Name != "" {

@@ -21,7 +21,7 @@ type User struct {
 
 type Balance struct {
 	Type    string
-	Balance string
+	Balance float64 `json:"balance,string"`
 }
 
 type Invite struct {
@@ -54,12 +54,36 @@ func FetchAccount(phone string) (*Account, error) {
 	return account, nil
 }
 
+func FetchInvite(phone string) (*Invite, error) {
+	var invite = new(Invite)
+
+	// Check invite existence
+	err := accountsClient.CheckInvite(phone, &invite)
+	if err != nil {
+		return &Invite{}, err
+	}
+
+	return invite, nil
+}
+
 func CheckAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
 	err := accountsClient.GetAccount(phone, &account)
 	if err != nil {
-		logger.ServiceLog.Error("Failed to fetch account", err)
+		logger.ServiceLog.Error("Failed to check account: ", err)
+		return nil, err
+	}
+
+	return account, nil
+}
+
+func CheckAccountByIdOrPhone(search string) (*Account, error) {
+	var account = new(Account)
+
+	err := accountsClient.GetAccountByIdOrPhone(search, &account)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to search account: ", err)
 		return nil, err
 	}
 
