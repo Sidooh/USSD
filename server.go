@@ -94,7 +94,8 @@ func main() {
 
 	initUssd()
 
-	defer destroyUssd()
+	//TODO: Review if this is necessary
+	//defer destroyUssd()
 
 	fmt.Printf("Starting USSD server at port %v\n", port)
 
