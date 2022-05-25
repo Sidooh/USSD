@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -38,6 +39,9 @@ func (api *ApiClient) init(baseUrl string) {
 }
 
 func (api *ApiClient) getUrl(endpoint string) string {
+	if strings.HasPrefix(endpoint, "http") {
+		return endpoint
+	}
 	return api.baseUrl + endpoint
 }
 
