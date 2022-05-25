@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -135,7 +136,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, "/users/signin", bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, os.Getenv("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}

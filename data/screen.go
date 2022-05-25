@@ -173,7 +173,7 @@ func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
 
 	validations := strings.Split(screen.Validations, ",")
 
-	var currentValidationCheck bool = false
+	var currentValidationCheck = false
 	for _, s := range validations {
 		validation := strings.Split(s, ":")
 
