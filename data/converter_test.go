@@ -1,6 +1,7 @@
 package data
 
 import (
+	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"os"
 	"testing"
@@ -19,22 +20,22 @@ func TestMain(m *testing.M) {
 }
 
 func createTestFile() {
-	_ = WriteFile("test", filename)
+	_ = datastore.WriteFile("test", filename)
 }
 
 func createDataTestFile(data interface{}) {
-	_ = WriteFile(data, utils.DATA_FILE)
+	_ = datastore.WriteFile(data, utils.DATA_FILE)
 }
 
 func TestReadFile(t *testing.T) {
-	file, err := ReadFile(filename)
+	file, err := datastore.ReadFile(filename)
 	if err == nil {
 		t.Errorf("ReadFile(%s) = %s; want err", filename, file)
 	}
 
 	createTestFile()
 
-	file, err = ReadFile(filename)
+	file, err = datastore.ReadFile(filename)
 	if file == nil {
 		t.Errorf("ReadFile(%s) = %s; want file", filename, err)
 	}
@@ -44,14 +45,14 @@ func TestUnmarshalFromFile(t *testing.T) {
 	_ = os.Remove(filename)
 	data := ""
 
-	err := UnmarshalFromFile(data, filename)
+	err := datastore.UnmarshalFromFile(data, filename)
 	if err == nil {
 		t.Errorf("UnmarshalFromFile(string, %s) = %s; want err", filename, err)
 	}
 
 	createTestFile()
 
-	err = UnmarshalFromFile(data, filename)
+	err = datastore.UnmarshalFromFile(data, filename)
 	if err != nil {
 		t.Errorf("UnmarshalFromFile(string, %s) = %s; want nil", filename, err)
 	}
@@ -60,14 +61,14 @@ func TestUnmarshalFromFile(t *testing.T) {
 func TestWriteFile(t *testing.T) {
 	data := "test"
 
-	err := WriteFile(data, filename)
+	err := datastore.WriteFile(data, filename)
 	if err != nil {
 		t.Errorf("WriteFile(string, %s) = %s; want nil", filename, err)
 	}
 
 	data = "testLong"
 
-	err = WriteFile(data, filename)
+	err = datastore.WriteFile(data, filename)
 	if err != nil {
 		t.Errorf("WriteFile(string, %s) = %s; want nil", filename, err)
 	}

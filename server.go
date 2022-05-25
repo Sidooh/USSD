@@ -94,6 +94,8 @@ func main() {
 
 	initUssd()
 
+	defer destroyUssd()
+
 	fmt.Printf("Starting USSD server at port %v\n", port)
 
 	http.Handle("/api/v1/ussd", Recovery())

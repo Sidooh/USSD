@@ -2,10 +2,12 @@ package state
 
 import (
 	"USSD.sidooh/data"
+	"USSD.sidooh/datastore"
 	"USSD.sidooh/logger"
 	"USSD.sidooh/products"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,6 +22,37 @@ type State struct {
 	ScreenPath data.ScreenPath   `json:"screen_path"`
 	Status     string            `json:"status"`
 	Vars       map[string]string `json:"vars"`
+}
+
+func (s *State) ToSession() *datastore.Session {
+	vars, err := json.Marshal(s.Vars)
+	if err != nil {
+		panic(err)
+	}
+
+	return &datastore.Session{
+		SessionId:  s.Session,
+		Phone:      s.Phone,
+		Code:       s.Code,
+		Status:     s.Status,
+		Product:    s.ProductKey,
+		ScreenPath: s.ScreenPath.Encode(),
+		Vars:       vars,
+	}
+}
+
+func (s *State) FromSession(session *datastore.Session) {
+	s.ProductKey = session.Product
+
+	err := json.Unmarshal([]byte(session.ScreenPath), &s.ScreenPath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(session.Vars, &s.Vars)
+	if err != nil {
+		panic(err)
+	}
 }
 
 var screens = map[string]*data.Screen{}
@@ -130,10 +163,14 @@ func RetrieveState(code, phone, session string) *State {
 		Status:  utils.GENESIS,
 		Phone:   phone,
 	}
-	err := data.UnmarshalFromFile(&stateData, session+utils.STATE_FILE)
+
+	sessionData := new(datastore.Session)
+	err := datastore.UnmarshalFromDatabase(session, sessionData)
 	if err != nil {
 		// TODO: Get the actual error and decide whether log is info or error
 		logger.UssdLog.Error(err)
+	} else {
+		stateData.FromSession(sessionData)
 	}
 
 	stateData.setProduct(stateData.ProductKey)
@@ -150,7 +187,7 @@ func (s *State) SaveState() error {
 
 	s.ScreenPath.SubstituteVars(s.Vars)
 
-	err := data.WriteFile(s, s.Session+utils.STATE_FILE)
+	err := datastore.MarshalToDatabase(*s.ToSession())
 	if err != nil {
 		panic(err)
 	}
@@ -159,7 +196,8 @@ func (s *State) SaveState() error {
 }
 
 func (s *State) unsetState() {
-	_ = data.RemoveFile(s.Session + utils.STATE_FILE)
+	// Unnecessary since we are using DB and not file store
+	//_ = datastore.RemoveFile(s.Session + utils.STATE_FILE)
 }
 
 func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {

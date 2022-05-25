@@ -4,6 +4,7 @@ import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -25,6 +26,15 @@ type Screen struct {
 type ScreenPath struct {
 	Screen
 	Previous *ScreenPath `json:"previous"`
+}
+
+func (path *ScreenPath) Encode() string {
+	screenPath, err := json.Marshal(path)
+	if err != nil {
+		return ""
+	}
+
+	return string(screenPath)
 }
 
 var nextExceptionScreens = map[string]bool{

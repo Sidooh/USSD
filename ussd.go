@@ -3,6 +3,7 @@ package main
 import (
 	"USSD.sidooh/cache"
 	"USSD.sidooh/data"
+	"USSD.sidooh/datastore"
 	"USSD.sidooh/logger"
 	"USSD.sidooh/state"
 	"USSD.sidooh/utils"
@@ -98,6 +99,7 @@ func initUssd() {
 
 	logger.Init()
 	cache.Init()
+	datastore.Init()
 
 	LoadScreens()
 }
