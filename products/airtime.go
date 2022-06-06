@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -40,6 +41,9 @@ func (a *Airtime) processScreen(input string) {
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
 		a.setPaymentMethods(input)
+
+		amount, _ := strconv.Atoi(input)
+		a.vars["{product}"] = fmt.Sprintf("%s (which will earn you %v points)", a.productRep, utils.CalculateAirtimeEarnings(amount))
 		break
 	}
 }

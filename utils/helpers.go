@@ -29,3 +29,17 @@ func Float64bytes(float float64) []byte {
 	binary.LittleEndian.PutUint64(bytes, bits)
 	return bytes
 }
+
+func CalculateAirtimeEarnings(amount int) float64 {
+	// Get discount
+	discount := .06
+
+	// Get users earning ratio
+	ratio := .6
+
+	// Get ripples
+	ripples := 6
+
+	// Calculate earnings
+	return float64(amount) * discount * ratio / float64(ripples)
+}
