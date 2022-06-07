@@ -36,14 +36,14 @@ func (a *Airtime) processScreen(input string) {
 		a.processOtherNumberSelection(input)
 		break
 	case utils.AIRTIME_OTHER_NUMBER:
-		a.vars["{number}"] = input
+		a.vars["{number}"], _ = utils.FormatPhone(input)
 		break
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
 		a.setPaymentMethods(input)
 
 		amount, _ := strconv.Atoi(input)
-		a.vars["{product}"] = fmt.Sprintf("%s (which will earn you %v points)", a.productRep, utils.CalculateAirtimeEarnings(amount))
+		a.vars["{product}"] = fmt.Sprintf("%s (which will earn you %.2f points)", a.productRep, utils.CalculateAirtimeEarnings(amount))
 		break
 	}
 }

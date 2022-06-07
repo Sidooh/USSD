@@ -27,7 +27,7 @@ func (v *Voucher) processScreen(input string) {
 		v.vars["{product}"] = v.productRep
 		v.vars["{number}"] = v.vars["{phone}"]
 	case utils.VOUCHER_OTHER_ACCOUNT:
-		v.vars["{number}"] = input
+		v.vars["{number}"], _ = utils.FormatPhone(input)
 		break
 	case utils.VOUCHER_AMOUNT:
 		v.vars["{amount}"] = input

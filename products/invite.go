@@ -26,8 +26,7 @@ func (i *Invite) processScreen(input string) {
 		i.vars["{enrollment_time}"] = "48"
 
 	case utils.INVITE:
-		// TODO: Get from env
-		i.vars["{number}"] = input
+		i.vars["{number}"], _ = utils.FormatPhone(input)
 	}
 }
 

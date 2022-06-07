@@ -32,7 +32,7 @@ func (u *Utility) processScreen(input string) {
 		u.processUtilityAccountSelection(input)
 		break
 	case utils.UTILITY_OTHER_ACCOUNT:
-		u.vars["{number}"] = input
+		u.vars["{number}"], _ = utils.FormatPhone(input)
 		break
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input

@@ -354,7 +354,7 @@
   },
   "subscription_renew": {
     "key": "subscription_renew",
-    "title": "Dear {name}, Your subscription to {subscription_type} expires/expired on {subscription_end_date}.",
+    "title": "Dear{name}, Your subscription to {subscription_type} expires/expired on {subscription_end_date}.",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -391,7 +391,7 @@
   },
   "subscription_agent_confirm": {
     "key": "subscription_agent_confirm",
-    "title": "Please confirm your details.\n\nName: {name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
+    "title": "Please confirm your details.\n\nName: {agent_name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
     "type": "CLOSED",
     "options": {
       "1": {

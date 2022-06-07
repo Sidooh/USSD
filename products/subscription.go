@@ -38,8 +38,14 @@ func (s *Subscription) processScreen(input string) {
 
 		s.fetchUserSubscription()
 
+	case utils.SUBSCRIPTION_AGENT_NAME:
+		s.vars["{agent_name}"] = input
+
 	case utils.SUBSCRIPTION_AGENT_CONFIRM:
-		s.setPaymentMethods(input)
+		s.setPaymentMethods(s.vars["{amount}"])
+
+	case utils.SUBSCRIPTION_RENEW:
+		s.setPaymentMethods(s.vars["{amount}"])
 	}
 }
 
@@ -50,6 +56,17 @@ func (s *Subscription) finalize() {
 		accountId, _ := strconv.Atoi(s.vars["{account_id}"])
 		amount, _ := strconv.Atoi(s.vars["{amount}"])
 		method := s.vars["{payment_method}"]
+
+		// Update name if necessary
+		if name, ok := s.vars["{agent_name}"]; ok {
+			profileRequest := client.ProfileDetails{
+				Name: name,
+			}
+
+			// TODO: Make into goroutine if applicable
+			// TODO: Should we check returned value? Or should we make it a void function?
+			_, _ = service.UpdateProfile(s.vars["{account_id}"], profileRequest)
+		}
 
 		// TODO: Make subscription_type dynamic with api fetch
 		request := client.SubscriptionPurchaseRequest{

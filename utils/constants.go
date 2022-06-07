@@ -75,6 +75,7 @@ const (
 	SUBSCRIPTION_RENEW         = "subscription_renew"
 	SUBSCRIPTION_ACTIVE        = "subscription_active"
 	SUBSCRIPTION_REGISTER      = "subscription_register"
+	SUBSCRIPTION_AGENT_NAME    = "subscription_agent_name"
 	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
 
 	// ACCOUNT

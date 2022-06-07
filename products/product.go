@@ -34,7 +34,7 @@ func (p *Product) Process(input string) {
 		p.setPaymentMethodText(input)
 		break
 	case utils.PAYMENT_OTHER_NUMBER_MPESA:
-		p.vars["{mpesa_number}"] = input
+		p.vars["{mpesa_number}"], _ = utils.FormatPhone(input)
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{mpesa_number}"]
 		break
 	}
