@@ -50,7 +50,7 @@ func (p *Product) setPaymentMethods(input string) {
 
 	// Delete voucher option if balance is not enough or buying voucher for self
 	if int(voucherBalance) < amount {
-		delete(p.screen.Next.Options, 2)
+		//delete(p.screen.Next.Options, 2)
 	} else if p.productRep == "Voucher" && p.vars["{number}"] == p.vars["{phone}"] {
 		delete(p.screen.Next.Options, 2)
 	}

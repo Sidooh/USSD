@@ -87,6 +87,11 @@ func (api *ApiClient) send(data interface{}) error {
 		return errors.New(string(body))
 	}
 
+	//TODO: Deal with 401
+	if response.StatusCode == 401 {
+		api.EnsureAuthenticated()
+	}
+
 	err = json.Unmarshal(body, &data)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to unmarshal body: ", err)
