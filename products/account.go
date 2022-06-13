@@ -104,12 +104,27 @@ func (a *Account) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		err := service.SetPin(accountId, pin)
-		if !err {
+		status := service.SetPin(accountId, pin)
+		if !status {
 			a.screen.Next.Title = "Sorry. We failed to set your pin, please try again later."
+			return
 		} else {
 			//	TODO: Notify user of new pin set and also ask to set id and security questions
 		}
+
+		name := a.vars["{full_name}"]
+
+		request := client.ProfileDetails{
+			Name: name,
+		}
+
+		// TODO: Make into goroutine if applicable
+		// TODO: Should we check returned value? Or should we make it a void function?
+		_, err := service.UpdateProfile(accountId, request)
+		if err != nil {
+			a.screen.Next.Title = "Sorry. We failed to update your details, please try again later."
+		}
+
 	}
 
 	// User has just updated their name/profile

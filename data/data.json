@@ -590,12 +590,24 @@
         "label": "Earnings",
         "value": "2",
         "next": "earnings"
+      },
+      "3": {
+        "label": "Saved Points",
+        "value": "3",
+        "next": "savings"
       }
     }
   },
+  "savings": {
+    "key": "savings",
+    "title": "Your saved points breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
+    "type": "OPEN",
+    "paginated": true,
+    "next": "cancel"
+  },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
+    "title": "Your earnings breakdown\n\n1. PURCHASES {sidooh_points}\n  a. Self: {available_points}\n  b. Invites: {saved_points}\n\n2. SUBSCRIPTION: {withdrawable_points}\n  a. Self: {available_points}\n  b. Invites: {saved_points}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
