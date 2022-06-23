@@ -88,3 +88,15 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
 }
+
+func FetchSubscriptionType() (client.SubscriptionType, error) {
+	var subscriptionType client.SubscriptionType
+
+	err := productsClient.GetSubscriptionType(&subscriptionType)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch subscription type: ", err)
+		return client.SubscriptionType{}, err
+	}
+
+	return subscriptionType, nil
+}

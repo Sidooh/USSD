@@ -36,6 +36,8 @@ func (s *Subscription) processScreen(input string) {
 		s.vars["{duration}"] = "month"
 		s.vars["{amount}"] = "365"
 
+		s.FetchSubscriptionType()
+
 		s.fetchUserSubscription()
 
 	case utils.SUBSCRIPTION_AGENT_NAME:
@@ -54,11 +56,10 @@ func (s *Subscription) finalize() {
 
 	if s.screen.Next.Type == utils.END {
 		accountId, _ := strconv.Atoi(s.vars["{account_id}"])
-		amount, _ := strconv.Atoi(s.vars["{amount}"])
 		method := s.vars["{payment_method}"]
 
 		// Update name if necessary
-		if name, ok := s.vars["{agent_name}"]; ok {
+		if name, ok := s.vars["{subscriber_name}"]; ok {
 			profileRequest := client.ProfileDetails{
 				Name: name,
 			}
@@ -72,7 +73,6 @@ func (s *Subscription) finalize() {
 		request := client.SubscriptionPurchaseRequest{
 			PurchaseRequest: client.PurchaseRequest{
 				Initiator: utils.CONSUMER,
-				Amount:    amount,
 				Method:    method,
 				AccountId: accountId,
 			},
@@ -84,6 +84,18 @@ func (s *Subscription) finalize() {
 		// TODO: Make into goroutine if applicable
 		service.PurchaseSubscription(&request)
 	}
+}
+
+func (s *Subscription) FetchSubscriptionType() {
+	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch default subscription")
+
+	subscriptionType, _ := service.FetchSubscriptionType()
+
+	s.vars["{subscription_type_id}"] = strconv.Itoa(subscriptionType.Id)
+	s.vars["{subscription_type}"] = subscriptionType.Title
+	s.vars["{subscription_amount}"] = "KES" + strconv.Itoa(subscriptionType.Price)
+	s.vars["{amount}"] = strconv.Itoa(subscriptionType.Price)
+
 }
 
 func (s *Subscription) fetchUserSubscription() {

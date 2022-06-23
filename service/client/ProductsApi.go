@@ -18,6 +18,14 @@ type UtilityAccount struct {
 	AccountNumber string `json:"account_number"`
 }
 
+type SubscriptionType struct {
+	Id       int
+	Title    string
+	Price    int
+	Duration int
+	Active   bool
+}
+
 type Subscription struct {
 	Id        int
 	Amount    string
@@ -147,6 +155,24 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 
 	var response = Response{}
 	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
+	apiResponse := new(Response)
+
+	err := p.newRequest(http.MethodGet, "/products/subscription-types/default", nil).send(apiResponse)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Can we get rid of this round trip?
+	dbByte, err := json.Marshal(apiResponse.Data)
+	err = json.Unmarshal(dbByte, response)
 	if err != nil {
 		return err
 	}
