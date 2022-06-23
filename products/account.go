@@ -454,10 +454,10 @@ func (a *Account) fetchEarnings() {
 	var purchasesAccount client.EarningAccount
 	var subscriptionsAccount client.EarningAccount
 	for _, earning := range earnings {
-		if earning.Type == "PURCHASES" {
+		if earning.Type == "PURCHASE" {
 			purchasesAccount = earning
 		}
-		if earning.Type == "SUBSCRIPTIONS" {
+		if earning.Type == "SUBSCRIPTION" {
 			subscriptionsAccount = earning
 		}
 	}
