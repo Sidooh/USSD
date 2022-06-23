@@ -607,7 +607,7 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. PURCHASES {sidooh_points}\n  a. Self: {available_points}\n  b. Invites: {saved_points}\n\n2. SUBSCRIPTION: {withdrawable_points}\n  a. Self: {available_points}\n  b. Invites: {saved_points}",
+    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTION: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"

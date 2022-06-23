@@ -451,34 +451,28 @@ func (a *Account) fetchEarnings() {
 		return
 	}
 
-	var currentAccount client.EarningAccount
-	var lockedAccount client.EarningAccount
+	var purchasesAccount client.EarningAccount
+	var subscriptionsAccount client.EarningAccount
 	for _, earning := range earnings {
-		if earning.Type == "CURRENT" {
-			currentAccount = earning
+		if earning.Type == "PURCHASES" {
+			purchasesAccount = earning
 		}
-		if earning.Type == "LOCKED" {
-			lockedAccount = earning
+		if earning.Type == "SUBSCRIPTIONS" {
+			subscriptionsAccount = earning
 		}
 	}
 
-	cBal := currentAccount.Balance
-	lBal := lockedAccount.Balance
+	pE := purchasesAccount.Self + purchasesAccount.Invite
+	sE := subscriptionsAccount.Self + subscriptionsAccount.Invite
 
-	cInt := currentAccount.Interest
-	lInt := lockedAccount.Interest
+	total := pE + sE
 
-	wBal := float64(0)
-	if cBal > 100 {
-		wBal = cBal - 50
-	} else {
-		wBal = 0
-	}
-
-	a.vars["{sidooh_points}"] = fmt.Sprintf("%.4f", cBal+lBal)
-	a.vars["{available_points}"] = fmt.Sprintf("%.4f", cBal)
-	a.vars["{saved_points}"] = fmt.Sprintf("%.4f", lBal)
-	a.vars["{interest}"] = fmt.Sprintf("%.4f", cInt+lInt)
-	a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wBal)
+	a.vars["{purchase_earnings}"] = fmt.Sprintf("%.4f", pE)
+	a.vars["{self_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Self)
+	a.vars["{invite_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Invite)
+	a.vars["{subscriptions_earnings}"] = fmt.Sprintf("%.4f", sE)
+	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
+	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
+	a.vars["{total_earnings}"] = fmt.Sprintf("%.4f", total)
 
 }
