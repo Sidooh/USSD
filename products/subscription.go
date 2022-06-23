@@ -41,7 +41,7 @@ func (s *Subscription) processScreen(input string) {
 		s.fetchUserSubscription()
 
 	case utils.SUBSCRIPTION_AGENT_NAME:
-		s.vars["{agent_name}"] = input
+		s.vars["{subscriber_name}"] = input
 
 	case utils.SUBSCRIPTION_AGENT_CONFIRM:
 		s.setPaymentMethods(s.vars["{amount}"])
