@@ -21,6 +21,7 @@ type Screen struct {
 	Next        *Screen         `json:"-"`
 	Validations string          `json:"validations"`
 	Acyclic     bool            `json:"acyclic,omitempty"`
+	Paginated   bool            `json:"paginated"`
 }
 
 type ScreenPath struct {

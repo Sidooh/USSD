@@ -28,6 +28,13 @@ type EarningAccount struct {
 	Invite float64 `json:"invite_amount,string"`
 }
 
+type SavingAccount struct {
+	Id       uint `json:"id,string"`
+	Type     string
+	Balance  float64 `json:"balance,string"`
+	Interest float64 `json:"interest,string"`
+}
+
 // TODO: Understand and use custom unmarshalers
 //type Money struct {
 //	float64

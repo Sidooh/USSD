@@ -8,6 +8,7 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 )
 
@@ -27,9 +28,7 @@ func (a *Account) Process(input string) {
 func (a *Account) processScreen(input string) {
 	switch a.screen.Key {
 	case utils.MAIN_MENU:
-		//a.vars["{product}"] = a.productRep
-		//a.vars["{number}"] = a.vars["{phone}"]
-
+		// Set to '' for display purposes
 		if _, ok := a.vars["{full_name}"]; !ok {
 			a.vars["{full_name}"] = ""
 		}
@@ -40,6 +39,11 @@ func (a *Account) processScreen(input string) {
 
 	case utils.ACCOUNT_PROFILE:
 		a.setAccountProfileOptions()
+
+	case utils.PROFILE_SECURITY:
+		if name, ok := a.vars["{full_name}"]; ok && len(name) > 0 {
+			a.screen.Options[1].NextKey = utils.PROFILE_NEW_PIN
+		}
 
 	case utils.PROFILE_NAME, utils.PROFILE_UPDATE_NAME:
 		a.vars["{full_name}"] = input
@@ -438,6 +442,8 @@ func (a *Account) getAccountBalances(input string) {
 
 	if input == "2" {
 		a.fetchEarnings()
+	} else if input == "3" {
+		a.fetchSavings()
 	}
 }
 
@@ -448,7 +454,7 @@ func (a *Account) fetchEarnings() {
 	if err != nil {
 		a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
 		logger.UssdLog.Error(err)
-		return
+		//return
 	}
 
 	var purchasesAccount client.EarningAccount
@@ -474,5 +480,43 @@ func (a *Account) fetchEarnings() {
 	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
 	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
 	a.vars["{total_earnings}"] = fmt.Sprintf("%.4f", total)
+
+}
+
+func (a *Account) fetchSavings() {
+	accountId := a.vars["{account_id}"]
+
+	earnings, err := service.FetchSavingBalances(accountId)
+	if err != nil {
+		a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
+		logger.UssdLog.Error(err)
+		//return
+	}
+
+	var currentAccount client.SavingAccount
+	var lockedAccount client.SavingAccount
+	for _, earning := range earnings {
+		if earning.Type == "CURRENT" {
+			currentAccount = earning
+		}
+		if earning.Type == "LOCKED" {
+			lockedAccount = earning
+		}
+	}
+
+	cS := currentAccount.Balance
+	lS := lockedAccount.Balance
+
+	total := cS + lS
+
+	wS := 0.0
+	if cS > 50 {
+		wS = math.Floor(cS - 50)
+	}
+
+	a.vars["{current_savings}"] = fmt.Sprintf("%.2f", cS)
+	a.vars["{locked_savings}"] = fmt.Sprintf("%.2f", lS)
+	a.vars["{withdrawable_savings}"] = fmt.Sprintf("%.2f", wS)
+	a.vars["{total_savings}"] = fmt.Sprintf("%.2f", total)
 
 }

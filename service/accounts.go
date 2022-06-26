@@ -275,6 +275,17 @@ func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
 	return earnings, nil
 }
 
+func FetchSavingBalances(id string) ([]client.SavingAccount, error) {
+	var earnings []client.SavingAccount
+
+	err := savingsClient.FetchAccountSavings(id, &earnings)
+	if err != nil {
+		return nil, err
+	}
+
+	return earnings, nil
+}
+
 func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error {
 	err := savingsClient.WithdrawEarnings(request)
 	if err != nil {

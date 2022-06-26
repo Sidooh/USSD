@@ -17,6 +17,17 @@ func InitSavingsClient() *SavingsApiClient {
 	return &client
 }
 
+func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) error {
+	endpoint := "/accounts/" + id + "/earnings"
+
+	err := s.newRequest(http.MethodGet, endpoint, nil).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *SavingsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)

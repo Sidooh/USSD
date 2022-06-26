@@ -377,21 +377,21 @@
       "1": {
         "label": "Proceed to subscribe as an Agent",
         "value": "1",
-        "next": "subscription_agent_name"
+        "next": "subscription_subscriber_name"
       }
     },
     "paginated": true
   },
-  "subscription_agent_name": {
-    "key": "subscription_agent_name",
+  "subscription_subscriber_name": {
+    "key": "subscription_subscriber_name",
     "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
     "type": "OPEN",
-    "next": "subscription_agent_confirm",
+    "next": "subscription_subscriber_confirm",
     "validations": "NAME"
   },
-  "subscription_agent_confirm": {
-    "key": "subscription_agent_confirm",
-    "title": "Please confirm your details.\n\nName: {agent_name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
+  "subscription_subscriber_confirm": {
+    "key": "subscription_subscriber_confirm",
+    "title": "Please confirm your details.\n\nName: {subscriber_name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -402,7 +402,7 @@
       "2": {
         "label": "Change Details",
         "value": "2",
-        "next": "subscription_agent_name",
+        "next": "subscription_subscriber_name",
         "acyclic": true
       }
     }
@@ -465,7 +465,7 @@
     "type": "OPEN"
   },
   "profile_security": {
-    "key": "profile_pin",
+    "key": "profile_security",
     "title": "What would you like to do?",
     "type": "CLOSED",
     "options": {
@@ -600,7 +600,7 @@
   },
   "savings": {
     "key": "savings",
-    "title": "Your saved points breakdown\n\n1. Sidooh Points {sidooh_points}\n  a. Available Points: {available_points}\n  b. Saved n Invested Points: {saved_points}\n  c. Interest Earned: {interest}\n\n2. Withdrawable Points: {withdrawable_points}",
+    "title": "Your saved points breakdown\n\nTotal: {total_savings}\n\n1. CURRENT {current_savings}\n\n2. LOCKED {locked_savings}\n\n3. Withdrawable Points: {withdrawable_savings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"

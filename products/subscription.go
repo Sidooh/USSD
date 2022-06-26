@@ -40,10 +40,15 @@ func (s *Subscription) processScreen(input string) {
 
 		s.fetchUserSubscription()
 
-	case utils.SUBSCRIPTION_AGENT_NAME:
+	case utils.SUBSCRIPTION_REGISTER:
+		if name, ok := s.vars["{full_name}"]; ok && len(name) > 0 {
+			s.screen.Options[1].NextKey = utils.PAYMENT_METHOD
+		}
+
+	case utils.SUBSCRIPTION_SUBSCRIBER_NAME:
 		s.vars["{subscriber_name}"] = input
 
-	case utils.SUBSCRIPTION_AGENT_CONFIRM:
+	case utils.SUBSCRIPTION_SUBSCRIBER_CONFIRM:
 		s.setPaymentMethods(s.vars["{amount}"])
 
 	case utils.SUBSCRIPTION_RENEW:
@@ -89,7 +94,10 @@ func (s *Subscription) finalize() {
 func (s *Subscription) FetchSubscriptionType() {
 	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch default subscription")
 
-	subscriptionType, _ := service.FetchSubscriptionType()
+	subscriptionType, err := service.FetchSubscriptionType()
+	if err != nil {
+		return
+	}
 
 	s.vars["{subscription_type_id}"] = strconv.Itoa(subscriptionType.Id)
 	s.vars["{subscription_type}"] = subscriptionType.Title

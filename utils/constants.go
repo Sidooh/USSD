@@ -71,12 +71,12 @@ const (
 	INVITE_END = "invite_end"
 
 	// SUBSCRIPTION
-	SUBSCRIPTION               = "subscription"
-	SUBSCRIPTION_RENEW         = "subscription_renew"
-	SUBSCRIPTION_ACTIVE        = "subscription_active"
-	SUBSCRIPTION_REGISTER      = "subscription_register"
-	SUBSCRIPTION_AGENT_NAME    = "subscription_agent_name"
-	SUBSCRIPTION_AGENT_CONFIRM = "subscription_agent_confirm"
+	SUBSCRIPTION                    = "subscription"
+	SUBSCRIPTION_RENEW              = "subscription_renew"
+	SUBSCRIPTION_ACTIVE             = "subscription_active"
+	SUBSCRIPTION_REGISTER           = "subscription_register"
+	SUBSCRIPTION_SUBSCRIBER_NAME    = "subscription_subscriber_name"
+	SUBSCRIPTION_SUBSCRIBER_CONFIRM = "subscription_subscriber_confirm"
 
 	// ACCOUNT
 	ACCOUNT          = "account"
@@ -84,6 +84,7 @@ const (
 	ACCOUNT_BALANCES = "account_balances"
 	ACCOUNT_WITHDRAW = "account_withdraw"
 
+	PROFILE_SECURITY                   = "profile_security"
 	PROFILE_NAME                       = "profile_name"
 	PROFILE_NEW_PIN                    = "profile_new_pin"
 	PROFILE_NEW_PIN_CONFIRM            = "profile_new_pin_confirm"

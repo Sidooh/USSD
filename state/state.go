@@ -302,9 +302,11 @@ func (s *State) GetStringResponse() string {
 		if s.ScreenPath.Type == utils.CLOSED {
 			response += "\n"
 		}
-		response += "0. Back"
-		response += "\n"
-		response += "00. Home"
+		if !s.ScreenPath.Paginated {
+			response += "0.Back "
+			response += " "
+		}
+		response += "00.Home"
 	}
 
 	return response
