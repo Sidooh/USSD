@@ -3,7 +3,9 @@ package products
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service"
+	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
+	"fmt"
 )
 
 type Invite struct {
@@ -42,6 +44,24 @@ func (i *Invite) finalize() {
 		_, err := service.CreateInvite(accountId, number)
 		if err != nil {
 			i.screen.Next.Title = "Sorry. We failed to process your invite, please try again later."
+			return
 		}
+
+		name := i.vars["{full_name}"] + " " + i.vars["{phone}"]
+		code := "*384*99#"
+
+		message := fmt.Sprintf("Hi, %s has invited you to try out Sidooh, "+
+			"a digital platform that gives you loyalty points on every item you purchase and pay for through "+
+			"the platform. After which, the earned loyalty points are automatically saved and then invested in "+
+			"secure financial assets like Treasury Bills & Bonds so as to generate extra income for you.\n"+
+			"Dial %s NOW for FREE on your Safaricom line to buy airtime & start investing using your points.", name, code)
+		request := client.NotificationRequest{
+			Channel:     "sms",
+			Destination: []string{number},
+			EventType:   "REFERRAL_INVITE", //TODO: Change notify referral types to invite
+			Content:     message,
+		}
+
+		service.Notify(&request)
 	}
 }

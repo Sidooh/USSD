@@ -6,6 +6,7 @@ import (
 )
 
 var productsClient = client.InitProductClient()
+var notifyClient = client.InitNotifyClient()
 
 func PurchaseAirtime(request *client.PurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
@@ -99,4 +100,11 @@ func FetchSubscriptionType() (client.SubscriptionType, error) {
 	}
 
 	return subscriptionType, nil
+}
+
+func Notify(request *client.NotificationRequest) {
+	err := notifyClient.SendNotification(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to send notification: ", err)
+	}
 }

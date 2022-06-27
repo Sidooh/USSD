@@ -41,6 +41,13 @@ type EarningsWithdrawalRequest struct {
 	TargetNumber string `json:"target_number,omitempty"`
 }
 
+type NotificationRequest struct {
+	Channel     string
+	Destination []string
+	EventType   string `json:"event_type"`
+	Content     string
+}
+
 //TODO: Remove these once verified not needed
 //func (r *AirtimePurchaseRequest) Marshal() ([]byte, error) {
 //	request := map[string]interface{}{
