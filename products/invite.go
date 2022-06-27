@@ -27,6 +27,7 @@ func (i *Invite) processScreen(input string) {
 		// TODO: Get from env
 		i.vars["{enrollment_time}"] = "48"
 
+	//	TODO: Navigating back from screen causes a bug - sends request but display shows error
 	case utils.INVITE:
 		i.vars["{number}"], _ = utils.FormatPhone(input)
 	}

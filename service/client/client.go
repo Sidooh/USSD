@@ -64,6 +64,7 @@ func (api *ApiClient) send(data interface{}) error {
 	}
 	logger.ServiceLog.Println("API_RESP - body: ", string(body))
 
+	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
 		response.StatusCode != 404 && response.StatusCode != 422 {
 		if response.StatusCode < 500 {
@@ -121,11 +122,13 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
 	if token := cache.Instance.Get("token"); token != nil {
+		// TODO: Check if token has expired since we should be able to decode it
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {
 		api.EnsureAuthenticated()
 
 		//TODO: What will happen to client if cache fails to store token? E.g. when account srv is not reachable?
+		// TODO: Can we even just use a global Var?
 		token = cache.Instance.Get("token")
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	}
@@ -151,7 +154,7 @@ func (api *ApiClient) Authenticate(data []byte) error {
 		return err
 	}
 
-	cache.Instance.Set("token", response.Token, 14*time.Minute)
+	cache.Instance.Set("token", response.Token, 12*time.Minute)
 
 	return nil
 }
