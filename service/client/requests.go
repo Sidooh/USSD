@@ -42,10 +42,10 @@ type EarningsWithdrawalRequest struct {
 }
 
 type NotificationRequest struct {
-	Channel     string
-	Destination []string
-	EventType   string `json:"event_type"`
-	Content     string
+	Channel     string   `json:"channel"`
+	Destination []string `json:"destination"`
+	EventType   string   `json:"event_type"`
+	Content     string   `json:"content"`
 }
 
 //TODO: Remove these once verified not needed

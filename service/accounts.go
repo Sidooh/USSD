@@ -23,7 +23,7 @@ type User struct {
 
 type Balance struct {
 	Type    string
-	Balance float64 `json:"balance,string"`
+	Balance float64 `json:"balance"`
 }
 
 type Invite struct {
