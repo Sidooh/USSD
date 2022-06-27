@@ -64,7 +64,8 @@ func (api *ApiClient) send(data interface{}) error {
 	}
 	logger.ServiceLog.Println("API_RESP - body: ", string(body))
 
-	if response.StatusCode != 200 && response.StatusCode != 401 && response.StatusCode != 404 && response.StatusCode != 422 {
+	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
+		response.StatusCode != 404 && response.StatusCode != 422 {
 		if response.StatusCode < 500 {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
