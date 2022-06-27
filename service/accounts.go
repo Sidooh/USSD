@@ -3,15 +3,17 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"fmt"
 	"strconv"
 )
 
 type Account struct {
-	Id       int    `json:"id,omitempty"`
-	Phone    string `json:"phone"`
-	Active   bool   `json:"active"`
-	User     `json:"user"`
-	Balances []Balance
+	Id        int    `json:"id,omitempty"`
+	Phone     string `json:"phone"`
+	Active    bool   `json:"active"`
+	InviterId int    `json:"inviter_id"`
+	User      `json:"user"`
+	Balances  []Balance
 }
 
 type User struct {
@@ -78,6 +80,7 @@ func CheckAccount(phone string) (*Account, error) {
 	return account, nil
 }
 
+// TODO: Add for Id only - may be faster when id is known?
 func CheckAccountByIdOrPhone(search string) (*Account, error) {
 	var account = new(Account)
 
@@ -158,6 +161,29 @@ func CreateAccount(phone string) (*Account, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	go func() {
+		if account.InviterId != 0 {
+			inviter, err := CheckAccountByIdOrPhone(strconv.Itoa(account.InviterId))
+			if err != nil {
+				logger.ServiceLog.Error("Failed to fetch invite account: ", err)
+				return
+			}
+
+			message := fmt.Sprintf("Congratulations! %s has "+
+				"successfully accessed Sidooh using your invite code. "+
+				"Show them how to buy airtime from Sidooh so as to unlock your earnings."+
+				"The more friends you invite to Sidooh, the more you earn.", account.Phone)
+			request := client.NotificationRequest{
+				Channel:     "sms",
+				Destination: []string{inviter.Phone},
+				EventType:   "REFERRAL_JOINED", //TODO: Change notify referral types to invite
+				Content:     message,
+			}
+
+			Notify(&request)
+		}
+	}()
 
 	return account, nil
 }
