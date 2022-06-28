@@ -2,7 +2,7 @@ package client
 
 type PurchaseRequest struct {
 	Initiator    string `json:"initiator"`
-	Amount       int    `json:"amount"`
+	Amount       int    `json:"amount,omitempty"`
 	Method       string `json:"method"`
 	AccountId    int    `json:"account_id"`
 	TargetNumber string `json:"target_number,omitempty"`

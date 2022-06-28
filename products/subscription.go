@@ -81,7 +81,14 @@ func (s *Subscription) finalize() {
 				Method:    method,
 				AccountId: accountId,
 			},
-			SubscriptionTypeId: 1,
+		}
+
+		if mpesa, ok := s.vars["{subscription_type_id}"]; ok {
+			request.DebitAccount = mpesa
+		}
+
+		if subType, ok := s.vars["{subscription_type_id}"]; ok {
+			request.SubscriptionTypeId, _ = strconv.Atoi(subType)
 		}
 
 		logger.UssdLog.Println(" -- SUBSCRIPTION: purchase", request)
