@@ -83,7 +83,7 @@ func (s *Subscription) finalize() {
 			},
 		}
 
-		if mpesa, ok := s.vars["{subscription_type_id}"]; ok {
+		if mpesa, ok := s.vars["{mpesa_number}"]; ok {
 			request.DebitAccount = mpesa
 		}
 
