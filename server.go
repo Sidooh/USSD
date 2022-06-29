@@ -1,6 +1,7 @@
 package main
 
 import (
+	"USSD.sidooh/datastore"
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
@@ -86,6 +87,33 @@ func Recovery() http.Handler {
 	})
 }
 
+func Logs() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sessions, err := datastore.FetchSessionLogs()
+		if err != nil {
+			return
+		}
+
+		marshal, err := json.Marshal(sessions)
+		if err != nil {
+			jsonBody, _ := json.Marshal(map[string]string{
+				"error": "There was an internal server error",
+			})
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(jsonBody)
+
+			panic(err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(marshal)
+
+	})
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -100,6 +128,7 @@ func main() {
 	fmt.Printf("Starting USSD server at port %v\n", port)
 
 	http.Handle("/api/v1/ussd", Recovery())
+	http.Handle("/api/v1/sessions/logs", Logs())
 
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)

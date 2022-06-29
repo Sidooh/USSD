@@ -16,17 +16,17 @@ type Screen struct {
 	Key         string          `json:"key"`
 	Title       string          `json:"title"`
 	Type        string          `json:"type"`
-	Options     map[int]*Option `json:"options"`
+	Options     map[int]*Option `json:"options,omitempty"`
 	NextKey     string          `json:"next"`
 	Next        *Screen         `json:"-"`
-	Validations string          `json:"validations"`
+	Validations string          `json:"validations,omitempty"`
 	Acyclic     bool            `json:"acyclic,omitempty"`
-	Paginated   bool            `json:"paginated"`
+	Paginated   bool            `json:"paginated,omitempty"`
 }
 
 type ScreenPath struct {
 	Screen
-	Previous *ScreenPath `json:"previous"`
+	Previous *ScreenPath `json:"previous,omitempty"`
 }
 
 func (path *ScreenPath) Encode() string {

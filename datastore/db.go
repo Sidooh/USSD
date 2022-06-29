@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
@@ -22,6 +23,20 @@ type Session struct {
 	Product    int
 	ScreenPath string
 	Vars       []byte
+}
+
+type SessionLog struct {
+	Id         string                 `json:"id"`
+	SessionId  string                 `json:"session_id"`
+	Phone      string                 `json:"phone"`
+	Text       string                 `json:"text"`
+	Code       string                 `json:"code"`
+	Status     string                 `json:"status"`
+	Product    int                    `json:"product"`
+	ScreenPath map[string]interface{} `json:"screen_path"`
+	Vars       map[string]string      `json:"vars"`
+	CreatedAt  time.Time              `json:"created_at,omitempty"`
+	UpdatedAt  time.Time              `json:"updated_at,omitempty"`
 }
 
 func Init() {
@@ -120,4 +135,50 @@ func MarshalToDatabase(session Session) error {
 	}
 
 	return nil
+}
+
+func FetchSessionLogs() ([]SessionLog, error) {
+	var sessions []SessionLog
+
+	rows, err := db.Query(`SELECT * FROM sessions LIMIT 50`)
+	if err != nil {
+		return nil, err
+	}
+
+	var counter = 0
+
+	//TODO: Move to repo or something so that we can unmarshall to ScreenPath struct
+	// Fetch rows
+	for rows.Next() {
+		session := new(SessionLog)
+
+		var screenPath []byte
+		var vars []byte
+
+		// get RawBytes from data
+		err = rows.Scan(&session.Id, &session.SessionId, &session.Phone, &session.Text, &session.Code, &session.Status,
+			&session.Product, &screenPath, &vars, &session.CreatedAt, &session.UpdatedAt)
+		if err != nil {
+			panic(err.Error()) // proper error handling instead of panic in your app
+		}
+
+		err := json.Unmarshal(screenPath, &session.ScreenPath)
+		if err != nil {
+			panic(err)
+		}
+
+		err = json.Unmarshal(vars, &session.Vars)
+		if err != nil {
+			panic(err)
+		}
+
+		sessions = append(sessions, *session)
+
+		counter += 1
+	}
+	if err = rows.Err(); err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	return sessions, nil
 }
