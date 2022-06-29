@@ -87,6 +87,10 @@ func Recovery() http.Handler {
 	})
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func Logs() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		sessions, err := datastore.FetchSessionLogs()
@@ -106,6 +110,8 @@ func Logs() http.Handler {
 
 			panic(err)
 		}
+
+		enableCors(&w)
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
