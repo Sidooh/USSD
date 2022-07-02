@@ -527,6 +527,8 @@ func (a *Account) fetchSavings() {
 
 	total := cS + lS
 
+	interest := currentAccount.Interest + lockedAccount.Interest
+
 	wS := 0.0
 	if cS > 50 {
 		wS = math.Floor(cS - 50)
@@ -536,5 +538,6 @@ func (a *Account) fetchSavings() {
 	a.vars["{locked_savings}"] = fmt.Sprintf("%.2f", lS)
 	a.vars["{total_savings}"] = fmt.Sprintf("%.2f", total)
 	a.vars["{withdrawable_savings}"] = fmt.Sprintf("%.0f", wS)
+	a.vars["{interest_savings}"] = fmt.Sprintf("%.4f", interest)
 
 }

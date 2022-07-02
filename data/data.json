@@ -600,7 +600,7 @@
   },
   "savings": {
     "key": "savings",
-    "title": "Your saved points breakdown\n\nTotal: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Withdrawable: {withdrawable_savings}",
+    "title": "Your saved points breakdown\n\nTotal: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\n4. Withdrawable: {withdrawable_savings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
