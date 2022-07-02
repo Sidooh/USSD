@@ -487,8 +487,6 @@ func (a *Account) fetchEarnings() {
 		wE = math.Floor(balance - 50)
 	}
 
-	fmt.Println(pE, sE, total, balance, wE)
-
 	a.vars["{purchase_earnings}"] = fmt.Sprintf("%.4f", pE)
 	a.vars["{self_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Self)
 	a.vars["{invite_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Invite)
@@ -506,7 +504,7 @@ func (a *Account) fetchSavings() {
 
 	earnings, err := service.FetchSavingBalances(accountId)
 	if err != nil {
-		a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
+		a.screen.Next.Title = "Sorry, we failed to fetch your earnings. Please try again later."
 		logger.UssdLog.Error(err)
 		//return
 	}

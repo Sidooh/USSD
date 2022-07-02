@@ -607,7 +607,7 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTION: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}\n\nWithdrawable: {withdrawable_points}",
+    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}\n\nWithdrawable: {withdrawable_points}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
@@ -627,7 +627,7 @@
   },
   "account_withdraw": {
     "key": "account_withdraw",
-    "title": "Enter points you wish to withdraw (MIN. KES50):\n\n- Withdrawable Points: {withdrawable_points}",
+    "title": "Enter points you wish to withdraw (MIN. KES50):\n\nWithdrawable Points: {withdrawable_points}",
     "type": "OPEN",
     "next": "withdraw_destination",
     "validations": "WITHDRAW_LIMITS"
