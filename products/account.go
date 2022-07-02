@@ -93,7 +93,7 @@ func (a *Account) processScreen(input string) {
 		a.vars["{account_number}"] = a.vars["{phone}"]
 
 	case utils.WITHDRAW_OTHER_NUMBER_MPESA:
-		a.vars["{account_number}"] = input
+		a.vars["{account_number}"], _ = utils.FormatPhone(input)
 
 	}
 }
@@ -187,11 +187,15 @@ func (a *Account) finalize() {
 	// User has just requested a withdrawal
 	if a.screen.Key == utils.WITHDRAW_CONFIRM_PIN {
 		accountId, _ := strconv.Atoi(a.vars["{account_id}"])
-		amount, _ := strconv.Atoi(a.vars["{account_id}"])
+		amount, _ := strconv.Atoi(a.vars["{amount}"])
 
 		request := &client.EarningsWithdrawalRequest{
 			AccountId: accountId,
 			Amount:    amount,
+		}
+
+		if a.vars["{account_number}"] != a.vars["{phone}"] {
+			request.TargetNumber = a.vars["{account_number}"]
 		}
 
 		// TODO: Make into goroutine if applicable
@@ -459,12 +463,16 @@ func (a *Account) fetchEarnings() {
 
 	var purchasesAccount client.EarningAccount
 	var subscriptionsAccount client.EarningAccount
+	var withdrawalAccount client.EarningAccount
 	for _, earning := range earnings {
-		if earning.Type == "PURCHASE" {
+		if earning.Type == "PURCHASES" {
 			purchasesAccount = earning
 		}
-		if earning.Type == "SUBSCRIPTION" {
+		if earning.Type == "SUBSCRIPTIONS" {
 			subscriptionsAccount = earning
+		}
+		if earning.Type == "WITHDRAWALS" {
+			withdrawalAccount = earning
 		}
 	}
 
@@ -473,6 +481,14 @@ func (a *Account) fetchEarnings() {
 
 	total := pE + sE
 
+	balance := total - withdrawalAccount.Self
+	wE := 0.0
+	if balance > 50 {
+		wE = math.Floor(balance - 50)
+	}
+
+	fmt.Println(pE, sE, total, balance, wE)
+
 	a.vars["{purchase_earnings}"] = fmt.Sprintf("%.4f", pE)
 	a.vars["{self_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Self)
 	a.vars["{invite_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Invite)
@@ -480,6 +496,8 @@ func (a *Account) fetchEarnings() {
 	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
 	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
 	a.vars["{total_earnings}"] = fmt.Sprintf("%.4f", total)
+
+	a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wE)
 
 }
 
@@ -516,7 +534,7 @@ func (a *Account) fetchSavings() {
 
 	a.vars["{current_savings}"] = fmt.Sprintf("%.2f", cS)
 	a.vars["{locked_savings}"] = fmt.Sprintf("%.2f", lS)
-	a.vars["{withdrawable_savings}"] = fmt.Sprintf("%.2f", wS)
 	a.vars["{total_savings}"] = fmt.Sprintf("%.2f", total)
+	a.vars["{withdrawable_savings}"] = fmt.Sprintf("%.0f", wS)
 
 }

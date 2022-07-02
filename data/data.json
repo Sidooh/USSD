@@ -600,14 +600,14 @@
   },
   "savings": {
     "key": "savings",
-    "title": "Your saved points breakdown\n\nTotal: {total_savings}\n\n1. CURRENT {current_savings}\n\n2. LOCKED {locked_savings}\n\n3. Withdrawable Points: {withdrawable_savings}",
+    "title": "Your saved points breakdown\n\nTotal: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Withdrawable: {withdrawable_savings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTION: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}",
+    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTION: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}\n\nWithdrawable: {withdrawable_points}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"

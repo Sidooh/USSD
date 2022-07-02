@@ -8,12 +8,13 @@ import (
 )
 
 type Account struct {
-	Id        int    `json:"id,omitempty"`
-	Phone     string `json:"phone"`
-	Active    bool   `json:"active"`
-	InviterId int    `json:"inviter_id"`
-	User      `json:"user"`
-	Balances  []Balance
+	Id           int    `json:"id,omitempty"`
+	Phone        string `json:"phone"`
+	Active       bool   `json:"active"`
+	InviterId    int    `json:"inviter_id"`
+	User         `json:"user"`
+	Balances     []Balance
+	Subscription client.Subscription
 }
 
 type User struct {
@@ -46,11 +47,18 @@ func FetchAccount(phone string) (*Account, error) {
 		return nil, err
 	}
 
+	// TODO: make into goroutine
 	if account != nil {
 		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
 		if err != nil {
 			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 		}
+
+		subscription, err := FetchSubscription(strconv.Itoa(account.Id))
+		if err != nil {
+			logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
+		}
+		account.Subscription = subscription
 	}
 
 	return account, nil
@@ -313,7 +321,7 @@ func FetchSavingBalances(id string) ([]client.SavingAccount, error) {
 }
 
 func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error {
-	err := savingsClient.WithdrawEarnings(request)
+	err := productsClient.WithdrawEarnings(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to withdraw earnings: ", err)
 		return err

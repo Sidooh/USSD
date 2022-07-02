@@ -198,3 +198,16 @@ func (p *ProductsApiClient) FetchAccountEarnings(id string, response interface{}
 
 	return nil
 }
+
+func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	var response = Response{}
+	err = p.newRequest(http.MethodPost, "/earnings/withdraw", dataBytes).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

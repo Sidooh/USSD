@@ -36,7 +36,7 @@ type SecurityQuestionRequest struct {
 
 type EarningsWithdrawalRequest struct {
 	Amount       int    `json:"amount"`
-	Method       string `json:"method"`
+	Method       string `json:"method,omitempty"`
 	AccountId    int    `json:"account_id"`
 	TargetNumber string `json:"target_number,omitempty"`
 }

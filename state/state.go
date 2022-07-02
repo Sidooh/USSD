@@ -41,20 +41,6 @@ func (s *State) ToSession() *datastore.Session {
 	}
 }
 
-func (s *State) FromSession(session *datastore.Session) {
-	s.ProductKey = session.Product
-
-	err := json.Unmarshal([]byte(session.ScreenPath), &s.ScreenPath)
-	if err != nil {
-		panic(err)
-	}
-
-	err = json.Unmarshal(session.Vars, &s.Vars)
-	if err != nil {
-		panic(err)
-	}
-}
-
 var screens = map[string]*data.Screen{}
 
 func (s *State) Init(sc map[string]*data.Screen) {
@@ -94,6 +80,10 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 			s.Vars["{full_name}"] = account.User.Name
+		}
+
+		if account.Subscription.Id != 0 {
+			s.Vars["{subscription_status}"] = account.Subscription.Status
 		}
 	}
 }
@@ -314,4 +304,18 @@ func (s *State) GetStringResponse() string {
 
 func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
 	return screens[screenKey]
+}
+
+func (s *State) FromSession(session *datastore.Session) {
+	s.ProductKey = session.Product
+
+	err := json.Unmarshal([]byte(session.ScreenPath), &s.ScreenPath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(session.Vars, &s.Vars)
+	if err != nil {
+		panic(err)
+	}
 }
