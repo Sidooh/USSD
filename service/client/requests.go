@@ -3,7 +3,7 @@ package client
 type PurchaseRequest struct {
 	Initiator    string `json:"initiator"`
 	Amount       int    `json:"amount,omitempty"`
-	Method       string `json:"method"`
+	Method       string `json:"method,omitempty"`
 	AccountId    int    `json:"account_id"`
 	TargetNumber string `json:"target_number,omitempty"`
 	DebitAccount string `json:"debit_account,omitempty"`
@@ -35,10 +35,11 @@ type SecurityQuestionRequest struct {
 }
 
 type EarningsWithdrawalRequest struct {
-	Amount       int    `json:"amount"`
-	Method       string `json:"method,omitempty"`
-	AccountId    int    `json:"account_id"`
-	TargetNumber string `json:"target_number,omitempty"`
+	PurchaseRequest
+	//Amount       int    `json:"amount"`
+	//Method       string `json:"method,omitempty"`
+	//AccountId    int    `json:"account_id"`
+	//TargetNumber string `json:"target_number,omitempty"`
 }
 
 type NotificationRequest struct {

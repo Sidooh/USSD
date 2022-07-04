@@ -190,8 +190,11 @@ func (a *Account) finalize() {
 		amount, _ := strconv.Atoi(a.vars["{amount}"])
 
 		request := &client.EarningsWithdrawalRequest{
-			AccountId: accountId,
-			Amount:    amount,
+			PurchaseRequest: client.PurchaseRequest{
+				Initiator: utils.CONSUMER,
+				AccountId: accountId,
+				Amount:    amount,
+			},
 		}
 
 		if a.vars["{account_number}"] != a.vars["{phone}"] {

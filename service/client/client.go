@@ -47,7 +47,7 @@ func (api *ApiClient) getUrl(endpoint string) string {
 
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
-	logger.ServiceLog.Println(api.request)
+	logger.ServiceLog.Println("API_REQ: ", api.request)
 	start := time.Now()
 	response, err := api.client.Do(api.request)
 	if err != nil {

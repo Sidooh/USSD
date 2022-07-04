@@ -3,6 +3,8 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"fmt"
+	"strconv"
 )
 
 var productsClient = client.InitProductClient()
@@ -77,6 +79,8 @@ var subscriptions = map[string]client.Subscription{}
 func FetchSubscription(id string) (client.Subscription, error) {
 	var subscription client.Subscription
 
+	fmt.Println(subscriptions)
+
 	if cachedSub, ok := subscriptions[id]; ok {
 		subscription = cachedSub
 		return subscription, nil
@@ -87,8 +91,10 @@ func FetchSubscription(id string) (client.Subscription, error) {
 		logger.ServiceLog.Error("Failed to fetch subscription: ", err)
 		return client.Subscription{}, err
 	}
-
-	subscriptions[id] = subscription
+	// TODO: Should we only cache when ACTIVE?
+	if subscription.Id != 0 {
+		subscriptions[id] = subscription
+	}
 
 	return subscription, nil
 }
@@ -98,6 +104,8 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
+	// TODO: Test if this actually works
+	delete(subscriptions, strconv.Itoa(request.AccountId))
 }
 
 func FetchSubscriptionType() (client.SubscriptionType, error) {

@@ -49,16 +49,16 @@ func FetchAccount(phone string) (*Account, error) {
 
 	// TODO: make into goroutine
 	if account != nil {
-		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
-		if err != nil {
-			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
-		}
-
 		subscription, err := FetchSubscription(strconv.Itoa(account.Id))
 		if err != nil {
 			logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
 		}
 		account.Subscription = subscription
+
+		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
+		if err != nil {
+			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
+		}
 	}
 
 	return account, nil
