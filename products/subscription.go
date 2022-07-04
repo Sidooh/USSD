@@ -99,7 +99,7 @@ func (s *Subscription) finalize() {
 }
 
 func (s *Subscription) FetchSubscriptionType() {
-	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch default subscription")
+	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch default subscription type")
 
 	subscriptionType, err := service.FetchSubscriptionType()
 	if err != nil {

@@ -3,8 +3,6 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
-	"fmt"
-	"strconv"
 )
 
 var productsClient = client.InitProductClient()
@@ -74,17 +72,16 @@ func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
 }
 
 // TODO: Implement global caching procedure (Local memory, TTL3, network ...order?)
-var subscriptions = map[string]client.Subscription{}
+//var subscriptions = map[string]client.Subscription{}
 
 func FetchSubscription(id string) (client.Subscription, error) {
 	var subscription client.Subscription
 
-	fmt.Println(subscriptions)
-
-	if cachedSub, ok := subscriptions[id]; ok {
-		subscription = cachedSub
-		return subscription, nil
-	}
+	// TODO: Return once we have implemented global caching or can autoremove after duration
+	//if cachedSub, ok := subscriptions[id]; ok {
+	//	subscription = cachedSub
+	//	return subscription, nil
+	//}
 
 	err := productsClient.GetSubscription(id, &subscription)
 	if err != nil {
@@ -92,9 +89,9 @@ func FetchSubscription(id string) (client.Subscription, error) {
 		return client.Subscription{}, err
 	}
 	// TODO: Should we only cache when ACTIVE?
-	if subscription.Id != 0 {
-		subscriptions[id] = subscription
-	}
+	//if subscription.Id != 0 {
+	//	subscriptions[id] = subscription
+	//}
 
 	return subscription, nil
 }
@@ -105,7 +102,7 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
 	// TODO: Test if this actually works
-	delete(subscriptions, strconv.Itoa(request.AccountId))
+	//delete(subscriptions, strconv.Itoa(request.AccountId))
 }
 
 func FetchSubscriptionType() (client.SubscriptionType, error) {
