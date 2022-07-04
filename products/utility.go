@@ -32,7 +32,7 @@ func (u *Utility) processScreen(input string) {
 		u.processUtilityAccountSelection(input)
 		break
 	case utils.UTILITY_OTHER_ACCOUNT:
-		u.vars["{number}"], _ = utils.FormatPhone(input)
+		u.vars["{number}"] = input
 		break
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input
@@ -50,25 +50,18 @@ func (u *Utility) setUtilityAccountOptions(input string) {
 	switch integerInput {
 	case 1:
 		provider = utils.KPLC_PREPAID
-		break
 	case 2:
 		provider = utils.KPLC_POSTPAID
-		break
 	case 3:
 		provider = utils.NAIROBI_WTR
-		break
 	case 4:
 		provider = utils.DSTV
-		break
 	case 5:
 		provider = utils.ZUKU
-		break
 	case 6:
 		provider = utils.GOTV
-		break
 	case 7:
 		provider = utils.STARTIMES
-		break
 	}
 
 	u.vars["{selected_utility}"] = provider

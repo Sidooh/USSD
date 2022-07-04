@@ -33,7 +33,6 @@ func (a *Account) processScreen(input string) {
 			a.vars["{full_name}"] = ""
 		}
 
-		break
 	case utils.ACCOUNT:
 		a.setAccountOptions()
 
