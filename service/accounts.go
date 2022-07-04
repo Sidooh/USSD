@@ -48,20 +48,22 @@ func FetchAccount(phone string) (*Account, error) {
 	}
 
 	// TODO: make into goroutine
-	go func() {
-		if account != nil {
-			subscription, err := FetchSubscription(strconv.Itoa(account.Id))
-			if err != nil {
-				logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
-			}
-			account.Subscription = subscription
-
-			err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
-			if err != nil {
-				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
-			}
+	// TODO: Making into goroutine means we have to set the details into session Vars somehow... so how???
+	// 	Should we pass in vars map to func?
+	//go func() {
+	if account != nil {
+		subscription, err := FetchSubscription(strconv.Itoa(account.Id))
+		if err != nil {
+			logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
 		}
-	}()
+		account.Subscription = subscription
+
+		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
+		if err != nil {
+			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
+		}
+	}
+	//}()
 
 	return account, nil
 }
