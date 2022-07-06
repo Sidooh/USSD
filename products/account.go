@@ -17,6 +17,7 @@ type Account struct {
 }
 
 func (a *Account) Process(input string) {
+	// TODO: Add check for sensitive inputs and ignore. Maybe add sensitive/sanitize/hide key to screen?
 	logger.UssdLog.Println(" -- ACCOUNT: process", a.screen.Key, input)
 	a.productRep = "account"
 
