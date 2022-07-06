@@ -507,7 +507,7 @@ func (a *Account) fetchSavings() {
 
 	earnings, err := service.FetchSavingBalances(accountId)
 	if err != nil {
-		a.screen.Next.Title = "Sorry, we failed to fetch your earnings. Please try again later."
+		a.screen.Next.Title = "Sorry, we failed to fetch your saved points. Please try again later."
 		logger.UssdLog.Error(err)
 		//return
 	}
