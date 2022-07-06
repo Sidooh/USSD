@@ -73,6 +73,7 @@ func processAndRespond(code, phone, session, input string) string {
 	//TODO: Update ussd session in table here
 
 	text := strings.Split(input, "*")
+	phone, _ = utils.FormatPhone(phone)
 	response := Process(code, phone, session, text[len(text)-1])
 
 	if response.Status == utils.END {
