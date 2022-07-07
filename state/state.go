@@ -194,8 +194,7 @@ func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 	logger.UssdLog.Println("Processing open input: ", input)
 	screens = m
 
-	next := getScreen(screens, s.ScreenPath.Screen.NextKey)
-	s.ScreenPath.Screen.Next = &next
+	s.ScreenPath.Screen.Next = getScreen(screens, s.ScreenPath.Screen.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
@@ -224,8 +223,7 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 		s.setProduct(products.PAY*10 + option.Value)
 	}
 
-	next := getScreen(screens, option.NextKey)
-	s.ScreenPath.Screen.Next = &next
+	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
@@ -257,7 +255,7 @@ func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) int {
 
 func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
-	s.ScreenPath.Screen = getScreen(screens, screenKey)
+	s.ScreenPath.Screen = *getScreen(screens, screenKey)
 }
 
 func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
@@ -272,7 +270,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = getScreen(screens, utils.MAIN_MENU)
+		s.ScreenPath.Screen = *getScreen(screens, utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
 		s.setProduct(0)
 	}
@@ -304,9 +302,9 @@ func (s *State) GetStringResponse() string {
 	return response
 }
 
-func getScreen(screens map[string]*data.Screen, screenKey string) data.Screen {
+func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated and we don't want to change the original
-	return *screens[screenKey]
+	return screens[screenKey]
 }
 
 func (s *State) FromSession(session *datastore.Session) {
