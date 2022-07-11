@@ -21,7 +21,7 @@ type ApiClient struct {
 }
 
 type AuthResponse struct {
-	Token string `json:"token"`
+	Token string `json:"access_token"`
 }
 
 type Response struct {
@@ -91,7 +91,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	//TODO: Deal with 401
 	if response.StatusCode == 401 {
-		api.EnsureAuthenticated()
+		logger.ServiceLog.Panic("Failed to authenticate.")
 	}
 
 	err = json.Unmarshal(body, &data)
