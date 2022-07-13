@@ -627,7 +627,7 @@
   },
   "account_withdraw": {
     "key": "account_withdraw",
-    "title": "Enter points you wish to withdraw (MIN. KES50):\n\nWithdrawable Points: {withdrawable_points}",
+    "title": "Enter points you wish to withdraw (MIN. KES50):\n\nWithdrawable Points: {withdrawable_savings}",
     "type": "OPEN",
     "next": "withdraw_destination",
     "validations": "WITHDRAW_LIMITS"
