@@ -31,8 +31,8 @@ type EarningAccount struct {
 type SavingAccount struct {
 	Id       uint `json:"id,string"`
 	Type     string
-	Balance  float64 `json:"balance,string"`
-	Interest float64 `json:"interest,string"`
+	Balance  float64 `json:"balance"`
+	Interest float64 `json:"interest"`
 }
 
 // TODO: Understand and use custom unmarshalers
