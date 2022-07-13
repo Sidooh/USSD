@@ -182,9 +182,8 @@ func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
 
 func (p *ProductsApiClient) FetchAccountEarnings(id string, response interface{}) error {
 	apiResponse := new(Response)
-	endpoint := "/accounts/" + id + "/earnings"
 
-	err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&apiResponse)
 	if err != nil {
 		return err
 	}
@@ -204,7 +203,7 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/earnings/withdraw", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/withdraw", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
