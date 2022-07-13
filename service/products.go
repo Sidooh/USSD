@@ -3,6 +3,7 @@ package service
 import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"strings"
 )
 
 var productsClient = client.InitProductClient()
@@ -92,6 +93,12 @@ func FetchSubscription(id string) (client.Subscription, error) {
 	//if subscription.Id != 0 {
 	//	subscriptions[id] = subscription
 	//}
+
+	parts := strings.Split(subscription.EndDate, "T")
+	if len(parts) == 2 {
+		timeParts := strings.Split(parts[1], ".")
+		subscription.EndDate = parts[0] + " " + timeParts[0]
+	}
 
 	return subscription, nil
 }
