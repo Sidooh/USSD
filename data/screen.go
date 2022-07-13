@@ -232,7 +232,7 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.SECURITY_QUESTION:
 		return isValidSecurityQuestionAnswer(input)
 	case utils.WITHDRAW_LIMITS:
-		return isValidWithdrawalAmount(input, vars["{withdrawable_points}"])
+		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
 
 	case utils.INVITE_CODE_VALIDATION:
 		return screen.isSidoohAccountIdOrPhone(input, vars)
