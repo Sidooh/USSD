@@ -16,7 +16,6 @@ FROM gcr.io/distroless/base-debian11
 
 COPY --from=build /server /server
 COPY data/data.json data/
-#COPY logger ./
 
 EXPOSE 8004
 

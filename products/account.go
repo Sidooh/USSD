@@ -73,7 +73,7 @@ func (a *Account) processScreen(input string) {
 		a.getAccountBalances(input)
 
 	case utils.ACCOUNT_WITHDRAW_PIN:
-		a.fetchEarnings()
+		a.fetchSavings()
 
 	case utils.ACCOUNT_WITHDRAW:
 		a.vars["{points}"] = input
