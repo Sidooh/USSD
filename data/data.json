@@ -607,7 +607,7 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nTotal: {total_earnings}\n\nWithdrawable: {withdrawable_points}",
+    "title": "Your earnings breakdown\n\n1. PURCHASES {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}\n\nBalance: {earnings_balance}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"

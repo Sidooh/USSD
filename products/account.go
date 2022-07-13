@@ -485,10 +485,6 @@ func (a *Account) fetchEarnings() {
 	total := pE + sE
 
 	balance := total - withdrawalAccount.Self
-	wE := 0.0
-	if balance > 50 {
-		wE = math.Floor(balance - 50)
-	}
 
 	a.vars["{purchase_earnings}"] = fmt.Sprintf("%.4f", pE)
 	a.vars["{self_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Self)
@@ -496,9 +492,9 @@ func (a *Account) fetchEarnings() {
 	a.vars["{subscriptions_earnings}"] = fmt.Sprintf("%.4f", sE)
 	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
 	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
-	a.vars["{total_earnings}"] = fmt.Sprintf("%.4f", total)
+	a.vars["{withdrawn_earnings}"] = fmt.Sprintf("%.0f", withdrawalAccount.Self)
 
-	a.vars["{withdrawable_points}"] = fmt.Sprintf("%.0f", wE)
+	a.vars["{earnings_balance}"] = fmt.Sprintf("%.0f", balance)
 
 }
 
