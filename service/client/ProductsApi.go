@@ -123,7 +123,7 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/products/voucher/top-up", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/vouchers/top-up", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -154,7 +154,7 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
