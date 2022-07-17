@@ -126,7 +126,9 @@ func (a *Account) finalize() {
 		// TODO: Should we check returned value? Or should we make it a void function?
 		_, err := service.UpdateProfile(accountId, request)
 		if err != nil {
-			a.screen.Next.Title = "Sorry. We failed to update your details, please try again later."
+			// Handle this on SMS
+
+			//a.screen.Next.Title += "Sorry. We failed to update your details, please try again later."
 		}
 
 	}

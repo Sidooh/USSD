@@ -11,7 +11,7 @@ type PurchaseRequest struct {
 
 type UtilityPurchaseRequest struct {
 	PurchaseRequest
-	Provider      string
+	Provider      string `json:"provider"`
 	AccountNumber string `json:"account_number"`
 }
 
