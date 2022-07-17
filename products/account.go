@@ -228,21 +228,6 @@ func (a *Account) fetchUserSubscription() {
 	}
 }
 
-func (a *Account) checkHasPin() bool {
-	accountId := a.vars["{account_id}"]
-
-	// Check if user already has_pin in state else fetch from service
-	var hasPin bool
-	err := json.Unmarshal([]byte(a.vars["{has_pin}"]), &hasPin)
-	if err != nil {
-		hasPin = service.CheckHasPin(accountId)
-		stringVars, _ := json.Marshal(hasPin)
-		a.vars["{has_pin}"] = string(stringVars)
-	}
-
-	return hasPin
-}
-
 func (a *Account) checkHasSecurityQuestions() bool {
 	accountId := a.vars["{account_id}"]
 
@@ -396,6 +381,10 @@ func (a *Account) setAccountOptions() {
 	hasPin := a.checkHasPin()
 
 	if !hasPin {
+		// Account Profile option
+		if option, ok := a.screen.Options[1]; ok {
+			option.NextKey = utils.ACCOUNT_PROFILE
+		}
 		// Account Balances option
 		if option, ok := a.screen.Options[2]; ok {
 			option.NextKey = utils.PIN_NOT_SET
@@ -494,9 +483,8 @@ func (a *Account) fetchEarnings() {
 	a.vars["{subscriptions_earnings}"] = fmt.Sprintf("%.4f", sE)
 	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
 	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
-	a.vars["{withdrawn_earnings}"] = fmt.Sprintf("%.0f", withdrawalAccount.Self)
-
-	a.vars["{earnings_balance}"] = fmt.Sprintf("%.0f", balance)
+	a.vars["{withdrawn_earnings}"] = fmt.Sprintf("%.4f", withdrawalAccount.Self)
+	a.vars["{earnings_balance}"] = fmt.Sprintf("%.4f", balance)
 
 }
 

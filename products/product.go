@@ -3,7 +3,9 @@ package products
 import (
 	"USSD.sidooh/data"
 	"USSD.sidooh/logger"
+	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -48,8 +50,14 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
+	hasPin := p.checkHasPin()
+	if !hasPin {
+		p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+	}
+
 	// Delete voucher option if balance is not enough or buying voucher for self
 	if int(voucherBalance) < amount {
+		//TODO: Move user to topup flow
 		//delete(p.screen.Next.Options, 2)
 	} else if p.productRep == "Voucher" && p.vars["{number}"] == p.vars["{phone}"] {
 		delete(p.screen.Next.Options, 2)
@@ -68,7 +76,22 @@ func (p *Product) setPaymentMethodText(input string) {
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be debited automatically", p.vars["{payment_method_text}"])
 
-		delete(p.screen.Next.Next.Options, 3)
+		//delete(p.screen.Next.Next.Options, 3)
 		break
 	}
+}
+
+func (p *Product) checkHasPin() bool {
+	accountId := p.vars["{account_id}"]
+
+	// Check if user already has_pin in state else fetch from service
+	var hasPin bool
+	err := json.Unmarshal([]byte(p.vars["{has_pin}"]), &hasPin)
+	if err != nil {
+		hasPin = service.CheckHasPin(accountId)
+		stringVars, _ := json.Marshal(hasPin)
+		p.vars["{has_pin}"] = string(stringVars)
+	}
+
+	return hasPin
 }

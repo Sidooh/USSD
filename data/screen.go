@@ -45,7 +45,6 @@ var nextExceptionScreens = map[string]bool{
 	utils.INVITE_END:                 true,
 	utils.NOT_TRANSACTED:             true,
 	utils.SUBSCRIPTION_ACTIVE:        true,
-	utils.PIN_NOT_SET:                true,
 	utils.PROFILE_UPDATE_END:         true,
 	utils.HAS_SECURITY_QUESTIONS:     true,
 	utils.SECURITY_QUESTIONS_NOT_SET: true,

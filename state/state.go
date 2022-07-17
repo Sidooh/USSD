@@ -70,8 +70,10 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.ScreenPath.Screen = *screens[utils.INVITE_CODE]
 		}
 	} else {
-		s.Vars["{account_id}"] = strconv.Itoa(account.Id)
-		s.Vars["{phone}"] = account.Phone
+		if account.Id != 0 {
+			s.Vars["{account_id}"] = strconv.Itoa(account.Id)
+			s.Vars["{phone}"] = account.Phone
+		}
 
 		if len(account.Balances) != 0 {
 			s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
@@ -221,6 +223,10 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 
 	if s.ScreenPath.Key == utils.PAY {
 		s.setProduct(products.PAY*10 + option.Value)
+	}
+
+	if s.ScreenPath.Key == utils.PIN_NOT_SET && option.Value == 1 {
+		s.setProduct(products.ACCOUNT)
 	}
 
 	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)

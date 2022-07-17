@@ -116,6 +116,7 @@ func TestLoadData(t *testing.T) {
 		},
 	})
 
+	loadScreenKeys = []string{utils.MAIN_MENU}
 	data, err = LoadData()
 	if err != nil {
 		t.Errorf("LoadData() = %v; want data", err)

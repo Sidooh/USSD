@@ -7,6 +7,16 @@ import (
 	"errors"
 )
 
+var loadScreenKeys = []string{
+	// TODO: Reset to MAIN_MENU when done with invite_code beta
+	utils.INVITE_CODE,
+
+	// The below screens are hanging screens, i.e. have no parent
+	utils.SUBSCRIPTION_RENEW,
+	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
+	utils.PIN_NOT_SET,
+}
+
 func LoadData() (map[string]*Screen, error) {
 	file, err := datastore.ReadFile(utils.DATA_FILE)
 	if err != nil {
@@ -23,11 +33,15 @@ func LoadData() (map[string]*Screen, error) {
 		return nil, errors.New("data file is empty")
 	}
 
-	// TODO: Reset to MAIN_MENU when done with invite_code beta
-	setNextScreens(screens, screens[utils.INVITE_CODE])
-	// The below screens are hanging screens, i.e. have no parent
-	setNextScreens(screens, screens[utils.SUBSCRIPTION_RENEW])
-	setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_ANSWER])
+	for _, screenKey := range loadScreenKeys {
+		setNextScreens(screens, screens[screenKey])
+	}
+	//// TODO: Reset to MAIN_MENU when done with invite_code beta
+	//setNextScreens(screens, screens[utils.INVITE_CODE])
+	//// The below screens are hanging screens, i.e. have no parent
+	//setNextScreens(screens, screens[utils.SUBSCRIPTION_RENEW])
+	//setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_ANSWER])
+	//setNextScreens(screens, screens[utils.PIN_NOT_SET])
 
 	err = validateScreens(screens)
 	if err != nil {

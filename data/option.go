@@ -27,7 +27,7 @@ func (option *Option) Validate() error {
 	}
 
 	if option.Next == nil {
-		return fmt.Errorf("next is not set for option " + option.Label + " with value " + strconv.Itoa(option.Value))
+		return fmt.Errorf("next is not set for option '" + option.Label + "' with value " + strconv.Itoa(option.Value))
 	} else if option.Acyclic {
 		return nil
 	} else {

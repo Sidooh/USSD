@@ -414,7 +414,7 @@
       "1": {
         "label": "Profile",
         "value": "1",
-        "next": "account_profile"
+        "next": "account_profile_pin"
       },
       "2": {
         "label": "Balances",
@@ -427,6 +427,13 @@
         "next": "account_withdraw_pin"
       }
     }
+  },
+  "account_profile_pin": {
+    "key": "account_profile_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_profile",
+    "validations": "PIN"
   },
   "account_profile": {
     "key": "account_profile",
@@ -805,7 +812,14 @@
   "pin_not_set": {
     "key": "pin_not_set",
     "title": "Please set a PIN first in order to proceed.",
-    "type": "OPEN"
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to set pin",
+        "value": "1",
+        "next": "profile_name"
+      }
+    }
   },
   "security_questions_not_set": {
     "key": "security_questions_not_set",
