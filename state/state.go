@@ -60,7 +60,6 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	//3. Account and User -> phone, name, balances
 	if err != nil {
 		logger.UssdLog.Error("FetchAccount: ", err)
-		s.Vars["{voucher_balance}"] = "0"
 		s.Vars["{phone}"] = s.Phone
 
 		_, err := service.FetchInvite(s.Phone)
@@ -309,7 +308,7 @@ func (s *State) GetStringResponse() string {
 }
 
 func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
-	// here we need a value and not reference since it will be translated and we don't want to change the original
+	// here we need a value and not reference since it will be translated, and we don't want to change the original
 	return screens[screenKey]
 }
 

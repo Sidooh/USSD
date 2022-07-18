@@ -126,9 +126,21 @@ func (a *Account) finalize() {
 		// TODO: Should we check returned value? Or should we make it a void function?
 		_, err := service.UpdateProfile(accountId, request)
 		if err != nil {
-			// Handle this on SMS
+			// TODO: Handle this on SMS
+			name, _ := a.vars["{name}"]
+			email, _ := a.vars["{customer_support_email}"]
+			phone, _ := a.vars["{phone}"]
 
-			//a.screen.Next.Title += "Sorry. We failed to update your details, please try again later."
+			message := fmt.Sprintf("Dear %s"+
+				"we suscessfully updated your pin but were unable to update your profile. "+
+				"Please try again later or contact support at %s", name, email)
+			request := client.NotificationRequest{
+				Channel:     "sms",
+				Destination: []string{phone},
+				EventType:   "ERROR_ALERT",
+				Content:     message,
+			}
+			service.Notify(&request)
 		}
 
 	}
