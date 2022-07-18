@@ -410,6 +410,7 @@ func getIntVal(str string) int {
 	return 0
 }
 
+//TODO: Check whether using non-pointer screen will solve airtime/utility accounts replication
 func (screen *Screen) SubstituteVars(vars map[string]string) {
 	screen.Title = Strtr(screen.Title, vars)
 

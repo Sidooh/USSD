@@ -86,6 +86,10 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		if account.Subscription.Id != 0 {
 			s.Vars["{subscription_status}"] = account.Subscription.Status
 		}
+
+		if account.HasPin {
+			s.Vars["{has_pin}"] = "true"
+		}
 	}
 }
 
@@ -216,6 +220,10 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 		if !ok {
 			for _, k := range keys {
 				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
+			}
+		} else {
+			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
+				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
 			}
 		}
 	}

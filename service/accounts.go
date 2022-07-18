@@ -15,6 +15,7 @@ type Account struct {
 	User         `json:"user"`
 	Balances     []Balance
 	Subscription client.Subscription
+	HasPin       bool
 }
 
 type User struct {
@@ -62,6 +63,8 @@ func FetchAccount(phone string) (*Account, error) {
 		if err != nil {
 			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 		}
+
+		account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
 	}
 	//}()
 

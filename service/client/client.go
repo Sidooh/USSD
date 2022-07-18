@@ -56,13 +56,13 @@ func (api *ApiClient) send(data interface{}) error {
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.Println("API_RESP - raw: ", response, time.Since(start))
+	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
-	logger.ServiceLog.Println("API_RESP - body: ", string(body))
+	logger.ServiceLog.Println("API_RES - body: ", string(body))
 
 	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
@@ -121,7 +121,8 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	if token := cache.Instance.Get("token"); token != nil {
+	if token := cache.Instance.Get("token"); token != nil /*&& !token.IsExpired()*/ {
+		fmt.Println(token.Value(), token.IsExpired())
 		// TODO: Check if token has expired since we should be able to decode it
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {
@@ -154,7 +155,9 @@ func (api *ApiClient) Authenticate(data []byte) error {
 		return err
 	}
 
-	cache.Instance.Set("token", response.Token, 12*time.Minute)
+	if cache.Instance != nil {
+		cache.Instance.Set("token", response.Token, 14*time.Minute)
+	}
 
 	return nil
 }
