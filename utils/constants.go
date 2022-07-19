@@ -24,12 +24,13 @@ const (
 	INVITE_CODE = "invite_code"
 
 	// static
-	ABOUT                      = "about"
-	COMING_SOON                = "coming_soon"
-	BETA                       = "beta"
-	CANCEL                     = "cancel"
-	PIN_NOT_SET                = "pin_not_set"
-	SECURITY_QUESTIONS_NOT_SET = "security_questions_not_set"
+	ABOUT                        = "about"
+	COMING_SOON                  = "coming_soon"
+	BETA                         = "beta"
+	CANCEL                       = "cancel"
+	PIN_NOT_SET                  = "pin_not_set"
+	SECURITY_QUESTIONS_NOT_SET   = "security_questions_not_set"
+	VOUCHER_BALANCE_INSUFFICIENT = "voucher_balance_insufficient"
 
 	NOT_TRANSACTED = "not_transacted"
 

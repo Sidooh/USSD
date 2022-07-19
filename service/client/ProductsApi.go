@@ -34,6 +34,11 @@ type Subscription struct {
 	EndDate   string `json:"end_date"`
 }
 
+type EarningRate struct {
+	Type  string
+	Value float64
+}
+
 //const timeFormat = `2006-01-02 15:04:05`
 
 //type Time struct {
@@ -204,6 +209,24 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 
 	var response = Response{}
 	err = p.newRequest(http.MethodPost, "/products/withdraw", dataBytes).send(&response)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
+	apiResponse := new(Response)
+
+	err := p.newRequest(http.MethodGet, "/products/earnings/rates", nil).send(apiResponse)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Can we get rid of this round trip?
+	dbByte, err := json.Marshal(apiResponse.Data)
+	err = json.Unmarshal(dbByte, response)
 	if err != nil {
 		return err
 	}

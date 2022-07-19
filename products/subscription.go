@@ -42,6 +42,7 @@ func (s *Subscription) processScreen(input string) {
 
 	case utils.SUBSCRIPTION_REGISTER:
 		if name, ok := s.vars["{full_name}"]; ok && len(name) > 0 {
+			// TODO: Fix pin not set checking in setPaymentMethods
 			s.screen.Options[1].NextKey = utils.PAYMENT_METHOD
 		}
 

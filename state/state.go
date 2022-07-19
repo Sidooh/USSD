@@ -204,7 +204,7 @@ func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
 
-	s.MoveNext(s.ScreenPath.Screen.NextKey)
+	s.MoveNext("")
 }
 
 func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {
@@ -236,12 +236,20 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 		s.setProduct(products.ACCOUNT)
 	}
 
+	if s.ScreenPath.Key == utils.VOUCHER_BALANCE_INSUFFICIENT && option.Value == 1 {
+		s.setProduct(products.PAY_VOUCHER)
+	}
+
 	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
 
-	s.MoveNext(option.NextKey)
+	if option.NextKey != s.ScreenPath.Next.Key {
+		s.MoveNext(option.NextKey)
+	} else {
+		s.MoveNext("")
+	}
 }
 
 func (s *State) SetPrevious() {
@@ -268,7 +276,12 @@ func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) int {
 
 func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
-	s.ScreenPath.Screen = *getScreen(screens, screenKey)
+
+	if screenKey != "" {
+		s.ScreenPath.Screen = *getScreen(screens, screenKey)
+	} else {
+		s.ScreenPath.Screen = *s.ScreenPath.Next
+	}
 }
 
 func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
@@ -317,7 +330,21 @@ func (s *State) GetStringResponse() string {
 
 func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated, and we don't want to change the original
-	return screens[screenKey]
+	screen := *screens[screenKey]
+
+	options := make(map[int]*data.Option)
+	for i, v := range screen.Options {
+		options[i] = &data.Option{
+			Label:   v.Label,
+			Value:   v.Value,
+			NextKey: v.NextKey,
+			Next:    v.Next,
+			Acyclic: v.Acyclic,
+		}
+	}
+	screen.Options = options
+
+	return &screen
 }
 
 func (s *State) FromSession(session *datastore.Session) {

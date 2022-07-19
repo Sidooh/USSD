@@ -130,3 +130,26 @@ func Notify(request *client.NotificationRequest) {
 		logger.ServiceLog.Error("Failed to send notification: ", err)
 	}
 }
+
+var earningRates = map[string]client.EarningRate{}
+
+func GetEarningRate(provider string) (*client.EarningRate, error) {
+	var rate client.EarningRate
+
+	if cachedRate, ok := earningRates[provider]; ok {
+		rate = cachedRate
+		return &rate, nil
+	}
+
+	var rates map[string]client.EarningRate
+	err := productsClient.FetchEarningRates(&rates)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch earning rates: ", err)
+		return nil, err
+	}
+
+	earningRates = rates
+	rate = earningRates[provider]
+
+	return &rate, nil
+}

@@ -15,6 +15,7 @@ var loadScreenKeys = []string{
 	utils.SUBSCRIPTION_RENEW,
 	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
 	utils.PIN_NOT_SET,
+	utils.VOUCHER_BALANCE_INSUFFICIENT,
 }
 
 func LoadData() (map[string]*Screen, error) {

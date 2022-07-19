@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	_ "modernc.org/sqlite"
 	"os"
 	"time"
 )
@@ -42,7 +43,14 @@ type SessionLog struct {
 func Init() {
 	fmt.Println("Initializing USSD subsystem database")
 
-	conn, err := sql.Open("mysql", os.Getenv("DB_DSN"))
+	driverName := "mysql"
+
+	env := os.Getenv("APP_ENV")
+	if env == "TEST" {
+		driverName = "sqlite"
+	}
+
+	conn, err := sql.Open(driverName, os.Getenv("DB_DSN"))
 	if err != nil {
 		fmt.Println(err)
 		panic("failed to connect database")

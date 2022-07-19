@@ -366,7 +366,7 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "Dear {name}, you are already subscribed to {subscription_type} valid until {subscription_end_date}.",
+    "title": "Dear{name}, you are already subscribed to {subscription_type} valid until {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
@@ -818,6 +818,18 @@
         "label": "Proceed to set pin",
         "value": "1",
         "next": "profile_name"
+      }
+    }
+  },
+  "voucher_balance_insufficient": {
+    "key": "voucher_balance_insufficient",
+    "title": "Voucher balance is insufficient.\nAvailable: KES{voucher_balance}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to top up",
+        "value": "1",
+        "next": "voucher_amount"
       }
     }
   },

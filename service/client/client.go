@@ -121,8 +121,7 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	if token := cache.Instance.Get("token"); token != nil /*&& !token.IsExpired()*/ {
-		fmt.Println(token.Value(), token.IsExpired())
+	if token := cache.Instance.Get("token"); token != nil && !token.IsExpired() {
 		// TODO: Check if token has expired since we should be able to decode it
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {

@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -36,6 +37,15 @@ func (u *Utility) processScreen(input string) {
 		break
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input
+		u.setPaymentMethods(input)
+
+		amount, _ := strconv.Atoi(input)
+		subscription, _ := u.vars["{subscription_status}"]
+		u.vars["{product}"] = fmt.Sprintf(
+			"%s (which will earn you %.2f points)",
+			u.vars["{product}"],
+			utils.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
+		)
 		break
 	}
 }

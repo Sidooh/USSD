@@ -14,16 +14,9 @@ func Init() {
 	fmt.Println("Initializing USSD subsystem cache")
 
 	Instance = ttlcache.New[string, string](
-		ttlcache.WithTTL[string, string](14 * time.Minute),
+		ttlcache.WithTTL[string, string](14*time.Minute),
+		ttlcache.WithDisableTouchOnHit[string, string](),
 	)
 
 	go Instance.Start() // starts automatic expired item deletion
-
-	//go func() {
-	//	for {
-	//		time.Sleep(1 * time.Minute)
-	//		fmt.Println("==== RUNNING cache delete")
-	//		Instance.Delete("token")
-	//	}
-	//}()
 }

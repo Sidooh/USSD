@@ -50,17 +50,28 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
-	hasPin := p.checkHasPin()
-	if !hasPin {
-		p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+	// Delete voucher option if buying voucher for self
+	if p.productRep == "voucher" && p.vars["{number}"] == p.vars["{phone}"] {
+		delete(p.screen.Next.Options, 2)
+		return
 	}
 
-	// Delete voucher option if balance is not enough or buying voucher for self
+	hasPin := p.checkHasPin()
+	if !hasPin {
+		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
+			p.screen.Options[2].NextKey = utils.PIN_NOT_SET
+			return
+		}
+
+		p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+		return
+	}
+
+	// Move user to top up flow if balance is not enough
 	if int(voucherBalance) < amount {
-		//TODO: Move user to topup flow
-		//delete(p.screen.Next.Options, 2)
-	} else if p.productRep == "Voucher" && p.vars["{number}"] == p.vars["{phone}"] {
-		delete(p.screen.Next.Options, 2)
+		//TODO: Move user to top up flow
+		p.screen.Next.Options[2].NextKey = utils.VOUCHER_BALANCE_INSUFFICIENT
+		return
 	}
 }
 

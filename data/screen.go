@@ -410,22 +410,12 @@ func getIntVal(str string) int {
 	return 0
 }
 
-//TODO: Check whether using non-pointer screen will solve airtime/utility accounts replication
 func (screen *Screen) SubstituteVars(vars map[string]string) {
 	screen.Title = Strtr(screen.Title, vars)
 
-	// Make a copy of options since we use a pointer and we don't want to modify original
-	options := make(map[int]*Option)
-	for i, v := range screen.Options {
-		options[i] = &Option{
-			Label:   Strtr(v.Label, vars),
-			Value:   v.Value,
-			NextKey: v.NextKey,
-			Next:    v.Next,
-			Acyclic: v.Acyclic,
-		}
+	for _, v := range screen.Options {
+		v.Label = Strtr(v.Label, vars)
 	}
-	screen.Options = options
 }
 
 // Strtr SOURCE: https://github.com/syyongx/php2go/blob/master/php.go
