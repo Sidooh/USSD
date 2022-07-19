@@ -42,6 +42,12 @@ func (api *ApiClient) getUrl(endpoint string) string {
 	if strings.HasPrefix(endpoint, "http") {
 		return endpoint
 	}
+	if !strings.HasPrefix(api.baseUrl, "http") {
+		api.baseUrl = "https://" + api.baseUrl
+	}
+	if !strings.HasPrefix(endpoint, "/") {
+		endpoint = "/" + endpoint
+	}
 	return api.baseUrl + endpoint
 }
 

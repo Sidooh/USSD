@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-var UssdLog = log.New()
-var ServiceLog = log.New()
+var UssdLog = &log.Logger{}
+var ServiceLog = &log.Logger{}
 
 func Init() {
 	fmt.Println("Initializing USSD subsystem loggers")

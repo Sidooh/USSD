@@ -30,7 +30,7 @@ func TestOption_Validate(t *testing.T) {
 	}
 
 	got := option.Validate()
-	expect := errors.New("next is not set for option Test with value 0")
+	expect := errors.New("next is not set for option 'Test' with value 0")
 	if got.Error() != expect.Error() {
 		t.Errorf("Option_Validate(): got %s; expect %s", got, expect)
 	}

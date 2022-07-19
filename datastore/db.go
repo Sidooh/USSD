@@ -36,8 +36,8 @@ type SessionLog struct {
 	Product    int                    `json:"product"`
 	ScreenPath map[string]interface{} `json:"screen_path"`
 	Vars       map[string]string      `json:"vars"`
-	CreatedAt  time.Time              `json:"created_at,omitempty"`
-	UpdatedAt  time.Time              `json:"updated_at,omitempty"`
+	CreatedAt  *time.Time             `json:"created_at,omitempty"`
+	UpdatedAt  *time.Time             `json:"updated_at,omitempty"`
 }
 
 func Init() {
@@ -83,12 +83,6 @@ func Init() {
 	}
 
 	db = conn
-}
-
-func Close() {
-	fmt.Println("Closing USSD subsystem database")
-
-	db.Close()
 }
 
 func UnmarshalFromDatabase(sessionId string, session *Session) error {
