@@ -25,6 +25,7 @@ func Init() {
 	//log.SetOutput(file)
 
 	// Set up USSD Log
+	UssdLog = log.New()
 	filename := "logger/ussd-" + time.Now().Format("2006-01-02") + ".log"
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
@@ -34,6 +35,7 @@ func Init() {
 	}
 
 	// Set up Service Log
+	ServiceLog = log.New()
 	filename = "logger/service-" + time.Now().Format("2006-01-02") + ".log"
 	file, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
