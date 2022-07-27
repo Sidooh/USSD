@@ -1,4 +1,4 @@
-FROM golang:1.18-bullseye as build
+FROM golang:1.18 as build
 
 WORKDIR /app
 
@@ -9,10 +9,10 @@ RUN go mod download
 COPY ./ ./
 RUN rm -rf ussd_sim.go
 
-RUN go build -o /server
+RUN CGO_ENABLED=0 go build -o /server
 
 
-FROM gcr.io/distroless/base-debian11 as deploy
+FROM gcr.io/distroless/static-debian11 as deploy
 
 COPY --from=build /server /server
 COPY data/data.json data/
