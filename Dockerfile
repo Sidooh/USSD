@@ -12,7 +12,7 @@ RUN rm -rf ussd_sim.go
 RUN CGO_ENABLED=0 go build -o /server
 
 
-FROM gcr.io/distroless/static-debian11 as deploy
+FROM gcr.io/distroless/static-debian11
 
 COPY --from=build /server /server
 COPY data/data.json data/
