@@ -3,7 +3,9 @@ package products
 import (
 	"USSD.sidooh/data"
 	"USSD.sidooh/logger"
+	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
 	"fmt"
 	"strconv"
 )
@@ -34,7 +36,7 @@ func (p *Product) Process(input string) {
 		p.setPaymentMethodText(input)
 		break
 	case utils.PAYMENT_OTHER_NUMBER_MPESA:
-		p.vars["{mpesa_number}"] = input
+		p.vars["{mpesa_number}"], _ = utils.FormatPhone(input)
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{mpesa_number}"]
 		break
 	}
@@ -48,12 +50,28 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
-	fmt.Println(p.productRep, p.vars["{number}"] == p.vars["{phone}"])
-	// Delete voucher option if balance is not enough or buying voucher for self
+	// Delete voucher option if buying voucher for self
+	if p.productRep == "voucher" && p.vars["{number}"] == p.vars["{phone}"] {
+		delete(p.screen.Next.Options, 2)
+		return
+	}
+
+	hasPin := p.checkHasPin()
+	if !hasPin {
+		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
+			p.screen.Options[2].NextKey = utils.PIN_NOT_SET
+			return
+		}
+
+		p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+		return
+	}
+
+	// Move user to top up flow if balance is not enough
 	if int(voucherBalance) < amount {
-		delete(p.screen.Next.Options, 2)
-	} else if p.productRep == "Voucher" && p.vars["{number}"] == p.vars["{phone}"] {
-		delete(p.screen.Next.Options, 2)
+		//TODO: Move user to top up flow
+		p.screen.Next.Options[2].NextKey = utils.VOUCHER_BALANCE_INSUFFICIENT
+		return
 	}
 }
 
@@ -69,7 +87,22 @@ func (p *Product) setPaymentMethodText(input string) {
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be debited automatically", p.vars["{payment_method_text}"])
 
-		delete(p.screen.Next.Next.Options, 3)
+		//delete(p.screen.Next.Next.Options, 3)
 		break
 	}
+}
+
+func (p *Product) checkHasPin() bool {
+	accountId := p.vars["{account_id}"]
+
+	// Check if user already has_pin in state else fetch from service
+	var hasPin bool
+	err := json.Unmarshal([]byte(p.vars["{has_pin}"]), &hasPin)
+	if err != nil {
+		hasPin = service.CheckHasPin(accountId)
+		stringVars, _ := json.Marshal(hasPin)
+		p.vars["{has_pin}"] = string(stringVars)
+	}
+
+	return hasPin
 }

@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -35,11 +36,20 @@ func (a *Airtime) processScreen(input string) {
 		a.processOtherNumberSelection(input)
 		break
 	case utils.AIRTIME_OTHER_NUMBER:
-		a.vars["{number}"] = input
+		a.vars["{number}"], _ = utils.FormatPhone(input)
 		break
 	case utils.AIRTIME_AMOUNT:
 		a.vars["{amount}"] = input
 		a.setPaymentMethods(input)
+
+		amount, _ := strconv.Atoi(input)
+		subscription, _ := a.vars["{subscription_status}"]
+		provider, _ := utils.GetPhoneProvider(a.vars["{number}"])
+		a.vars["{product}"] = fmt.Sprintf(
+			"%s (which will earn you %.2f points)",
+			a.productRep,
+			utils.GetPotentialEarnings(provider, amount, subscription == "ACTIVE"),
+		)
 		break
 	}
 }
@@ -64,8 +74,8 @@ func (a *Airtime) finalize() {
 			accountId = account.Id
 		}
 
-		request := client.AirtimePurchaseRequest{
-			Initiator: client.CONSUMER,
+		request := client.PurchaseRequest{
+			Initiator: utils.CONSUMER,
 			Amount:    amount,
 			Method:    method,
 			AccountId: accountId,

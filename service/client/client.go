@@ -1,6 +1,7 @@
 package client
 
 import (
+	"USSD.sidooh/cache"
 	"USSD.sidooh/logger"
 	"bytes"
 	"encoding/json"
@@ -8,9 +9,9 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
+	"strings"
 	"time"
-
-	"github.com/jellydator/ttlcache/v3"
 )
 
 type ApiClient struct {
@@ -20,7 +21,7 @@ type ApiClient struct {
 }
 
 type AuthResponse struct {
-	Token string `json:"token"`
+	Token string `json:"access_token"`
 }
 
 type Response struct {
@@ -29,24 +30,31 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-var (
-	cache = ttlcache.New[string, string](
-		ttlcache.WithTTL[string, string](14 * time.Minute),
-	)
-)
-
 func (api *ApiClient) init(baseUrl string) {
-	// TODO: Review switching t0 http2
+	logger.ServiceLog.Println("Init client: ", baseUrl)
+
+	// TODO: Review switching to http2
 	api.client = &http.Client{Timeout: 10 * time.Second}
 	api.baseUrl = baseUrl
 }
 
 func (api *ApiClient) getUrl(endpoint string) string {
+	if strings.HasPrefix(endpoint, "http") {
+		return endpoint
+	}
+	if !strings.HasPrefix(api.baseUrl, "http") {
+		api.baseUrl = "https://" + api.baseUrl
+	}
+	if !strings.HasPrefix(endpoint, "/") {
+		endpoint = "/" + endpoint
+	}
 	return api.baseUrl + endpoint
 }
 
 func (api *ApiClient) send(data interface{}) error {
-	logger.ServiceLog.Println(api.request)
+	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
+	logger.ServiceLog.Println("API_REQ: ", api.request)
+	start := time.Now()
 	response, err := api.client.Do(api.request)
 	if err != nil {
 		logger.ServiceLog.Error("Error sending request to API endpoint: ", err)
@@ -54,18 +62,28 @@ func (api *ApiClient) send(data interface{}) error {
 	}
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.Println("API_RESP - raw: ", response)
+	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
 
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
-	logger.ServiceLog.Println("API_RESP - body: ", string(body))
+	logger.ServiceLog.Println("API_RES - body: ", string(body))
 
-	if response.StatusCode != 200 && response.StatusCode != 401 && response.StatusCode != 404 && response.StatusCode != 422 {
+	//TODO: Perform error handling in a better way
+	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
+		response.StatusCode != 404 && response.StatusCode != 422 {
 		if response.StatusCode < 500 {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
+
+			if len(errorMessage["errors"]) == 0 {
+				var errorMessage map[string]string
+				err = json.Unmarshal(body, &errorMessage)
+				logger.ServiceLog.Error("API_ERR - body: ", errorMessage)
+
+				return errors.New(errorMessage["message"])
+			}
 
 			return errors.New(errorMessage["errors"][0]["message"])
 		}
@@ -75,6 +93,11 @@ func (api *ApiClient) send(data interface{}) error {
 
 	if response.StatusCode == 404 {
 		return errors.New(string(body))
+	}
+
+	//TODO: Deal with 401
+	if response.StatusCode == 401 {
+		logger.ServiceLog.Panic("Failed to authenticate.")
 	}
 
 	err = json.Unmarshal(body, &data)
@@ -100,18 +123,19 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 	api.request = request
 	api.setDefaultHeaders()
 
-	logger.ServiceLog.Println(body)
-
 	return api
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	if token := cache.Get("token"); token != nil {
+	if token := cache.Instance.Get("token"); token != nil && !token.IsExpired() {
+		// TODO: Check if token has expired since we should be able to decode it
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	} else {
 		api.EnsureAuthenticated()
 
-		token = cache.Get("token")
+		//TODO: What will happen to client if cache fails to store token? E.g. when account srv is not reachable?
+		// TODO: Can we even just use a global Var?
+		token = cache.Instance.Get("token")
 		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
 	}
 
@@ -124,25 +148,21 @@ func (api *ApiClient) EnsureAuthenticated() {
 
 	err = api.Authenticate(jsonData)
 	if err != nil {
-		logger.ServiceLog.Fatalf("error authenticating: %v", err)
+		logger.ServiceLog.Errorf("error authenticating: %v", err)
 	}
 }
 
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, "/users/signin", bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, os.Getenv("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}
 
-	cache.Set("token", response.Token, 14*time.Minute)
-	go func() {
-		for {
-			time.Sleep(14 * time.Minute)
-			cache.Delete("token")
-		}
-	}()
+	if cache.Instance != nil {
+		cache.Instance.Set("token", response.Token, 14*time.Minute)
+	}
 
 	return nil
 }

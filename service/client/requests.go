@@ -1,23 +1,52 @@
 package client
 
-type AirtimePurchaseRequest struct {
+type PurchaseRequest struct {
 	Initiator    string `json:"initiator"`
-	Amount       int    `json:"amount"`
-	Method       string `json:"method"`
+	Amount       int    `json:"amount,omitempty"`
+	Method       string `json:"method,omitempty"`
 	AccountId    int    `json:"account_id"`
 	TargetNumber string `json:"target_number,omitempty"`
 	DebitAccount string `json:"debit_account,omitempty"`
 }
 
 type UtilityPurchaseRequest struct {
-	AirtimePurchaseRequest
-	Provider      string
+	PurchaseRequest
+	Provider      string `json:"provider"`
 	AccountNumber string `json:"account_number"`
 }
 
 type VoucherPurchaseRequest struct {
-	AirtimePurchaseRequest
+	PurchaseRequest
 	TargetAccountId int `json:"target_account_id,omitempty"`
+}
+
+type SubscriptionPurchaseRequest struct {
+	PurchaseRequest
+	SubscriptionTypeId int `json:"subscription_type_id,omitempty"`
+}
+
+type ProfileDetails struct {
+	Name string
+}
+
+type SecurityQuestionRequest struct {
+	QuestionId string `json:"question_id"`
+	Answer     string
+}
+
+type EarningsWithdrawalRequest struct {
+	PurchaseRequest
+	//Amount       int    `json:"amount"`
+	//Method       string `json:"method,omitempty"`
+	//AccountId    int    `json:"account_id"`
+	//TargetNumber string `json:"target_number,omitempty"`
+}
+
+type NotificationRequest struct {
+	Channel     string   `json:"channel"`
+	Destination []string `json:"destination"`
+	EventType   string   `json:"event_type"`
+	Content     string   `json:"content"`
 }
 
 //TODO: Remove these once verified not needed

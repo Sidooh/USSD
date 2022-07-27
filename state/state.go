@@ -2,10 +2,13 @@ package state
 
 import (
 	"USSD.sidooh/data"
+	"USSD.sidooh/datastore"
 	"USSD.sidooh/logger"
 	"USSD.sidooh/products"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -19,6 +22,23 @@ type State struct {
 	ScreenPath data.ScreenPath   `json:"screen_path"`
 	Status     string            `json:"status"`
 	Vars       map[string]string `json:"vars"`
+}
+
+func (s *State) ToSession() *datastore.Session {
+	vars, err := json.Marshal(s.Vars)
+	if err != nil {
+		panic(err)
+	}
+
+	return &datastore.Session{
+		SessionId:  s.Session,
+		Phone:      s.Phone,
+		Code:       s.Code,
+		Status:     s.Status,
+		Product:    s.ProductKey,
+		ScreenPath: s.ScreenPath.Encode(),
+		Vars:       vars,
+	}
 }
 
 var screens = map[string]*data.Screen{}
@@ -39,19 +59,36 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	//2. Account has no user -> phone, name "", balances,
 	//3. Account and User -> phone, name, balances
 	if err != nil {
-		logger.UssdLog.Error(err)
-		s.Vars["{voucher_balance}"] = "0"
+		logger.UssdLog.Error("FetchAccount: ", err)
 		s.Vars["{phone}"] = s.Phone
+
+		_, err := service.FetchInvite(s.Phone)
+		if err != nil {
+			logger.UssdLog.Error("FetchInvite: ", err)
+
+			s.ScreenPath.Screen = *screens[utils.INVITE_CODE]
+		}
 	} else {
-		s.Vars["{account_id}"] = strconv.Itoa(account.Id)
-		s.Vars["{phone}"] = account.Phone
+		if account.Id != 0 {
+			s.Vars["{account_id}"] = strconv.Itoa(account.Id)
+			s.Vars["{phone}"] = account.Phone
+		}
 
 		if len(account.Balances) != 0 {
-			s.Vars["{voucher_balance}"] = strings.TrimSuffix(account.Balances[0].Balance, ".00")
+			s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
 		}
 
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
+			s.Vars["{full_name}"] = account.User.Name
+		}
+
+		if account.Subscription.Id != 0 {
+			s.Vars["{subscription_status}"] = account.Subscription.Status
+		}
+
+		if account.HasPin {
+			s.Vars["{has_pin}"] = "true"
 		}
 	}
 }
@@ -71,8 +108,20 @@ func (s *State) setProduct(option int) {
 		s.product = &products.Voucher{}
 		s.ProductKey = products.PAY_VOUCHER
 	//case products.PAY_MERCHANT:
-	//	s.product = &products.Merhcant{}
+	//	s.product = &products.Merchant{}
 	//	s.ProductKey = products.PAY_MERCHANT
+	case products.SAVE:
+		s.product = &products.Save{}
+		s.ProductKey = products.SAVE
+	case products.INVITE:
+		s.product = &products.Invite{}
+		s.ProductKey = products.INVITE
+	case products.SUBSCRIPTION:
+		s.product = &products.Subscription{}
+		s.ProductKey = products.SUBSCRIPTION
+	case products.ACCOUNT:
+		s.product = &products.Account{}
+		s.ProductKey = products.ACCOUNT
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -89,6 +138,14 @@ func (s *State) getProduct() int {
 		return products.PAY_UTILITY
 	case &products.Voucher{}:
 		return products.PAY_VOUCHER
+	case &products.Save{}:
+		return products.SAVE
+	case &products.Invite{}:
+		return products.INVITE
+	case &products.Subscription{}:
+		return products.SUBSCRIPTION
+	case &products.Account{}:
+		return products.ACCOUNT
 	default:
 		return 0
 	}
@@ -101,10 +158,14 @@ func RetrieveState(code, phone, session string) *State {
 		Status:  utils.GENESIS,
 		Phone:   phone,
 	}
-	err := data.UnmarshalFromFile(&stateData, session+utils.STATE_FILE)
+
+	sessionData := new(datastore.Session)
+	err := datastore.UnmarshalFromDatabase(session, sessionData)
 	if err != nil {
 		// TODO: Get the actual error and decide whether log is info or error
 		logger.UssdLog.Error(err)
+	} else {
+		stateData.FromSession(sessionData)
 	}
 
 	stateData.setProduct(stateData.ProductKey)
@@ -121,7 +182,7 @@ func (s *State) SaveState() error {
 
 	s.ScreenPath.SubstituteVars(s.Vars)
 
-	err := data.WriteFile(s, s.Session+utils.STATE_FILE)
+	err := datastore.MarshalToDatabase(*s.ToSession())
 	if err != nil {
 		panic(err)
 	}
@@ -130,7 +191,8 @@ func (s *State) SaveState() error {
 }
 
 func (s *State) unsetState() {
-	_ = data.RemoveFile(s.Session + utils.STATE_FILE)
+	// Unnecessary since we are using DB and not file store
+	//_ = datastore.RemoveFile(s.Session + utils.STATE_FILE)
 }
 
 func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
@@ -142,7 +204,7 @@ func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
 
-	s.MoveNext(s.ScreenPath.Screen.NextKey)
+	s.MoveNext("")
 }
 
 func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {
@@ -151,10 +213,31 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
+
+		// Unauthorized screens for first time users
+		keys := []int{5, 6, 7}
+		_, ok := s.Vars["{account_id}"]
+		if !ok {
+			for _, k := range keys {
+				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
+			}
+		} else {
+			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
+				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
+			}
+		}
 	}
 
 	if s.ScreenPath.Key == utils.PAY {
 		s.setProduct(products.PAY*10 + option.Value)
+	}
+
+	if s.ScreenPath.Key == utils.PIN_NOT_SET && option.Value == 1 {
+		s.setProduct(products.ACCOUNT)
+	}
+
+	if s.ScreenPath.Key == utils.VOUCHER_BALANCE_INSUFFICIENT && option.Value == 1 {
+		s.setProduct(products.PAY_VOUCHER)
 	}
 
 	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
@@ -162,7 +245,11 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
 
-	s.MoveNext(option.NextKey)
+	if option.NextKey != s.ScreenPath.Next.Key {
+		s.MoveNext(option.NextKey)
+	} else {
+		s.MoveNext("")
+	}
 }
 
 func (s *State) SetPrevious() {
@@ -189,7 +276,12 @@ func (s *State) ensurePathDepth(previous *data.ScreenPath, i int) int {
 
 func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
-	s.ScreenPath.Screen = *getScreen(screens, screenKey)
+
+	if screenKey != "" {
+		s.ScreenPath.Screen = *getScreen(screens, screenKey)
+	} else {
+		s.ScreenPath.Screen = *s.ScreenPath.Next
+	}
 }
 
 func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
@@ -226,14 +318,45 @@ func (s *State) GetStringResponse() string {
 		if s.ScreenPath.Type == utils.CLOSED {
 			response += "\n"
 		}
-		response += "0. Back"
-		response += "\n"
-		response += "00. Home"
+		if !s.ScreenPath.Paginated {
+			response += "0.Back "
+			response += " "
+		}
+		response += "00.Home"
 	}
 
 	return response
 }
 
 func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
-	return screens[screenKey]
+	// here we need a value and not reference since it will be translated, and we don't want to change the original
+	screen := *screens[screenKey]
+
+	options := make(map[int]*data.Option)
+	for i, v := range screen.Options {
+		options[i] = &data.Option{
+			Label:   v.Label,
+			Value:   v.Value,
+			NextKey: v.NextKey,
+			Next:    v.Next,
+			Acyclic: v.Acyclic,
+		}
+	}
+	screen.Options = options
+
+	return &screen
+}
+
+func (s *State) FromSession(session *datastore.Session) {
+	s.ProductKey = session.Product
+
+	err := json.Unmarshal([]byte(session.ScreenPath), &s.ScreenPath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(session.Vars, &s.Vars)
+	if err != nil {
+		panic(err)
+	}
 }

@@ -1,63 +1,25 @@
 package data
 
 import (
+	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"errors"
-	"os"
-	"path/filepath"
 )
 
-func ReadFile(filename string) ([]byte, error) {
-	wd, err := os.Getwd()
-	file, err := os.ReadFile(filepath.Join(wd, utils.DATA_DIRECTORY, filename))
-	if err != nil {
-		return nil, err
-	}
+var loadScreenKeys = []string{
+	// TODO: Reset to MAIN_MENU when done with invite_code beta
+	utils.INVITE_CODE,
 
-	return file, nil
-}
-
-func UnmarshalFromFile(to interface{}, filename string) error {
-	file, err := ReadFile(filename)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(file, &to)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func WriteFile(data interface{}, filename string) error {
-	marshal, err := json.Marshal(data)
-	if err != nil {
-		return err
-	}
-
-	wd, err := os.Getwd()
-	err = os.WriteFile(filepath.Join(wd, utils.DATA_DIRECTORY, filename), marshal, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func RemoveFile(filename string) error {
-	wd, err := os.Getwd()
-	err = os.Remove(filepath.Join(wd, utils.DATA_DIRECTORY, filename))
-	if err != nil {
-		return err
-	}
-
-	return nil
+	// The below screens are hanging screens, i.e. have no parent
+	utils.SUBSCRIPTION_RENEW,
+	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
+	utils.PIN_NOT_SET,
+	utils.VOUCHER_BALANCE_INSUFFICIENT,
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := ReadFile(utils.DATA_FILE)
+	file, err := datastore.ReadFile(utils.DATA_FILE)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +34,15 @@ func LoadData() (map[string]*Screen, error) {
 		return nil, errors.New("data file is empty")
 	}
 
-	setNextScreens(screens, screens[utils.MAIN_MENU])
+	for _, screenKey := range loadScreenKeys {
+		setNextScreens(screens, screens[screenKey])
+	}
+	//// TODO: Reset to MAIN_MENU when done with invite_code beta
+	//setNextScreens(screens, screens[utils.INVITE_CODE])
+	//// The below screens are hanging screens, i.e. have no parent
+	//setNextScreens(screens, screens[utils.SUBSCRIPTION_RENEW])
+	//setNextScreens(screens, screens[utils.PROFILE_SECURITY_QUESTIONS_ANSWER])
+	//setNextScreens(screens, screens[utils.PIN_NOT_SET])
 
 	err = validateScreens(screens)
 	if err != nil {

@@ -1,15 +1,18 @@
 package logger
 
 import (
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"time"
 )
 
-var UssdLog = log.New()
-var ServiceLog = log.New()
+var UssdLog = &log.Logger{}
+var ServiceLog = &log.Logger{}
 
 func Init() {
+	fmt.Println("Initializing USSD subsystem loggers")
+
 	// TODO: Ensure logs are rotated daily
 
 	//// Set up default Log
@@ -22,20 +25,22 @@ func Init() {
 	//log.SetOutput(file)
 
 	// Set up USSD Log
+	UssdLog = log.New()
 	filename := "logger/ussd-" + time.Now().Format("2006-01-02") + ".log"
 	file, err := os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+	} else {
+		UssdLog.SetOutput(file)
 	}
 
-	UssdLog.SetOutput(file)
-
 	// Set up Service Log
+	ServiceLog = log.New()
 	filename = "logger/service-" + time.Now().Format("2006-01-02") + ".log"
 	file, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
-		log.Fatal(err)
+		log.Error(err)
+	} else {
+		ServiceLog.SetOutput(file)
 	}
-
-	ServiceLog.SetOutput(file)
 }

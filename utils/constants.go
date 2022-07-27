@@ -20,13 +20,19 @@ const (
 
 // screen keys
 const (
-	MAIN_MENU = "main_menu"
+	MAIN_MENU   = "main_menu"
+	INVITE_CODE = "invite_code"
 
 	// static
-	ABOUT       = "about"
-	COMING_SOON = "coming_soon"
-	BETA        = "beta"
-	CANCEL      = "cancel"
+	ABOUT                        = "about"
+	COMING_SOON                  = "coming_soon"
+	BETA                         = "beta"
+	CANCEL                       = "cancel"
+	PIN_NOT_SET                  = "pin_not_set"
+	SECURITY_QUESTIONS_NOT_SET   = "security_questions_not_set"
+	VOUCHER_BALANCE_INSUFFICIENT = "voucher_balance_insufficient"
+
+	NOT_TRANSACTED = "not_transacted"
 
 	// global
 	PAYMENT_METHOD             = "payment_method"
@@ -56,6 +62,52 @@ const (
 	PAY_VOUCHER           = "voucher"
 	VOUCHER_AMOUNT        = "voucher_amount"
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
+
+	// SAVE
+	SAVE = "save"
+
+	// INVITE
+	INVITE     = "invite"
+	INVITE_PIN = "invite_pin"
+	INVITE_END = "invite_end"
+
+	// SUBSCRIPTION
+	SUBSCRIPTION                    = "subscription"
+	SUBSCRIPTION_RENEW              = "subscription_renew"
+	SUBSCRIPTION_ACTIVE             = "subscription_active"
+	SUBSCRIPTION_REGISTER           = "subscription_register"
+	SUBSCRIPTION_SUBSCRIBER_NAME    = "subscription_subscriber_name"
+	SUBSCRIPTION_SUBSCRIBER_CONFIRM = "subscription_subscriber_confirm"
+
+	// ACCOUNT
+	ACCOUNT          = "account"
+	ACCOUNT_PROFILE  = "account_profile"
+	ACCOUNT_BALANCES = "account_balances"
+	ACCOUNT_WITHDRAW = "account_withdraw"
+
+	PROFILE_SECURITY                   = "profile_security"
+	PROFILE_NAME                       = "profile_name"
+	PROFILE_NEW_PIN                    = "profile_new_pin"
+	PROFILE_NEW_PIN_CONFIRM            = "profile_new_pin_confirm"
+	PROFILE_CHANGE_PIN_METHODS         = "profile_change_pin_methods"
+	PROFILE_CHANGE_PIN_QUESTION        = "profile_change_pin_question"
+	PROFILE_SECURITY_QUESTIONS_PIN     = "profile_security_questions_pin"
+	PROFILE_SECURITY_QUESTIONS_OPTIONS = "profile_security_questions_options"
+	PROFILE_SECURITY_QUESTIONS_ANSWER  = "profile_security_questions_answer"
+	PROFILE_UPDATE_NAME                = "profile_update_name"
+	PROFILE_UPDATE_END                 = "profile_update_end"
+	PROFILE_SECURITY_QUESTIONS_END     = "profile_security_questions_end"
+
+	HAS_SECURITY_QUESTIONS = "has_security_questions"
+
+	ACCOUNT_BALANCES_PIN = "balances_pin"
+
+	ACCOUNT_WITHDRAW_PIN        = "account_withdraw_pin"
+	WITHDRAW_DESTINATION        = "withdraw_destination"
+	WITHDRAW_MPESA              = "withdraw_mpesa"
+	WITHDRAW_OTHER_NUMBER_MPESA = "withdraw_other_number_mpesa"
+	WITHDRAW_CONFIRM_PIN        = "withdraw_confirm_pin"
+	WITHDRAW_END                = "withdraw_end"
 )
 
 // validation keys
@@ -67,14 +119,29 @@ const (
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"
 	PIN_LENGTH       = "PIN_LENGTH"
+	PIN_CONFIRMED    = "PIN_CONFIRMED"
 	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
 	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
+
+	NOT_INVITED_OR_EXISTING_ACCOUNT = "NOT_INVITED_OR_EXISTING_ACCOUNT"
+
+	NAME = "NAME"
+
+	SECURITY_QUESTION      = "SECURITY_QUESTION"
+	WITHDRAW_LIMITS        = "WITHDRAW_LIMITS"
+	INVITE_CODE_VALIDATION = "INVITE_CODE_VALIDATION"
+)
+
+// initiator types
+const (
+	CONSUMER = "CONSUMER"
 )
 
 // payment methods
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
+	BANK    = "BANK"
 )
 
 // telco providers
@@ -104,4 +171,10 @@ const (
 	ZUKU          = "ZUKU"
 	GOTV          = "GOTV"
 	STARTIMES     = "STARTIMES"
+)
+
+// states
+const (
+	ACTIVE  = "ACTIVE"
+	EXPIRED = "EXPIRED"
 )

@@ -1,4 +1,11 @@
 {
+  "invite_code": {
+    "key": "invite_code",
+    "title": "Enter Invite Code:",
+    "type": "OPEN",
+    "next": "main_menu",
+    "validations": "INVITE_CODE_VALIDATION"
+  },
   "main_menu": {
     "key": "main_menu",
     "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",
@@ -22,31 +29,33 @@
       "4": {
         "label": "Save",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save"
       },
       "5": {
         "label": "Invite",
         "value": "5",
-        "next": "refer_pin"
+        "next": "invite_pin"
       },
       "6": {
         "label": "Become an Agent",
         "value": "6",
-        "next": "coming_soon"
+        "next": "subscription"
       },
       "7": {
         "label": "My Account",
         "value": "7",
-        "next": "coming_soon"
+        "next": "account"
       }
     }
   },
+
   "about": {
     "key": "about",
     "type": "OPEN",
     "title": "Sidooh is a cashback rewards platform that gives you cash refunds on every item you purchase through the platform. The earned cashback is then automatically saved and invested in financial assets like Treasury Bills and Bonds, Fixed Deposits, etc. so as to generate extra income for you.",
     "paginated": true
   },
+
   "airtime": {
     "key": "airtime",
     "title": "Buy airtime",
@@ -89,6 +98,7 @@
     "next": "payment_method",
     "validations": "INT,MIN:20,MAX:10000"
   },
+
   "pay": {
     "key": "pay",
     "title": "What would you like to pay for?",
@@ -111,6 +121,7 @@
       }
     }
   },
+
   "utility": {
     "key": "utility",
     "title": "Select provider:",
@@ -207,6 +218,505 @@
     "next": "payment_method",
     "validations": "INT,MIN:100,MAX:70000"
   },
+  "save": {
+    "key": "save",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Personal",
+        "value": "1",
+        "next": "personal_savings"
+      },
+      "2": {
+        "label": "Group",
+        "value": "2",
+        "next": "group_savings"
+      },
+      "3": {
+        "label": "Club Sidooh",
+        "value": "3",
+        "next": "club_sidooh_savings"
+      }
+    }
+  },
+  "personal_savings": {
+    "key": "personal_savings",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Retirement",
+        "value": "1",
+        "next": "personal_savings_amount"
+      },
+      "2": {
+        "label": "Emergency",
+        "value": "2",
+        "next": "personal_savings_amount"
+      },
+      "3": {
+        "label": "Monthly Income",
+        "value": "3",
+        "next": "monthly_income"
+      },
+      "4": {
+        "label": "Goal",
+        "value": "4",
+        "next": "goals"
+      },
+      "9": {
+        "label": "Statement",
+        "value": "9",
+        "next": "statement"
+      }
+    }
+  },
+  "personal_savings_amount": {
+    "key": "personal_savings_amount",
+    "title": "Enter amount (MIN: KES20)",
+    "type": "OPEN",
+    "next": "coming_soon",
+    "validations": "INT,MIN:20"
+  },
+  "monthly_income": {
+    "key": "monthly_income",
+    "title": "How much would you like to earn?",
+    "type": "CLOSED",
+    "options": {
+      "9": {
+        "label": "Other amount",
+        "value": "9",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "goals": {
+    "key": "goals",
+    "title": "Select or create goal",
+    "type": "CLOSED",
+    "options": {
+      "9": {
+        "label": "Create Goal",
+        "value": "9",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "statement": {
+    "key": "statement",
+    "title": "Your statement is being processed and will be sent to you.",
+    "type": "END"
+  },
+  "group_savings": {
+    "key": "group_savings",
+    "title": "Group Savings Screen",
+    "type": "OPEN",
+    "next": "coming_soon"
+  },
+  "club_sidooh_savings": {
+    "key": "club_sidooh_savings",
+    "title": "Club Sidooh Savings Screen",
+    "type": "OPEN",
+    "next": "coming_soon"
+  },
+  "invite_pin": {
+    "key": "invite_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "invite",
+    "validations": "PIN"
+  },
+  "invite": {
+    "key": "invite",
+    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {enrollment_time}hrs. Enter no:",
+    "type": "OPEN",
+    "next": "invite_end",
+    "validations": "SAFARICOM,DISALLOW_CURRENT,NOT_INVITED_OR_EXISTING_ACCOUNT"
+  },
+  "invite_end": {
+    "key": "invite_end",
+    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+  "subscription": {
+    "key": "subscription",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Subscribe as an agent",
+        "value": "1",
+        "next": "subscription_register"
+      }
+    }
+  },
+  "subscription_renew": {
+    "key": "subscription_renew",
+    "title": "Dear{name}, Your subscription to {subscription_type} expires/expired on {subscription_end_date}.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Renew Subscription",
+        "value": "1",
+        "next": "payment_method"
+      }
+    }
+  },
+  "subscription_active": {
+    "key": "subscription_active",
+    "title": "Dear{name}, you are already subscribed to {subscription_type} valid until {subscription_end_date}.",
+    "type": "OPEN"
+  },
+  "subscription_register": {
+    "key": "subscription_register",
+    "title": "By subscribing as a {subscription_type} through paying a fee ({subscription_amount}/{duration}), you will earn sales commissions on every airtime purchased from the platform by your invited customers.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to subscribe as an Agent",
+        "value": "1",
+        "next": "subscription_subscriber_name"
+      }
+    },
+    "paginated": true
+  },
+  "subscription_subscriber_name": {
+    "key": "subscription_subscriber_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "subscription_subscriber_confirm",
+    "validations": "NAME"
+  },
+  "subscription_subscriber_confirm": {
+    "key": "subscription_subscriber_confirm",
+    "title": "Please confirm your details.\n\nName: {subscriber_name}\nSubscription: {subscription_type} @ {subscription_amount}/{duration}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Confirm",
+        "value": "1",
+        "next": "payment_method"
+      },
+      "2": {
+        "label": "Change Details",
+        "value": "2",
+        "next": "subscription_subscriber_name",
+        "acyclic": true
+      }
+    }
+  },
+  "account": {
+    "key": "account",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Profile",
+        "value": "1",
+        "next": "account_profile_pin"
+      },
+      "2": {
+        "label": "Balances",
+        "value": "2",
+        "next": "account_balances_pin"
+      },
+      "3": {
+        "label": "Withdraw",
+        "value": "3",
+        "next": "account_withdraw_pin"
+      }
+    }
+  },
+  "account_profile_pin": {
+    "key": "account_profile_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_profile",
+    "validations": "PIN"
+  },
+  "account_profile": {
+    "key": "account_profile",
+    "title": "Your details are as follows\n\nName: {full_name}\nNumber: {phone}\n\nSubscription: {subscription_type}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Account Pin & Security",
+        "value": "1",
+        "next": "profile_security"
+      },
+      "2": {
+        "label": "Update Profile",
+        "value": "2",
+        "next": "profile_update_name_pin"
+      }
+    }
+  },
+  "profile_update_name_pin": {
+    "key": "profile_update_name_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_update_name",
+    "validations": "PIN"
+  },
+  "profile_update_name": {
+    "key": "profile_update_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "profile_update_end",
+    "validations": "NAME"
+  },
+  "profile_update_end": {
+    "key": "profile_update_end",
+    "title": "Congratulations, You have updated your profile. New details are as follows\n\nName: {full_name}",
+    "type": "OPEN"
+  },
+  "profile_security": {
+    "key": "profile_security",
+    "title": "What would you like to do?",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Set new PIN",
+        "value": "1",
+        "next": "profile_name"
+      },
+      "2": {
+        "label": "Change current PIN",
+        "value": "2",
+        "next": "profile_change_pin_methods"
+      },
+      "3": {
+        "label": "Security Questions",
+        "value": "3",
+        "next": "profile_security_questions_pin"
+      }
+    }
+  },
+  "profile_security_questions_pin": {
+    "key": "profile_security_questions_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_security_questions_options",
+    "validations": "PIN"
+  },
+  "profile_security_questions_options": {
+    "key": "profile_security_questions_options",
+    "title": "Select question",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "profile_security_questions_answer": {
+    "key": "profile_security_questions_answer",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "profile_security_questions_options",
+    "validations": "SECURITY_QUESTION"
+  },
+  "profile_security_questions_end": {
+    "key": "profile_security_questions_end",
+    "title": "{profile_security_questions_end_title}",
+    "type": "END"
+  },
+  "profile_change_pin_methods": {
+    "key": "profile_change_pin_methods",
+    "title": "Select method to use",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Use Old Pin",
+        "value": "1",
+        "next": "profile_change_pin_using_pin"
+      },
+      "2": {
+        "label": "Use Security Questions",
+        "value": "2",
+        "next": "profile_change_pin_question"
+      }
+    }
+  },
+  "profile_change_pin_question": {
+    "key": "profile_change_pin_question",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "profile_change_pin_question",
+    "validations": "SECURITY_QUESTION",
+    "acyclic": true
+  },
+  "profile_change_pin_using_pin": {
+    "key": "profile_change_pin_using_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_new_pin",
+    "validations": "PIN"
+  },
+  "profile_name": {
+    "key": "profile_name",
+    "title": "Please enter your Full Name\n\nFormat:\nFirstname Lastname",
+    "type": "OPEN",
+    "next": "profile_new_pin",
+    "validations": "NAME"
+  },
+  "profile_new_pin": {
+    "key": "profile_new_pin",
+    "title": "Enter new four-digit Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "profile_new_pin_confirm": {
+    "key": "profile_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN",
+    "type": "OPEN",
+    "next": "profile_pin_end",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "profile_pin_end": {
+    "key": "profile_pin_end",
+    "title": "Your new Sidooh PIN is {confirm_pin}. Please keep your PIN number safe. Do not share it with anyone.",
+    "type": "END"
+  },
+  "account_balances_pin": {
+    "key": "account_balances_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_balances",
+    "validations": "PIN"
+  },
+  "account_balances": {
+    "key": "account_balances",
+    "title": "Select an option below:",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Voucher",
+        "value": "1",
+        "next": "voucher_balance"
+      },
+      "2": {
+        "label": "Earnings",
+        "value": "2",
+        "next": "earnings"
+      },
+      "3": {
+        "label": "Saved Points",
+        "value": "3",
+        "next": "savings"
+      }
+    }
+  },
+  "savings": {
+    "key": "savings",
+    "title": "Your saved points breakdown\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nTotal: {total_savings}\n\nWithdrawable: {withdrawable_savings}",
+    "type": "OPEN",
+    "paginated": true,
+    "next": "cancel"
+  },
+  "earnings": {
+    "key": "earnings",
+    "title": "Your earnings breakdown\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}\n\nBalance: {earnings_balance}",
+    "type": "OPEN",
+    "paginated": true,
+    "next": "cancel"
+  },
+  "voucher_balance": {
+    "key": "voucher_balance",
+    "title": "Your voucher balance is:\nKES {voucher_balance}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+  "account_withdraw_pin": {
+    "key": "account_withdraw_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "account_withdraw",
+    "validations": "PIN"
+  },
+  "account_withdraw": {
+    "key": "account_withdraw",
+    "title": "Enter points you wish to withdraw (MIN. KES50):\n\nWithdrawable Points: {withdrawable_savings}",
+    "type": "OPEN",
+    "next": "withdraw_destination",
+    "validations": "WITHDRAW_LIMITS"
+  },
+  "withdraw_destination": {
+    "key": "withdraw_destination",
+    "title": "Where would you like us to send the money?",
+    "options": {
+      "1": {
+        "label": "MPESA Account",
+        "value": "1",
+        "next": "withdraw_mpesa"
+      },
+      "2": {
+        "label": "Voucher",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Bank Account",
+        "value": "3",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "withdraw_mpesa": {
+    "key": "withdraw_mpesa",
+    "title": "Select the account to send the funds to:",
+    "options": {
+      "1": {
+        "label": "Self {phone}",
+        "value": "1",
+        "next": "withdraw_confirm"
+      },
+      "2": {
+        "label": "Other MPESA number",
+        "value": "2",
+        "next": "withdraw_other_number_mpesa"
+      }
+    }
+  },
+  "withdraw_other_number_mpesa": {
+    "key": "withdraw_other_number_mpesa",
+    "title": "Enter MPESA number",
+    "type": "OPEN",
+    "next": "withdraw_confirm",
+    "validations": "SAFARICOM"
+  },
+  "withdraw_confirm": {
+    "key": "withdraw_confirm",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES{amount}\nTo {account_type}: {account_number}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "withdraw_confirm_pin"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      },
+      "3": {
+        "label": "Change Details",
+        "value": "3",
+        "next": "account_withdraw",
+        "acyclic": true
+      }
+    }
+  },
+  "withdraw_confirm_pin": {
+    "key": "withdraw_confirm_pin",
+    "title": "Please enter your Sidooh PIN again to confirm this transaction.",
+    "type": "OPEN",
+    "next": "withdraw_end",
+    "validations": "PIN"
+  },
+  "withdraw_end": {
+    "key": "withdraw_end",
+    "title": "Your request has been received and is being processed. You will receive a confirmation SMS shortly. Thank you.",
+    "type": "END"
+  },
   "payment_method": {
     "key": "payment_method",
     "title": "Pay KES{amount} {product} for {number} using:",
@@ -274,33 +784,14 @@
       }
     }
   },
-  "pin_blocked": {
-    "key": "pin_blocked",
-    "title": "Your pin is blocked.\nPlease email us at {customer_support_email} if you need further assistance.",
-    "type": "END"
-  },
-  "refer_pin": {
-    "key": "refer_pin",
-    "title": "Please enter your Sidooh PIN",
-    "type": "OPEN",
-    "next": "refer",
-    "option_type": "PIN"
-  },
-  "refer": {
-    "key": "refer",
-    "title": "Invite your friends to Sidooh and start earning from every airtime they purchase from the platform once they enroll within {enrollment_time}hrs. Enter no:",
-    "type": "OPEN",
-    "next": "refer_end",
-    "option_type": "PHONE"
-  },
-  "refer_end": {
-    "key": "refer_end",
-    "title": "Thank you for referring Sidooh. Your friend will receive an invite SMS. Once they register and buy airtime within {enrollment_time}hrs, you will start earning from every airtime they purchase from Sidooh.",
-    "type": "OPEN"
-  },
   "payment_end": {
     "key": "payment_end",
     "title": "Your request has been received and is being processed. {payment_method_instruction}. Thank you.",
+    "type": "END"
+  },
+  "pin_blocked": {
+    "key": "pin_blocked",
+    "title": "Your pin is blocked.\nPlease email us at {customer_support_email} if you need further assistance.",
     "type": "END"
   },
   "coming_soon": {
@@ -311,6 +802,45 @@
   "cancel": {
     "key": "cancel",
     "title": "Thank you for using Sidooh. Sidooh, Makes You Money on Every Purchase.",
+    "type": "OPEN"
+  },
+  "not_transacted": {
+    "key": "not_transacted",
+    "title": "This seems to be your first time on Sidooh. Kindly buy airtime or pay for utility first before proceeding.\nSidooh, Makes You Money on Every Purchase.",
+    "type": "OPEN"
+  },
+  "pin_not_set": {
+    "key": "pin_not_set",
+    "title": "Please set a PIN first in order to proceed.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to set pin",
+        "value": "1",
+        "next": "profile_name"
+      }
+    }
+  },
+  "voucher_balance_insufficient": {
+    "key": "voucher_balance_insufficient",
+    "title": "Voucher balance is insufficient.\nAvailable: KES{voucher_balance}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to top up",
+        "value": "1",
+        "next": "voucher_amount"
+      }
+    }
+  },
+  "security_questions_not_set": {
+    "key": "security_questions_not_set",
+    "title": "Please set your security questions first in order to proceed or contact us at {customer_support_email} for further assistance.",
+    "type": "OPEN"
+  },
+  "has_security_questions": {
+    "key": "has_security_questions",
+    "title": "Please contact us at {customer_support_email} if you have forgotten your security questions or answers.",
     "type": "OPEN"
   }
 }

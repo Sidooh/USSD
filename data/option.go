@@ -10,6 +10,7 @@ type Option struct {
 	Value   int     `json:"value,string"`
 	NextKey string  `json:"next"`
 	Next    *Screen `json:"-"`
+	Acyclic bool    `json:"acyclic,omitempty"`
 }
 
 func (option *Option) setNext(s *Screen) {
@@ -21,8 +22,14 @@ func (option *Option) GetStringRep() string {
 }
 
 func (option *Option) Validate() error {
+	if option.Label == "" {
+		return fmt.Errorf("label is not set for option with value " + strconv.Itoa(option.Value))
+	}
+
 	if option.Next == nil {
-		return fmt.Errorf("next is not set for option " + option.Label + " with value " + strconv.Itoa(option.Value))
+		return fmt.Errorf("next is not set for option '" + option.Label + "' with value " + strconv.Itoa(option.Value))
+	} else if option.Acyclic {
+		return nil
 	} else {
 		err := option.Next.Validate(true, true)
 		if err != nil {

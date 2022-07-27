@@ -1,6 +1,7 @@
 package main
 
 import (
+	"USSD.sidooh/datastore"
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
@@ -46,7 +47,7 @@ func decodeData(r *http.Request) *Data {
 }
 
 func ussdHandler(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/api/ussd" {
+	if r.URL.Path != "/api/v1/ussd" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
 	}
@@ -61,6 +62,64 @@ func ussdHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, processAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
 }
 
+func Recovery() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		defer func() {
+			err := recover()
+			if err != nil {
+
+				jsonBody, _ := json.Marshal(map[string]string{
+					"error": "There was an internal server error",
+				})
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(http.StatusInternalServerError)
+				w.Write(jsonBody)
+
+				panic(err) // May be log this error? Send to sentry?
+			}
+
+		}()
+
+		ussdHandler(w, r)
+
+	})
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func Logs() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sessions, err := datastore.FetchSessionLogs()
+		if err != nil {
+			return
+		}
+
+		marshal, err := json.Marshal(sessions)
+		if err != nil {
+			jsonBody, _ := json.Marshal(map[string]string{
+				"error": "There was an internal server error",
+			})
+
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write(jsonBody)
+
+			panic(err)
+		}
+
+		enableCors(&w)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(marshal)
+
+	})
+}
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -69,9 +128,13 @@ func main() {
 
 	initUssd()
 
-	fmt.Printf("Starting server at port %v\n", port)
+	//TODO: Review if this is necessary
+	//defer destroyUssd()
 
-	http.HandleFunc("/api/ussd", ussdHandler)
+	fmt.Printf("Starting USSD server at port %v\n", port)
+
+	http.Handle("/api/v1/ussd", Recovery())
+	http.Handle("/api/v1/sessions/logs", Logs())
 
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)

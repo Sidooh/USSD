@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 )
 
@@ -36,6 +37,15 @@ func (u *Utility) processScreen(input string) {
 		break
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input
+		u.setPaymentMethods(input)
+
+		amount, _ := strconv.Atoi(input)
+		subscription, _ := u.vars["{subscription_status}"]
+		u.vars["{product}"] = fmt.Sprintf(
+			"%s (which will earn you %.2f points)",
+			u.vars["{product}"],
+			utils.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
+		)
 		break
 	}
 }
@@ -50,25 +60,18 @@ func (u *Utility) setUtilityAccountOptions(input string) {
 	switch integerInput {
 	case 1:
 		provider = utils.KPLC_PREPAID
-		break
 	case 2:
 		provider = utils.KPLC_POSTPAID
-		break
 	case 3:
 		provider = utils.NAIROBI_WTR
-		break
 	case 4:
 		provider = utils.DSTV
-		break
 	case 5:
 		provider = utils.ZUKU
-		break
 	case 6:
 		provider = utils.GOTV
-		break
 	case 7:
 		provider = utils.STARTIMES
-		break
 	}
 
 	u.vars["{selected_utility}"] = provider
@@ -135,8 +138,8 @@ func (u *Utility) finalize() {
 		}
 
 		request := client.UtilityPurchaseRequest{
-			AirtimePurchaseRequest: client.AirtimePurchaseRequest{
-				Initiator: client.CONSUMER,
+			PurchaseRequest: client.PurchaseRequest{
+				Initiator: utils.CONSUMER,
 				Amount:    amount,
 				Method:    method,
 				AccountId: accountId,

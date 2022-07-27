@@ -4,7 +4,9 @@ import (
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
+	"encoding/json"
 	"fmt"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,25 +16,47 @@ type Screen struct {
 	Key         string          `json:"key"`
 	Title       string          `json:"title"`
 	Type        string          `json:"type"`
-	Options     map[int]*Option `json:"options"`
+	Options     map[int]*Option `json:"options,omitempty"`
 	NextKey     string          `json:"next"`
 	Next        *Screen         `json:"-"`
-	Validations string          `json:"validations"`
+	Validations string          `json:"validations,omitempty"`
+	Acyclic     bool            `json:"acyclic,omitempty"`
+	Paginated   bool            `json:"paginated,omitempty"`
 }
 
 type ScreenPath struct {
 	Screen
-	Previous *ScreenPath `json:"previous"`
+	Previous *ScreenPath `json:"previous,omitempty"`
+}
+
+func (path *ScreenPath) Encode() string {
+	screenPath, err := json.Marshal(path)
+	if err != nil {
+		return ""
+	}
+
+	return string(screenPath)
 }
 
 var nextExceptionScreens = map[string]bool{
-	"about": true, "cancel": true, "coming_soon": true,
-	"refer_end": true,
+	utils.ABOUT:                      true,
+	utils.CANCEL:                     true,
+	utils.COMING_SOON:                true,
+	utils.INVITE_END:                 true,
+	utils.NOT_TRANSACTED:             true,
+	utils.SUBSCRIPTION_ACTIVE:        true,
+	utils.PROFILE_UPDATE_END:         true,
+	utils.HAS_SECURITY_QUESTIONS:     true,
+	utils.SECURITY_QUESTIONS_NOT_SET: true,
 }
 
 var dynamicOptionScreens = map[string]bool{
 	utils.AIRTIME_OTHER_NUMBER_SELECT: true,
 	utils.UTILITY_ACCOUNT_SELECT:      true,
+}
+
+var optionsExceptionScreens = map[string]bool{
+	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS: true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -81,7 +105,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 		}
 
 		// Validate that options exist
-		if len(screen.Options) == 0 {
+		if _, ok := optionsExceptionScreens[screen.Key]; !ok && len(screen.Options) == 0 {
 			return fmt.Errorf("screen options are not set for screen " + screen.Key + " of type " + screen.Type)
 		}
 
@@ -98,7 +122,7 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 				//	Check if option already exists in list
 				_, ok := existingOptions[option.Label]
 				if ok {
-					return fmt.Errorf("screen options contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
+					return fmt.Errorf("screen options for screen " + screen.Key + " contains duplicates of " + option.Label + " with value " + strconv.Itoa(option.Value))
 				} else {
 					existingOptions[option.Label] = struct{}{}
 				}
@@ -108,16 +132,15 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 
 	if screen.Type == utils.OPEN {
 		// Validate that Next must be set
-		// exceptions about,
+		// exceptions about, acyclic screens...
 		if screen.Next != nil {
-			if recursive {
+			if recursive && !screen.Acyclic {
 				err := screen.Next.Validate(withOptions, recursive)
 				if err != nil {
 					panic(err)
 				}
 			}
 		} else {
-
 			if _, ok := nextExceptionScreens[screen.Key]; ok != true {
 				return fmt.Errorf("next is not set for screen " + screen.Key + " of type " + screen.Type)
 			}
@@ -145,12 +168,12 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 }
 
 func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
-	// TODO: Sanitize input to be logged? e.g. pins, etc. just replace with **** and use same length as input
+	// TODO: Sanitize input to be logged? e.g. pins, sec qns, etc. just replace with **** and use same length as input
 	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
 
 	validations := strings.Split(screen.Validations, ",")
 
-	var currentValidationCheck bool = false
+	var currentValidationCheck = false
 	for _, s := range validations {
 		validation := strings.Split(s, ":")
 
@@ -186,22 +209,57 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.PHONE:
 		return isValidPhone(input)
 	case utils.DISALLOW_CURRENT:
-		return !isCurrentPhone(input, vars["{phone}"])
+		return screen.isNotCurrentPhone(input, vars["{phone}"])
 	case utils.SAFARICOM:
-		return isValidPhoneAndProvider(input, utils.SAFARICOM)
+		return screen.isValidPhoneAndProvider(input, utils.SAFARICOM)
 	case utils.EXISTING_ACCOUNT:
 		return screen.isSidoohAccount(input)
+	case utils.NOT_INVITED_OR_EXISTING_ACCOUNT:
+		return screen.isUninvitedAndNonExistent(input)
 	case utils.PIN_LENGTH:
 		return screen.checkPinLength(input)
+	case utils.PIN_CONFIRMED:
+		return screen.confirmPin(input, vars)
 	case utils.PIN:
 		// TODO: Handle both -no pin set- and -invalid pin-
 		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
 		return screen.checkPin(input, vars)
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
+	case utils.NAME:
+		return isValidName(input)
+	case utils.SECURITY_QUESTION:
+		return isValidSecurityQuestionAnswer(input)
+	case utils.WITHDRAW_LIMITS:
+		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
+
+	case utils.INVITE_CODE_VALIDATION:
+		return screen.isSidoohAccountIdOrPhone(input, vars)
 	}
 
 	return false
+}
+
+func isValidWithdrawalAmount(input string, points string) bool {
+	min := 50
+	max := 1000
+
+	val := getIntVal(input)
+	pointsVal := getIntVal(points)
+
+	return val <= max && val >= min && val <= pointsVal
+}
+
+func isValidSecurityQuestionAnswer(input string) bool {
+	ansRegx := regexp.MustCompile(`^[A-z]{3,}$`)
+
+	return ansRegx.MatchString(input)
+}
+
+func isValidName(input string) bool {
+	nameRegx := regexp.MustCompile(`^[A-z .'-]{3,}$`)
+
+	return nameRegx.MatchString(input)
 }
 
 func isValidUtilityAmount(input string, utility string) bool {
@@ -232,12 +290,50 @@ func (screen *Screen) isSidoohAccount(input string) bool {
 	return false
 }
 
-func (screen *Screen) checkPinLength(input string) bool {
-	if len(input) == 4 {
+func (screen *Screen) isSidoohAccountIdOrPhone(input string, vars map[string]string) bool {
+	account, err := service.CheckAccountByIdOrPhone(input)
+	if err != nil {
+		screen.Title = "Invalid Code, please try again."
+		return false
+	}
+
+	if account != nil {
+		vars["{invite_code}"] = strconv.Itoa(account.Id)
+		_, _ = service.CreateInvite(vars["{invite_code}"], vars["{phone}"])
 		return true
 	}
 
-	screen.Title = "Please enter a valid pin (4 digits)"
+	return false
+}
+
+func (screen *Screen) isUninvitedAndNonExistent(input string) bool {
+	exists := service.InviteOrAccountExists(input)
+	if exists {
+		screen.Title = "Sorry, this number is not eligible for invite at the moment."
+	}
+
+	return !exists
+}
+
+func (screen *Screen) checkPinLength(input string) bool {
+	// TODO: Should we also check for consecutive e.g. 1234, 5678
+	actualVal := strconv.Itoa(getIntVal(input))
+	if len(actualVal) == 4 {
+		return true
+	}
+
+	screen.Title = "Please enter a valid pin (4 digits; Can't start with 0)"
+
+	return false
+}
+
+func (screen *Screen) confirmPin(input string, vars map[string]string) bool {
+	pin := vars["{pin}"]
+
+	if pin == input {
+		return true
+	}
+	screen.Title = "The PIN entered does not seem to match. Please try again."
 
 	return false
 }
@@ -266,7 +362,16 @@ func (screen *Screen) checkPin(input string, vars map[string]string) bool {
 	return false
 }
 
-func isCurrentPhone(input string, phone string) bool {
+func (screen *Screen) isNotCurrentPhone(input string, phone string) bool {
+	valid := !screen.isCurrentPhone(input, phone)
+	if !valid {
+		screen.Title = "Invalid phone.\nPlease use a number different from yours"
+	}
+
+	return valid
+}
+
+func (screen *Screen) isCurrentPhone(input string, phone string) bool {
 	s, err := utils.FormatPhone(input)
 	if err != nil {
 		return false
@@ -275,10 +380,15 @@ func isCurrentPhone(input string, phone string) bool {
 	return s == phone
 }
 
-func isValidPhoneAndProvider(input string, requiredProvider string) bool {
+func (screen *Screen) isValidPhoneAndProvider(input string, requiredProvider string) bool {
 	provider, err := utils.GetPhoneProvider(input)
 	if err != nil {
 		return false
+	}
+
+	valid := provider == requiredProvider
+	if !valid {
+		screen.Title = "Invalid phone.\nPlease try again with a valid " + requiredProvider + " number."
 	}
 
 	return provider == requiredProvider

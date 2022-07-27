@@ -1,0 +1,14 @@
+.github
+.idea
+
+# Sql test databases
+**/test.db
+.env
+*/**.log
+
+# Session state json file
+*_*.json
+
+# USSD test files
+*/*test.file
+*/*test-data.json

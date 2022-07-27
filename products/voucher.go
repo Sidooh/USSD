@@ -14,7 +14,7 @@ type Voucher struct {
 
 func (v *Voucher) Process(input string) {
 	logger.UssdLog.Println(" -- VOUCHER: process", v.screen.Key, input)
-	v.productRep = "Voucher"
+	v.productRep = "voucher"
 
 	v.Product.Process(input)
 	v.processScreen(input)
@@ -23,11 +23,11 @@ func (v *Voucher) Process(input string) {
 
 func (v *Voucher) processScreen(input string) {
 	switch v.screen.Key {
-	case utils.PAY_VOUCHER:
+	case utils.PAY_VOUCHER, utils.VOUCHER_BALANCE_INSUFFICIENT:
 		v.vars["{product}"] = v.productRep
 		v.vars["{number}"] = v.vars["{phone}"]
 	case utils.VOUCHER_OTHER_ACCOUNT:
-		v.vars["{number}"] = input
+		v.vars["{number}"], _ = utils.FormatPhone(input)
 		break
 	case utils.VOUCHER_AMOUNT:
 		v.vars["{amount}"] = input
@@ -57,8 +57,8 @@ func (v *Voucher) finalize() {
 		}
 
 		request := client.VoucherPurchaseRequest{
-			AirtimePurchaseRequest: client.AirtimePurchaseRequest{
-				Initiator: client.CONSUMER,
+			PurchaseRequest: client.PurchaseRequest{
+				Initiator: utils.CONSUMER,
 				Amount:    amount,
 				Method:    method,
 				AccountId: accountId,
