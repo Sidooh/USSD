@@ -489,7 +489,7 @@
       "3": {
         "label": "Security Questions",
         "value": "3",
-        "next": "profile_security_questions_pin"
+        "next": "coming_soon"
       }
     }
   },

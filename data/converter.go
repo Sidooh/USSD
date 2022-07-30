@@ -19,6 +19,7 @@ var loadScreenKeys = []string{
 
 	//TODO: Remove once save is added
 	utils.SAVE,
+	utils.PROFILE_SECURITY_QUESTIONS_PIN,
 }
 
 func LoadData() (map[string]*Screen, error) {
