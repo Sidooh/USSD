@@ -16,6 +16,9 @@ var loadScreenKeys = []string{
 	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
 	utils.PIN_NOT_SET,
 	utils.VOUCHER_BALANCE_INSUFFICIENT,
+
+	//TODO: Remove once save is added
+	utils.SAVE,
 }
 
 func LoadData() (map[string]*Screen, error) {
