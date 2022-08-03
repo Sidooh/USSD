@@ -4,9 +4,11 @@ import (
 	"USSD.sidooh/datastore"
 	"encoding/json"
 	"fmt"
+	"github.com/getsentry/sentry-go"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 type Data struct {
@@ -124,6 +126,19 @@ func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8004"
+	}
+
+	sentrySampleRate, _ := strconv.ParseFloat(os.Getenv("SENTRY_TRACES_SAMPLE_RATE"), 64)
+
+	err := sentry.Init(sentry.ClientOptions{
+		Dsn: os.Getenv("SENTRY_DSN"),
+		// Set TracesSampleRate to 1.0 to capture 100%
+		// of transactions for performance monitoring.
+		// We recommend adjusting this value in production,
+		TracesSampleRate: sentrySampleRate,
+	})
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
 	}
 
 	initUssd()
