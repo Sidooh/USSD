@@ -18,5 +18,5 @@ func Init() {
 		ttlcache.WithDisableTouchOnHit[string, string](),
 	)
 
-	//go Instance.Start() // starts automatic expired item deletion
+	go Instance.Start() // starts automatic expired item deletion
 }

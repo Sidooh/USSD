@@ -132,7 +132,7 @@ func (a *Account) finalize() {
 			phone, _ := a.vars["{phone}"]
 
 			message := fmt.Sprintf("Dear %s"+
-				"we suscessfully updated your pin but were unable to update your profile. "+
+				"we successfully updated your pin but were unable to update your name. "+
 				"Please try again later or contact support at %s", name, email)
 			request := client.NotificationRequest{
 				Channel:     "sms",

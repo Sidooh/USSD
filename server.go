@@ -142,6 +142,7 @@ func main() {
 	}
 
 	initUssd()
+	defer destroyUssd()
 
 	//TODO: Review if this is necessary
 	//defer destroyUssd()
