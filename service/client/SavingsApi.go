@@ -32,8 +32,7 @@ func (s *SavingsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
-	err = s.newRequest(http.MethodPost, "/personal-accounts/withdraw", dataBytes).send(&response)
+	err = s.newRequest(http.MethodPost, "/personal-accounts/withdraw", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}

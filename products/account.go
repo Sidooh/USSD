@@ -41,9 +41,11 @@ func (a *Account) processScreen(input string) {
 		a.setAccountProfileOptions()
 
 	case utils.PROFILE_SECURITY:
-		if name, ok := a.vars["{full_name}"]; ok && len(name) > 0 {
-			a.screen.Options[1].NextKey = utils.PROFILE_NEW_PIN
-		}
+		//if name, ok := a.vars["{full_name}"]; ok && len(name) > 0 {
+		//	if _, exists := a.screen.Options[1]; exists {
+		//		a.screen.Options[1].NextKey = utils.PROFILE_NEW_PIN
+		//	}
+		//}
 
 	case utils.PROFILE_NAME, utils.PROFILE_UPDATE_NAME:
 		a.vars["{full_name}"] = input
@@ -292,7 +294,9 @@ func (a *Account) fetchSecurityQuestionOptions() {
 		stringVars, _ := json.Marshal(questionOptionVars)
 		a.vars["{question_options}"] = string(stringVars)
 	} else {
-		a.screen.Options[3].NextKey = utils.COMING_SOON
+		if _, exists := a.screen.Options[3]; exists {
+			a.screen.Options[3].NextKey = utils.COMING_SOON
+		}
 	}
 }
 
