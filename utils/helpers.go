@@ -1,6 +1,8 @@
 package utils
 
-import "USSD.sidooh/service"
+import (
+	"USSD.sidooh/service"
+)
 
 func GetPotentialEarnings(provider string, amount int, subscribed bool) float64 {
 	// Get users earning ratio

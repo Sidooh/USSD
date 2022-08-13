@@ -53,7 +53,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars["{customer_support_email}"] = "customersupport@sidooh.co.ke"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
-	account, err := service.FetchAccount(s.Phone)
+	account, err := service.FetchAccount(s.Phone, s.Vars)
 	//Possible Use-cases
 	//1. Error is thrown -> phone "", name "", balances 0
 	//2. Account has no user -> phone, name "", balances,
@@ -74,13 +74,13 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{phone}"] = account.Phone
 		}
 
-		if len(account.Balances) != 0 {
-			s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
-		}
-
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 			s.Vars["{full_name}"] = account.User.Name
+		}
+
+		if len(account.Balances) != 0 {
+			s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
 		}
 
 		if account.Subscription.Id != 0 {
@@ -205,6 +205,12 @@ func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
 	s.product.Process(input)
 
 	s.MoveNext("")
+
+	//if s.ScreenPath.Next != nil && s.ScreenPath.NextKey != s.ScreenPath.Next.Key {
+	//	s.MoveNext(s.ScreenPath.NextKey)
+	//} else {
+	//	s.MoveNext("")
+	//}
 }
 
 func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {

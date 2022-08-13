@@ -72,27 +72,14 @@ func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
 	}
 }
 
-// TODO: Implement global caching procedure (Local memory, TTL3, network ...order?)
-//var subscriptions = map[string]client.Subscription{}
-
 func FetchSubscription(id string) (client.Subscription, error) {
 	var subscription client.Subscription
-
-	// TODO: Return once we have implemented global caching or can autoremove after duration
-	//if cachedSub, ok := subscriptions[id]; ok {
-	//	subscription = cachedSub
-	//	return subscription, nil
-	//}
 
 	err := productsClient.GetSubscription(id, &subscription)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch subscription: ", err)
 		return client.Subscription{}, err
 	}
-	// TODO: Should we only cache when ACTIVE?
-	//if subscription.Id != 0 {
-	//	subscriptions[id] = subscription
-	//}
 
 	parts := strings.Split(subscription.EndDate, "T")
 	if len(parts) == 2 {
