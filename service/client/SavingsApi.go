@@ -20,7 +20,15 @@ func InitSavingsClient() *SavingsApiClient {
 func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) error {
 	endpoint := "/accounts/" + id + "/earnings"
 
-	err := s.newRequest(http.MethodGet, endpoint, nil).send(&response)
+	apiResponse := new(Response)
+	err := s.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)
+	if err != nil {
+		return err
+	}
+
+	// TODO: Can we get rid of this round trip?
+	dbByte, err := json.Marshal(apiResponse.Data)
+	err = json.Unmarshal(dbByte, response)
 	if err != nil {
 		return err
 	}
