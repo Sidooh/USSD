@@ -20,7 +20,7 @@ func InitSavingsClient() *SavingsApiClient {
 func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) error {
 	endpoint := "/accounts/" + id + "/earnings"
 
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 	err := s.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)
 	if err != nil {
 		return err
