@@ -39,10 +39,10 @@ var accountsClient = client.InitAccountClient()
 var paymentsClient = client.InitPaymentClient()
 var savingsClient = client.InitSavingsClient()
 
-func FetchAccount(phone string) (*Account, error) {
+func FetchAccount(phone string, vars map[string]string) (*Account, error) {
 	var account = new(Account)
 
-	err := accountsClient.GetAccountWithUser(phone, &account)
+	err := accountsClient.GetAccountWithUser(phone, account)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch account", err)
 		return nil, err
@@ -51,22 +51,35 @@ func FetchAccount(phone string) (*Account, error) {
 	// TODO: make into goroutine
 	// TODO: Making into goroutine means we have to set the details into session Vars somehow... so how???
 	// 	Should we pass in vars map to func?
-	//go func() {
-	if account != nil {
-		subscription, err := FetchSubscription(strconv.Itoa(account.Id))
-		if err != nil {
-			logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
-		}
-		account.Subscription = subscription
+	/*go */
+	func() {
+		if account != nil && account.Id != 0 {
+			// Check subscription
+			subscription, err := FetchSubscription(strconv.Itoa(account.Id))
+			if err != nil {
+				logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
+			}
+			account.Subscription = subscription
+			//if account.Subscription.Id != 0 {
+			//	vars["{subscription_status}"] = account.Subscription.Status
+			//}
 
-		err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
-		if err != nil {
-			logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
-		}
+			// Check Voucher
+			err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id), &account.Balances)
+			if err != nil {
+				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
+			}
+			//if len(account.Balances) != 0 {
+			//	vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
+			//}
 
-		account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
-	}
-	//}()
+			// Check Pin
+			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
+			//if account.HasPin {
+			//	vars["{has_pin}"] = "true"
+			//}
+		}
+	}()
 
 	return account, nil
 }
@@ -148,14 +161,14 @@ func CheckPin(id string, pin string) bool {
 }
 
 func CheckHasPin(id string) bool {
-	var valid map[string]bool
+	var valid bool
 
 	err := accountsClient.CheckHasPin(id, &valid)
 	if err != nil {
 		return false
 	}
 
-	return valid["message"]
+	return valid
 }
 
 func CheckHasSecurityQuestions(id string) bool {

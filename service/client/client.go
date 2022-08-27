@@ -24,10 +24,11 @@ type AuthResponse struct {
 	Token string `json:"access_token"`
 }
 
-type Response struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data"`
+type ApiResponse struct {
+	Result  int           `json:"result"`
+	Message string        `json:"message"`
+	Data    interface{}   `json:"data"`
+	Errors  []interface{} `json:"errors"`
 }
 
 func (api *ApiClient) init(baseUrl string) {
@@ -127,16 +128,16 @@ func (api *ApiClient) baseRequest(method string, endpoint string, body io.Reader
 }
 
 func (api *ApiClient) newRequest(method string, endpoint string, body io.Reader) *ApiClient {
-	if token := cache.Instance.Get("token"); token != nil && !token.IsExpired() {
+	if token, err := cache.GetString("token"); err == nil {
 		// TODO: Check if token has expired since we should be able to decode it
-		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
+		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token)
 	} else {
 		api.EnsureAuthenticated()
 
 		//TODO: What will happen to client if cache fails to store token? E.g. when account srv is not reachable?
 		// TODO: Can we even just use a global Var?
-		token = cache.Instance.Get("token")
-		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token.Value())
+		token, _ = cache.GetString("token")
+		api.baseRequest(method, endpoint, body).request.Header.Add("Authorization", "Bearer "+token)
 	}
 
 	return api
@@ -160,9 +161,12 @@ func (api *ApiClient) Authenticate(data []byte) error {
 		return err
 	}
 
-	if cache.Instance != nil {
-		cache.Instance.Set("token", response.Token, 14*time.Minute)
-	}
+	cache.SetString("token", response.Token, 14*time.Minute)
 
 	return nil
+}
+
+func ConvertStruct(from interface{}, to interface{}) {
+	record, _ := json.Marshal(from)
+	_ = json.Unmarshal(record, &to)
 }

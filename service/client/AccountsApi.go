@@ -1,10 +1,12 @@
 package client
 
 import (
+	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
 	"net/http"
 	"os"
+	"time"
 )
 
 type AccountsApiClient struct {
@@ -79,10 +81,21 @@ func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interf
 }
 
 func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := cache.Get("account_"+phone, response)
+	if err == nil {
+		return nil
+	}
+
+	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
+
+	cache.Set("account_"+phone, response, 24*time.Hour)
 
 	return nil
 }
@@ -110,10 +123,21 @@ func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}
 }
 
 func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := cache.Get("account_"+id+"_pin", response)
+	if err == nil {
+		return nil
+	}
+
+	err = a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
+
+	cache.Set("account_"+id+"_pin", response, 24*time.Hour)
 
 	return nil
 }

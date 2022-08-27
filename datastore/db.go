@@ -85,6 +85,15 @@ func Init() {
 	db = conn
 }
 
+func Close() {
+	err := db.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("Closed Database")
+}
+
 func UnmarshalFromDatabase(sessionId string, session *Session) error {
 	stmtOut, err := db.Prepare(`SELECT session_id, status, product, screen_path, vars 
 										FROM sessions WHERE session_id = ?`)

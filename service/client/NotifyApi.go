@@ -21,8 +21,7 @@ func (n *NotifyApiClient) SendNotification(request *NotificationRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
-	err = n.newRequest(http.MethodPost, "/notifications", dataBytes).send(&response)
+	err = n.newRequest(http.MethodPost, "/notifications", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}

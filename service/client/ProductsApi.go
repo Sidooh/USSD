@@ -1,8 +1,10 @@
 package client
 
 import (
+	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -65,8 +67,7 @@ func (p *ProductsApiClient) BuyAirtime(request *PurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/products/airtime", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/airtime", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}
@@ -78,8 +79,7 @@ func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/products/utility", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/utility", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 }
 
 func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(apiResponse)
 	if err != nil {
@@ -106,19 +106,14 @@ func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) 
 }
 
 func (p *ProductsApiClient) GetUtilityAccounts(id string, response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, &response)
-	if err != nil {
-		return err
-	}
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -127,7 +122,7 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
+	var response = ApiResponse{}
 	err = p.newRequest(http.MethodPost, "/products/vouchers/top-up", dataBytes).send(&response)
 	if err != nil {
 		return err
@@ -137,19 +132,22 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 }
 
 func (p *ProductsApiClient) GetSubscription(id string, response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
+	err := cache.Get("subscription_"+id, response)
+	fmt.Println(response, err)
+	if err == nil {
+		return nil
+	}
+
+	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, response)
-	if err != nil {
-		return err
-	}
+	ConvertStruct(apiResponse.Data, response)
+
+	cache.Set("subscription_"+id, response, 24*time.Hour)
 
 	return nil
 }
@@ -158,7 +156,7 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
+	var response = ApiResponse{}
 	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)
 	if err != nil {
 		return err
@@ -168,37 +166,27 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 }
 
 func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/products/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, response)
-	if err != nil {
-		return err
-	}
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (p *ProductsApiClient) FetchAccountEarnings(id string, response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&apiResponse)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, response)
-	if err != nil {
-		return err
-	}
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -207,8 +195,7 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	var response = Response{}
-	err = p.newRequest(http.MethodPost, "/products/withdraw", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/withdraw", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}
@@ -217,19 +204,14 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 }
 
 func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
-	apiResponse := new(Response)
+	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/products/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, response)
-	if err != nil {
-		return err
-	}
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
