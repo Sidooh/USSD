@@ -126,16 +126,6 @@
     "key": "utility",
     "title": "Select provider:",
     "options": {
-      "1": {
-        "label": "KPLC Tokens",
-        "value": "1",
-        "next": "utility_account_select"
-      },
-      "2": {
-        "label": "KPLC Postpaid",
-        "value": "2",
-        "next": "utility_account_select"
-      },
       "3": {
         "label": "Nairobi Water",
         "value": "3",
@@ -607,14 +597,14 @@
   },
   "savings": {
     "key": "savings",
-    "title": "Your saved points breakdown\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nTotal: {total_savings}\n\nWithdrawable: {withdrawable_savings}",
+    "title": "Your saved points breakdown\n\nBalance: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nWithdrawable: {withdrawable_savings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}\n\nBalance: {earnings_balance}",
+    "title": "Your earnings breakdown\n\nBalance: {earnings_balance}\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
