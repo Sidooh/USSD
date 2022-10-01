@@ -23,6 +23,13 @@ func PurchaseUtility(request client.UtilityPurchaseRequest) {
 	}
 }
 
+func PayMerchant(request client.MerchantPurchaseRequest) {
+	err := productsClient.PayMerchant(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to pay merchant: ", err)
+	}
+}
+
 func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 	var accounts []client.UtilityAccount
 

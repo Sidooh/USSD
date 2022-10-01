@@ -107,9 +107,9 @@ func (s *State) setProduct(option int) {
 	case products.PAY_VOUCHER:
 		s.product = &products.Voucher{}
 		s.ProductKey = products.PAY_VOUCHER
-	//case products.PAY_MERCHANT:
-	//	s.product = &products.Merchant{}
-	//	s.ProductKey = products.PAY_MERCHANT
+	case products.PAY_MERCHANT:
+		s.product = &products.Merchant{}
+		s.ProductKey = products.PAY_MERCHANT
 	case products.SAVE:
 		s.product = &products.Save{}
 		s.ProductKey = products.SAVE
@@ -128,28 +128,28 @@ func (s *State) setProduct(option int) {
 	}
 }
 
-func (s *State) getProduct() int {
-	switch s.product {
-	case &products.Airtime{}:
-		return products.AIRTIME
-	case &products.Pay{}:
-		return products.PAY
-	case &products.Utility{}:
-		return products.PAY_UTILITY
-	case &products.Voucher{}:
-		return products.PAY_VOUCHER
-	case &products.Save{}:
-		return products.SAVE
-	case &products.Invite{}:
-		return products.INVITE
-	case &products.Subscription{}:
-		return products.SUBSCRIPTION
-	case &products.Account{}:
-		return products.ACCOUNT
-	default:
-		return 0
-	}
-}
+//func (s *State) getProduct() int {
+//	switch s.product {
+//	case &products.Airtime{}:
+//		return products.AIRTIME
+//	case &products.Pay{}:
+//		return products.PAY
+//	case &products.Utility{}:
+//		return products.PAY_UTILITY
+//	case &products.Voucher{}:
+//		return products.PAY_VOUCHER
+//	case &products.Save{}:
+//		return products.SAVE
+//	case &products.Invite{}:
+//		return products.INVITE
+//	case &products.Subscription{}:
+//		return products.SUBSCRIPTION
+//	case &products.Account{}:
+//		return products.ACCOUNT
+//	default:
+//		return 0
+//	}
+//}
 
 func RetrieveState(code, phone, session string) *State {
 	stateData := State{

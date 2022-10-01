@@ -28,13 +28,13 @@ func (u *Utility) processScreen(input string) {
 	switch u.screen.Key {
 	case utils.UTILITY:
 		u.setUtilityAccountOptions(input)
-		break
+
 	case utils.UTILITY_ACCOUNT_SELECT:
 		u.processUtilityAccountSelection(input)
-		break
+
 	case utils.UTILITY_OTHER_ACCOUNT:
 		u.vars["{number}"] = input
-		break
+
 	case utils.UTILITY_AMOUNT:
 		u.vars["{amount}"] = input
 		u.setPaymentMethods(input)
@@ -46,7 +46,7 @@ func (u *Utility) processScreen(input string) {
 			u.vars["{product}"],
 			utils.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
 		)
-		break
+
 	}
 }
 

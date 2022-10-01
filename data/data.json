@@ -115,13 +115,56 @@
         "next": "voucher"
       },
       "3": {
-        "label": "Pay Merchant (coming soon)",
+        "label": "Pay Merchant",
         "value": "3",
-        "next": "coming_soon"
+        "next": "merchant"
       }
     }
   },
-
+  "merchant": {
+    "key": "merchant",
+    "title": "Pay Merchant",
+    "options": {
+      "1": {
+        "label": "Pay Bill",
+        "value": "1",
+        "next": "merchant_pay_bill"
+      },
+      "2": {
+        "label": "Buy Goods",
+        "value": "2",
+        "next": "merchant_buy_goods"
+      }
+    }
+  },
+  "merchant_pay_bill": {
+    "key": "merchant_pay_bill",
+    "title": "Enter business no.",
+    "type": "OPEN",
+    "next": "merchant_pay_bill_account",
+    "validations": "INT,MAX_CHARS:20"
+  },
+  "merchant_pay_bill_account": {
+    "key": "merchant_pay_bill_account",
+    "title": "Account no.",
+    "type": "OPEN",
+    "next": "merchant_amount",
+    "validations": "ALPHANUM:20"
+  },
+  "merchant_buy_goods": {
+    "key": "merchant_buy_goods",
+    "title": "Enter till no",
+    "type": "OPEN",
+    "next": "merchant_amount",
+    "validations": "INT,MIN:1000,MAX_CHARS:10"
+  },
+  "merchant_amount": {
+    "key": "merchant_amount",
+    "title": "Enter amount (MIN: KES20)",
+    "type": "OPEN",
+    "next": "payment_method",
+    "validations": "INT,MIN:20,MAX:10000"
+  },
   "utility": {
     "key": "utility",
     "title": "Select provider:",

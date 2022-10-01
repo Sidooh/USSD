@@ -87,6 +87,18 @@ func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	return nil
 }
 
+func (p *ProductsApiClient) PayMerchant(request MerchantPurchaseRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = p.newRequest(http.MethodPost, "/products/merchant", dataBytes).send(nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) error {
 	apiResponse := new(ApiResponse)
 
