@@ -22,7 +22,7 @@ func Process(code, phone, session, input string) *state.State {
 
 	// User is starting
 	if stateData.ScreenPath.Key == "" {
-		logger.UssdLog.Println("START ========================", session)
+		logger.UssdLog.Println("\nSTART ========================", session)
 		stateData.Init(screens)
 		stateData.SaveState()
 

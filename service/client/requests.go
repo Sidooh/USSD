@@ -25,6 +25,13 @@ type SubscriptionPurchaseRequest struct {
 	SubscriptionTypeId int `json:"subscription_type_id,omitempty"`
 }
 
+type MerchantPurchaseRequest struct {
+	PurchaseRequest
+	MerchantType   string `json:"merchant_type"`
+	BusinessNumber string `json:"business_number"`
+	AccountNumber  string `json:"account_number,omitempty"`
+}
+
 type ProfileDetails struct {
 	Name string
 }
