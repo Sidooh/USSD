@@ -88,16 +88,23 @@ func (p *Product) setPaymentMethodText(input string) {
 		p.vars["{payment_method}"] = utils.MPESA
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{phone}"]
 		p.vars["{payment_method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
-		break
+
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be debited automatically", p.vars["{payment_method_text}"])
 
-		if p.screen.Next.Next.Key == utils.PAYMENT_CONFIRMATION {
-			delete(p.screen.Next.Next.Options, 3)
+		next := p.screen.Next
+		for {
+			if next.Key == utils.PAYMENT_CONFIRMATION {
+				delete(next.Options, 3)
+				break
+			}
+			if next.Next == nil {
+				break
+			}
+			next = next.Next
 		}
-		break
 	}
 }
 
