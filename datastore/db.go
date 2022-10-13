@@ -151,7 +151,7 @@ func MarshalToDatabase(session Session) error {
 func FetchSessionLogs() ([]SessionLog, error) {
 	var sessions []SessionLog
 
-	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT 50`)
+	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT 5000`)
 	if err != nil {
 		return nil, err
 	}
