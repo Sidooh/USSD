@@ -57,7 +57,7 @@ func (i *Invite) finalize() {
 			"secure financial assets like Treasury Bills & Bonds so as to generate extra income for you.\n"+
 			"Dial %s NOW for FREE on your Safaricom line to buy airtime & start investing using your points.", name, code)
 		request := client.NotificationRequest{
-			Channel:     "sms",
+			Channel:     "SMS",
 			Destination: []string{number},
 			EventType:   "REFERRAL_INVITE", //TODO: Change notify referral types to invite
 			Content:     message,

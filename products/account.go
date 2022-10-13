@@ -137,7 +137,7 @@ func (a *Account) finalize() {
 				"we successfully updated your pin but were unable to update your name. "+
 				"Please try again later or contact support at %s", name, email)
 			request := client.NotificationRequest{
-				Channel:     "sms",
+				Channel:     "SMS",
 				Destination: []string{phone},
 				EventType:   "ERROR_ALERT",
 				Content:     message,
