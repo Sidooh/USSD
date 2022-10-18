@@ -72,10 +72,14 @@ func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error
 }
 
 func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
