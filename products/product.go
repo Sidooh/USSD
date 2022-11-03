@@ -61,11 +61,6 @@ func (p *Product) setPaymentMethods(input string) {
 		delete(p.screen.Next.Options, 2)
 	}
 
-	// TODO: Merchant only supports voucher for now
-	if p.productRep == "pay_merchant" {
-		delete(p.screen.Next.Options, 1)
-	}
-
 	hasPin := p.checkHasPin()
 	if !hasPin {
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
