@@ -52,6 +52,19 @@ func (api *ApiClient) getUrl(endpoint string) string {
 	return api.baseUrl + endpoint
 }
 
+func cached(key string, result interface{}, fn func() (interface{}, error)) error {
+	err := cache.Get(key, result)
+	if err == nil {
+		return nil
+	}
+
+	result, err = fn()
+
+	cache.Set(key, result, 28*24*time.Hour)
+
+	return err
+}
+
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
 	logger.ServiceLog.Println("API_REQ: ", api.request)

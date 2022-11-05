@@ -1,8 +1,10 @@
 package service
 
 import (
+	"USSD.sidooh/cache"
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"strconv"
 	"strings"
 )
 
@@ -102,8 +104,9 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
-	// TODO: Test if this actually works
-	//delete(subscriptions, strconv.Itoa(request.AccountId))
+
+	cache.Remove("subscription_" + strconv.Itoa(request.AccountId))
+
 }
 
 func FetchSubscriptionType() (client.SubscriptionType, error) {
