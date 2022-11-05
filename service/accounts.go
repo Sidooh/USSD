@@ -39,7 +39,7 @@ var accountsClient = client.InitAccountClient()
 var paymentsClient = client.InitPaymentClient()
 var savingsClient = client.InitSavingsClient()
 
-func FetchAccount(phone string, vars map[string]string) (*Account, error) {
+func FetchAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
 	err := accountsClient.GetAccountWithUser(phone, account)

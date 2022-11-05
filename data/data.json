@@ -22,7 +22,7 @@
         "next": "airtime"
       },
       "3": {
-        "label": "Pay",
+        "label": "Pay Bill, Buy Goods",
         "value": "3",
         "next": "pay"
       },
@@ -37,7 +37,7 @@
         "next": "invite_pin"
       },
       "6": {
-        "label": "Become an Agent",
+        "label": "Earn More",
         "value": "6",
         "next": "subscription"
       },
@@ -101,29 +101,8 @@
 
   "pay": {
     "key": "pay",
-    "title": "What would you like to pay for?",
+    "title": "Select option",
     "super_product": 3,
-    "options": {
-      "1": {
-        "label": "Pay Utilities",
-        "value": "1",
-        "next": "utility"
-      },
-      "2": {
-        "label": "Voucher Top-up",
-        "value": "2",
-        "next": "voucher"
-      },
-      "3": {
-        "label": "Pay Merchant",
-        "value": "3",
-        "next": "merchant"
-      }
-    }
-  },
-  "merchant": {
-    "key": "merchant",
-    "title": "Pay Merchant",
     "options": {
       "1": {
         "label": "Pay Bill",
@@ -134,26 +113,36 @@
         "label": "Buy Goods",
         "value": "2",
         "next": "merchant_buy_goods"
+      },
+      "3": {
+        "label": "Pay Utilities",
+        "value": "3",
+        "next": "utility"
+      },
+      "4": {
+        "label": "Buy Voucher",
+        "value": "4",
+        "next": "voucher"
       }
     }
   },
   "merchant_pay_bill": {
     "key": "merchant_pay_bill",
-    "title": "Enter business no.",
+    "title": "Enter pay bill number",
     "type": "OPEN",
     "next": "merchant_pay_bill_account",
     "validations": "INT,MAX_CHARS:20"
   },
   "merchant_pay_bill_account": {
     "key": "merchant_pay_bill_account",
-    "title": "Account no.",
+    "title": "Account number",
     "type": "OPEN",
     "next": "merchant_amount",
     "validations": "ALPHANUM:20"
   },
   "merchant_buy_goods": {
     "key": "merchant_buy_goods",
-    "title": "Enter till no",
+    "title": "Enter till number",
     "type": "OPEN",
     "next": "merchant_amount",
     "validations": "INT,MIN:1000,MAX_CHARS:10"
@@ -752,7 +741,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} for {number} using:",
+    "title": "Pay KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -775,7 +764,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",

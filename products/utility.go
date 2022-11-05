@@ -42,7 +42,7 @@ func (u *Utility) processScreen(input string) {
 		amount, _ := strconv.Atoi(input)
 		subscription, _ := u.vars["{subscription_status}"]
 		u.vars["{product}"] = fmt.Sprintf(
-			"%s (which will earn you %.2f points)",
+			"%s (which will earn you %.2f points) for",
 			u.vars["{product}"],
 			utils.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
 		)
