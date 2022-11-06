@@ -27,7 +27,7 @@
         "next": "pay"
       },
       "4": {
-        "label": "Save",
+        "label": "Save & Invest",
         "value": "4",
         "next": "coming_soon"
       },
@@ -393,11 +393,11 @@
   },
   "subscription_register": {
     "key": "subscription_register",
-    "title": "By subscribing as a {subscription_type} through paying a fee ({subscription_amount}/{duration}), you will earn sales commissions on every airtime purchased from the platform by your invited customers.",
+    "title": "By subscribing to Earn More through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Proceed to subscribe as an Agent",
+        "label": "Proceed to subscribe to EARN MORE",
         "value": "1",
         "next": "subscription_subscriber_name"
       }
