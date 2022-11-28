@@ -203,7 +203,7 @@ func CreateAccount(phone string) (*Account, error) {
 				"Show them how to buy airtime from Sidooh so as to unlock your earnings."+
 				"The more friends you invite to Sidooh, the more you earn.", account.Phone)
 			request := client.NotificationRequest{
-				Channel:     "sms",
+				Channel:     "SMS",
 				Destination: []string{inviter.Phone},
 				EventType:   "REFERRAL_JOINED", //TODO: Change notify referral types to invite
 				Content:     message,
