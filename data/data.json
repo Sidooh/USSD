@@ -1,7 +1,7 @@
 {
   "invite_code": {
     "key": "invite_code",
-    "title": "Welcome to Sidooh!\n\nEnter phone number of the person who invited you",
+    "title": "Hi, Welcome to Sidooh. Please enter your invite code",
     "type": "OPEN",
     "next": "main_menu",
     "validations": "INVITE_CODE_VALIDATION"

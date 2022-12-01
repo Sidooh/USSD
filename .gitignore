@@ -5,6 +5,7 @@
 *.iml
 out
 gen
+.fleet
 
 ### Go template
 # Binaries for programs and plugins
@@ -37,3 +38,4 @@ gen
 
 # Sidooh bin
 USSD.sidooh
+/ab.json
