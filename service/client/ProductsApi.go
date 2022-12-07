@@ -134,7 +134,7 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/vouchers/top-up", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/voucher", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -163,7 +163,7 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -179,7 +179,7 @@ func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
 		return nil
 	}
 
-	err = p.newRequest(http.MethodGet, "/products/subscription-types/default", nil).send(apiResponse)
+	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
@@ -219,7 +219,7 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/products/earnings/rates", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
