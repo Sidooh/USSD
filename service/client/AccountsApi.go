@@ -114,14 +114,18 @@ func (a *AccountsApiClient) CheckInvite(phone string, response interface{}) erro
 }
 
 func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(response)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -156,14 +160,18 @@ func (a *AccountsApiClient) CheckHasSecurityQuestions(id string, response interf
 }
 
 func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(response)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
