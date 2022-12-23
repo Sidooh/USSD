@@ -4,8 +4,8 @@ import (
 	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
 	"time"
 )
 
@@ -58,7 +58,7 @@ type SavingAccount struct {
 
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
-	client.ApiClient.init(os.Getenv("ACCOUNTS_URL"))
+	client.ApiClient.init(viper.GetString("ACCOUNTS_URL"))
 	return &client
 }
 

@@ -6,10 +6,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/spf13/viper"
 	"io"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
@@ -169,7 +169,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, os.Getenv("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, viper.GetString("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}

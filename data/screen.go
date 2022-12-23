@@ -6,7 +6,7 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
-	"os"
+	"github.com/spf13/viper"
 	"regexp"
 	"sort"
 	"strconv"
@@ -282,7 +282,7 @@ func isValidUtilityAmount(input string, utility string) bool {
 }
 
 func (screen *Screen) isSocialInvite(input string, vars map[string]string) bool {
-	inviteCodes := os.Getenv("INVITE_CODES")
+	inviteCodes := viper.GetString("INVITE_CODES")
 	if inviteCodes == "" {
 		return false
 	}

@@ -1,8 +1,8 @@
 package client
 
 import (
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
 )
 
 type PaymentsApiClient struct {
@@ -11,7 +11,7 @@ type PaymentsApiClient struct {
 
 func InitPaymentClient() *PaymentsApiClient {
 	client := PaymentsApiClient{}
-	client.ApiClient.init(os.Getenv("PAYMENTS_URL"))
+	client.ApiClient.init(viper.GetString("PAYMENTS_URL"))
 	return &client
 }
 

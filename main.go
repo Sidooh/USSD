@@ -9,8 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"net/http"
-	"os"
-	"strconv"
 )
 
 type Data struct {
@@ -127,12 +125,12 @@ func Logs() http.Handler {
 func main() {
 	utils.SetupConfig(".")
 
-	port := os.Getenv("PORT")
+	port := viper.GetString("PORT")
 	if port == "" {
 		port = "8004"
 	}
 
-	sentrySampleRate, _ := strconv.ParseFloat(os.Getenv("SENTRY_TRACES_SAMPLE_RATE"), 64)
+	sentrySampleRate := viper.GetFloat64("SENTRY_TRACES_SAMPLE_RATE")
 
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: viper.GetString("SENTRY_DSN"),
