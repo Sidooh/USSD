@@ -118,7 +118,6 @@ func Logs() http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(marshal)
-
 	})
 }
 
