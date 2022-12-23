@@ -53,7 +53,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars["{customer_support_email}"] = "customersupport@sidooh.co.ke"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
-	account, err := service.FetchAccount(s.Phone, s.Vars)
+	account, err := service.FetchAccount(s.Phone)
 	//Possible Use-cases
 	//1. Error is thrown -> phone "", name "", balances 0
 	//2. Account has no user -> phone, name "", balances,
@@ -101,15 +101,18 @@ func (s *State) setProduct(option int) {
 	case products.PAY:
 		s.product = &products.Pay{}
 		s.ProductKey = products.PAY
+	case products.PAY_MPESA_PAY_BILL:
+		s.product = &products.PayBill{}
+		s.ProductKey = products.PAY_MPESA_PAY_BILL
+	case products.PAY_MPESA_BUY_GOODS:
+		s.product = &products.BuyGoods{}
+		s.ProductKey = products.PAY_MPESA_BUY_GOODS
 	case products.PAY_UTILITY:
 		s.product = &products.Utility{}
 		s.ProductKey = products.PAY_UTILITY
 	case products.PAY_VOUCHER:
 		s.product = &products.Voucher{}
 		s.ProductKey = products.PAY_VOUCHER
-	//case products.PAY_MERCHANT:
-	//	s.product = &products.Merchant{}
-	//	s.ProductKey = products.PAY_MERCHANT
 	case products.SAVE:
 		s.product = &products.Save{}
 		s.ProductKey = products.SAVE
@@ -125,29 +128,6 @@ func (s *State) setProduct(option int) {
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
-	}
-}
-
-func (s *State) getProduct() int {
-	switch s.product {
-	case &products.Airtime{}:
-		return products.AIRTIME
-	case &products.Pay{}:
-		return products.PAY
-	case &products.Utility{}:
-		return products.PAY_UTILITY
-	case &products.Voucher{}:
-		return products.PAY_VOUCHER
-	case &products.Save{}:
-		return products.SAVE
-	case &products.Invite{}:
-		return products.INVITE
-	case &products.Subscription{}:
-		return products.SUBSCRIPTION
-	case &products.Account{}:
-		return products.ACCOUNT
-	default:
-		return 0
 	}
 }
 

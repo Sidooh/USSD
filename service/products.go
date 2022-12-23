@@ -1,8 +1,10 @@
 package service
 
 import (
+	"USSD.sidooh/cache"
 	"USSD.sidooh/logger"
 	"USSD.sidooh/service/client"
+	"strconv"
 	"strings"
 )
 
@@ -20,6 +22,13 @@ func PurchaseUtility(request client.UtilityPurchaseRequest) {
 	err := productsClient.PayUtility(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to pay utility: ", err)
+	}
+}
+
+func PayMerchant(request client.MerchantPurchaseRequest) {
+	err := productsClient.PayMerchant(request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to pay merchant: ", err)
 	}
 }
 
@@ -95,8 +104,9 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
 	}
-	// TODO: Test if this actually works
-	//delete(subscriptions, strconv.Itoa(request.AccountId))
+
+	cache.Remove("subscription_" + strconv.Itoa(request.AccountId))
+
 }
 
 func FetchSubscriptionType() (client.SubscriptionType, error) {

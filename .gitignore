@@ -2,10 +2,10 @@
 
 # IntelliJ project files
 .idea
+.fleet
 *.iml
 out
 gen
-.fleet
 
 ### Go template
 # Binaries for programs and plugins
@@ -38,4 +38,5 @@ gen
 
 # Sidooh bin
 USSD.sidooh
-/ab.json
+
+ab.json
