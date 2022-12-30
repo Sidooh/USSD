@@ -3,8 +3,9 @@ package client
 import (
 	"USSD.sidooh/cache"
 	"encoding/json"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"regexp"
@@ -74,13 +75,6 @@ func initTestClient(fn RoundTripFunc) {
 	}
 }
 
-func setEnv(t *testing.T, key string, value string) {
-	err := os.Setenv(key, value)
-	if err != nil {
-		t.Error(err)
-	}
-}
-
 func authSuccessRequest(t *testing.T) RoundTripFunc {
 	return func(req *http.Request) *http.Response {
 		// Test request parameters
@@ -88,7 +82,7 @@ func authSuccessRequest(t *testing.T) RoundTripFunc {
 		return &http.Response{
 			StatusCode: 200,
 			// Send response to be tested
-			Body: ioutil.NopCloser(strings.NewReader("{\"access_token\":\"testToken\"}")),
+			Body: io.NopCloser(strings.NewReader("{\"access_token\":\"testToken\"}")),
 			// Must be set to non-nil value, or it panics
 			//Header: make(http.Header),
 		}
@@ -102,15 +96,15 @@ func authFailedRequest(t *testing.T) RoundTripFunc {
 		return &http.Response{
 			StatusCode: 401,
 			// Send response to be tested
-			Body: ioutil.NopCloser(strings.NewReader("{\"error\":\"unauthenticated\"}")),
-			// Must be set to non-nil value or it panics
+			Body: io.NopCloser(strings.NewReader("{\"error\":\"unauthenticated\"}")),
+			// Must be set to non-nil value, or it panics
 			//Header: make(http.Header),
 		}
 	}
 }
 
 func TestApiClient_Authenticate(t *testing.T) {
-	setEnv(t, "ACCOUNTS_URL", "http://localhost:8000")
+	viper.Set("ACCOUNTS_URL", "http://localhost:8000")
 
 	initTestClient(authSuccessRequest(t))
 

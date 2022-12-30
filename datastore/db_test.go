@@ -1,15 +1,12 @@
 package datastore
 
 import (
-	"os"
+	"github.com/spf13/viper"
 	"testing"
 )
 
 func initializeDB() {
-	err := os.Setenv("APP_ENV", "TEST")
-	if err != nil {
-		return
-	}
+	viper.Set("APP_ENV", "TEST")
 
 	Init()
 }

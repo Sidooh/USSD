@@ -2,15 +2,11 @@ package utils
 
 import (
 	"github.com/spf13/viper"
-	"os"
 	"testing"
 )
 
 func TestSetupConfig(t *testing.T) {
-	err := os.Setenv("TEST", "test")
-	if err != nil {
-		t.Errorf("Setting env failed, got: %s, want: %v.", err, nil)
-	}
+	viper.Set("TEST", "test")
 
 	SetupConfig(".")
 
