@@ -3,8 +3,8 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
 )
 
 type NotifyApiClient struct {
@@ -13,7 +13,7 @@ type NotifyApiClient struct {
 
 func InitNotifyClient() *NotifyApiClient {
 	client := NotifyApiClient{}
-	client.ApiClient.init(os.Getenv("NOTIFY_URL"))
+	client.ApiClient.init(viper.GetString("NOTIFY_URL"))
 	return &client
 }
 

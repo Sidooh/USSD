@@ -3,8 +3,8 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
 )
 
 type SavingsApiClient struct {
@@ -13,7 +13,7 @@ type SavingsApiClient struct {
 
 func InitSavingsClient() *SavingsApiClient {
 	client := SavingsApiClient{}
-	client.ApiClient.init(os.Getenv("SAVINGS_URL"))
+	client.ApiClient.init(viper.GetString("SAVINGS_URL"))
 	return &client
 }
 

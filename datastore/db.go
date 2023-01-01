@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/spf13/viper"
 	_ "modernc.org/sqlite"
-	"os"
+	"strings"
 	"time"
 )
 
@@ -45,12 +46,12 @@ func Init() {
 
 	driverName := "mysql"
 
-	env := os.Getenv("APP_ENV")
+	env := strings.ToUpper(viper.GetString("APP_ENV"))
 	if env == "TEST" {
 		driverName = "sqlite"
 	}
 
-	conn, err := sql.Open(driverName, os.Getenv("DB_DSN"))
+	conn, err := sql.Open(driverName, viper.GetString("DB_DSN"))
 	if err != nil {
 		fmt.Println(err)
 		panic("failed to connect database")

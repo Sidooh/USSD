@@ -70,7 +70,8 @@ func (m *Merchant) finalize() {
 		if accountId == 0 {
 			logger.UssdLog.Println(" -- MERCHANT: creating acc")
 
-			account, err := service.CreateAccount(m.vars["{phone}"])
+			//	TODO: Fix nil value for invite code
+			account, err := service.CreateAccount(m.vars["{phone}"], nil)
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error(err)
