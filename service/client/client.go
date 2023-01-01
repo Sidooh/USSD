@@ -8,7 +8,6 @@ import (
 	"errors"
 	"github.com/spf13/viper"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
@@ -78,7 +77,7 @@ func (api *ApiClient) send(data interface{}) error {
 	defer response.Body.Close()
 	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
 
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
@@ -86,7 +85,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
-		response.StatusCode != 404 && response.StatusCode != 422 {
+		response.StatusCode != 404 {
 		if response.StatusCode < 500 {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
