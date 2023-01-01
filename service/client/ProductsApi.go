@@ -4,7 +4,6 @@ import (
 	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -87,6 +86,18 @@ func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	return nil
 }
 
+func (p *ProductsApiClient) PayMerchant(request MerchantPurchaseRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = p.newRequest(http.MethodPost, "/products/merchant", dataBytes).send(nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) error {
 	apiResponse := new(ApiResponse)
 
@@ -123,7 +134,7 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/vouchers/top-up", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/voucher", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -134,22 +145,17 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 func (p *ProductsApiClient) GetSubscription(id string, response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := cache.Get("subscription_"+id, response)
-	fmt.Println(response, err)
-	if err == nil {
-		return nil
-	}
+	return cached("subscription_"+id, response, func() (interface{}, error) {
+		err := p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
+		if err != nil {
+			return nil, err
+		}
 
-	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
-	if err != nil {
-		return err
-	}
+		ConvertStruct(apiResponse.Data, response)
 
-	ConvertStruct(apiResponse.Data, response)
+		return response, nil
+	})
 
-	cache.Set("subscription_"+id, response, 24*time.Hour)
-
-	return nil
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
@@ -157,7 +163,7 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -168,12 +174,19 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/products/subscription-types/default", nil).send(apiResponse)
+	err := cache.Get("default_subscription", response)
+	if err == nil {
+		return nil
+	}
+
+	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
 	ConvertStruct(apiResponse.Data, response)
+
+	cache.Set("default_subscription", response, 28*24*time.Hour)
 
 	return nil
 }
@@ -206,7 +219,7 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/products/earnings/rates", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
