@@ -310,12 +310,6 @@ func (screen *Screen) isSidoohAccount(input string) bool {
 }
 
 func (screen *Screen) isSidoohAccountIdOrPhone(input string, vars map[string]string) bool {
-	// ID leaves it open to guesswork, so for now validate only phones
-	if !isValidPhone(input) {
-		screen.Title = "Invalid Code, please try again."
-		return false
-	}
-
 	account, err := service.CheckAccountByIdOrPhone(input)
 	if err != nil {
 		screen.Title = "Invalid Code, please try again."
