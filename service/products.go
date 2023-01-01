@@ -8,9 +8,6 @@ import (
 	"strings"
 )
 
-var productsClient = client.InitProductClient()
-var notifyClient = client.InitNotifyClient()
-
 func PurchaseAirtime(request *client.PurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
 	if err != nil {

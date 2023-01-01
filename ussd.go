@@ -5,6 +5,7 @@ import (
 	"USSD.sidooh/data"
 	"USSD.sidooh/datastore"
 	"USSD.sidooh/logger"
+	"USSD.sidooh/service"
 	"USSD.sidooh/state"
 	"USSD.sidooh/utils"
 	"fmt"
@@ -101,6 +102,7 @@ func initUssd() {
 	logger.Init()
 	cache.Init()
 	datastore.Init()
+	service.Init()
 
 	LoadScreens()
 }
