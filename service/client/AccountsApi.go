@@ -63,10 +63,14 @@ func InitAccountClient() *AccountsApiClient {
 }
 
 func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -105,10 +109,14 @@ func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{
 }
 
 func (a *AccountsApiClient) CheckInvite(phone string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -151,10 +159,14 @@ func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
 }
 
 func (a *AccountsApiClient) CheckHasSecurityQuestions(id string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -177,81 +189,109 @@ func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) 
 }
 
 func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	values := map[string]interface{}{"phone": phone, "invite_code": inviteCode}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts", dataBytes).send(response)
+	err = a.newRequest(http.MethodPost, "/accounts", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) CreateInvite(id string, phone string, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	values := map[string]string{"inviter_id": id, "phone": phone}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/invites", dataBytes).send(response)
+	err = a.newRequest(http.MethodPost, "/invites", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(&response)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) FetchSecurityQuestions(response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(&response)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) FetchUserSecurityQuestions(id string, response interface{}) error {
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(response)
+	var apiResponse = new(ApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
 
 func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest, response interface{}) error {
+	var apiResponse = new(ApiResponse)
+
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/check", dataBytes).send(&response)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/check", dataBytes).send(apiResponse)
 	if err != nil {
 		return err
 	}
+
+	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }

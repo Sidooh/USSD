@@ -133,6 +133,7 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
+	// TODO: Check/profile if this is better than new(ApiResponse)
 	var response = ApiResponse{}
 	err = p.newRequest(http.MethodPost, "/products/voucher", dataBytes).send(&response)
 	if err != nil {
