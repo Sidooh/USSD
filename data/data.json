@@ -427,7 +427,7 @@
   },
   "account_profile": {
     "key": "account_profile",
-    "title": "Your details are as follows\n\nName: {full_name}\nNumber: {phone}\n\nSubscription: {subscription_type}",
+    "title": "Your details are as follows\n\nName: {full_name}\n\nInvite Code: {account_id}\n\nSubscription: {subscription_type}",
     "type": "CLOSED",
     "options": {
       "1": {
