@@ -128,6 +128,7 @@ func Notify(request *client.NotificationRequest) {
 	}
 }
 
+// Move to cache client storage, and enable sync process if changed in products service
 var earningRates = map[string]client.EarningRate{}
 
 func GetEarningRate(provider string) (*client.EarningRate, error) {

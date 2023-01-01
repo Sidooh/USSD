@@ -182,10 +182,10 @@ func CheckHasSecurityQuestions(id string) bool {
 	return valid["message"]
 }
 
-func CreateAccount(phone string) (*Account, error) {
+func CreateAccount(phone string, inviteCode interface{}) (*Account, error) {
 	var account = new(Account)
 
-	err := accountsClient.CreateAccount(phone, &account)
+	err := accountsClient.CreateAccount(phone, inviteCode, &account)
 	if err != nil {
 		return nil, err
 	}

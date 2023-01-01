@@ -6,6 +6,7 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strconv"
@@ -238,7 +239,7 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
 
 	case utils.INVITE_CODE_VALIDATION:
-		return screen.isSidoohAccountIdOrPhone(input, vars)
+		return screen.isSocialInvite(input, vars) || screen.isSidoohAccountIdOrPhone(input, vars)
 	}
 
 	return false
@@ -278,6 +279,24 @@ func isValidUtilityAmount(input string, utility string) bool {
 	val := getIntVal(input)
 
 	return val <= max && val >= min
+}
+
+func (screen *Screen) isSocialInvite(input string, vars map[string]string) bool {
+	inviteCodes := os.Getenv("INVITE_CODES")
+	if inviteCodes == "" {
+		return false
+	}
+
+	codes := strings.Split(inviteCodes, ",")
+
+	for _, code := range codes {
+		if strings.ToLower(code) == strings.ToLower(input) {
+			vars["{invite_code_string}"] = strings.ToUpper(code)
+			return true
+		}
+	}
+
+	return false
 }
 
 func (screen *Screen) isSidoohAccount(input string) bool {

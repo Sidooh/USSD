@@ -45,9 +45,9 @@ func (v *Voucher) finalize() {
 		method := v.vars["{payment_method}"]
 
 		if accountId == 0 {
-			logger.UssdLog.Println(" -- AIRTIME: creating acc")
+			logger.UssdLog.Println(" -- VOUCHER: creating acc")
 
-			account, err := service.CreateAccount(v.vars["{phone}"])
+			account, err := service.CreateAccount(v.vars["{phone}"], v.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error("Failed to create account: ", err)

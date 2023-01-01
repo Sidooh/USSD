@@ -6,6 +6,7 @@
 *.iml
 out
 gen
+.fleet
 
 ### Go template
 # Binaries for programs and plugins

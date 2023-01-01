@@ -126,12 +126,12 @@ func (u *Utility) finalize() {
 		accountNumber := u.vars["{number}"]
 
 		if accountId == 0 {
-			logger.UssdLog.Println(" -- AIRTIME: creating acc")
+			logger.UssdLog.Println(" -- UTILITY: creating acc")
 
-			account, err := service.CreateAccount(u.vars["{phone}"])
+			account, err := service.CreateAccount(u.vars["{phone}"], u.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
-				logger.UssdLog.Error(err)
+				logger.UssdLog.Error("Failed to create account: ", err)
 			}
 
 			accountId = account.Id

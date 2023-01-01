@@ -65,7 +65,7 @@ func (a *Airtime) finalize() {
 		if accountId == 0 {
 			logger.UssdLog.Println(" -- AIRTIME: creating acc")
 
-			account, err := service.CreateAccount(a.vars["{phone}"])
+			account, err := service.CreateAccount(a.vars["{phone}"], a.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error("Failed to create account: ", err)

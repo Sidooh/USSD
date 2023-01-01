@@ -176,8 +176,8 @@ func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) 
 	return nil
 }
 
-func (a *AccountsApiClient) CreateAccount(phone string, response interface{}) error {
-	values := map[string]string{"phone": phone}
+func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}, response interface{}) error {
+	values := map[string]interface{}{"phone": phone, "invite_code": inviteCode}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
