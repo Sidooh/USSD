@@ -22,12 +22,12 @@
         "next": "airtime"
       },
       "3": {
-        "label": "Pay Bill, Buy Goods",
+        "label": "Pay",
         "value": "3",
         "next": "pay"
       },
       "4": {
-        "label": "Save & Invest",
+        "label": "Save",
         "value": "4",
         "next": "coming_soon"
       },
@@ -52,7 +52,7 @@
   "about": {
     "key": "about",
     "type": "OPEN",
-    "title": "Sidooh is a cashback rewards platform that gives you cash refunds on every item you purchase through the platform. The earned cashback is then automatically saved and invested in financial assets like Treasury Bills and Bonds, Fixed Deposits, etc. so as to generate extra income for you.",
+    "title": "Sidooh is a cashback platform that rewards you with cash points for every item you buy or pay for via the platform. The earned cash points are then automatically saved and invested in financial assets such as Treasury Bills and Bonds so as to generate passive income for you.",
     "paginated": true
   },
 
@@ -101,59 +101,27 @@
 
   "pay": {
     "key": "pay",
-    "title": "Select option",
+    "title": "What would you like to pay for?",
     "super_product": 3,
     "options": {
       "1": {
-        "label": "Pay Bill",
-        "value": "1",
-        "next": "merchant_pay_bill"
-      },
-      "2": {
-        "label": "Buy Goods",
-        "value": "2",
-        "next": "merchant_buy_goods"
-      },
-      "3": {
         "label": "Pay Utilities",
-        "value": "3",
+        "value": "1",
         "next": "utility"
       },
-      "4": {
-        "label": "Buy Voucher",
-        "value": "4",
+      "2": {
+        "label": "Voucher Top-up",
+        "value": "2",
         "next": "voucher"
+      },
+      "3": {
+        "label": "Pay Merchant (coming soon)",
+        "value": "3",
+        "next": "coming_soon"
       }
     }
   },
-  "merchant_pay_bill": {
-    "key": "merchant_pay_bill",
-    "title": "Enter pay bill number",
-    "type": "OPEN",
-    "next": "merchant_pay_bill_account",
-    "validations": "INT,MAX_CHARS:20"
-  },
-  "merchant_pay_bill_account": {
-    "key": "merchant_pay_bill_account",
-    "title": "Account number",
-    "type": "OPEN",
-    "next": "merchant_amount",
-    "validations": "ALPHANUM:20"
-  },
-  "merchant_buy_goods": {
-    "key": "merchant_buy_goods",
-    "title": "Enter till number",
-    "type": "OPEN",
-    "next": "merchant_amount",
-    "validations": "INT,MIN:1000,MAX_CHARS:10"
-  },
-  "merchant_amount": {
-    "key": "merchant_amount",
-    "title": "Enter amount (MIN: KES20)",
-    "type": "OPEN",
-    "next": "payment_method",
-    "validations": "INT,MIN:20,MAX:10000"
-  },
+
   "utility": {
     "key": "utility",
     "title": "Select provider:",
@@ -368,7 +336,7 @@
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Subscribe as an agent",
+        "label": "Subscribe to Earn More",
         "value": "1",
         "next": "subscription_register"
       }
@@ -376,7 +344,7 @@
   },
   "subscription_renew": {
     "key": "subscription_renew",
-    "title": "Your subscription to {subscription_type} {subscription_end_date}.",
+    "title": "Your subscription to Earn More expired on {subscription_end_date}.",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -388,12 +356,12 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "You are already subscribed to {subscription_type}. {subscription_end_date}.",
+    "title": "You are already subscribed to Earn More. Valid until {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
     "key": "subscription_register",
-    "title": "By subscribing to {subscription_type} through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
+    "title": "By subscribing to Earn More through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -741,7 +709,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} {number} using:",
+    "title": "Pay KES{amount} {product} for {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -764,7 +732,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
     "options": {
       "1": {
         "label": "Accept",

@@ -4,8 +4,9 @@ import (
 	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
-	"github.com/spf13/viper"
 	"net/http"
+	"os"
+	"strconv"
 	"time"
 )
 
@@ -57,7 +58,7 @@ type EarningRate struct {
 
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
-	client.ApiClient.init(viper.GetString("PRODUCTS_URL"))
+	client.ApiClient.init(os.Getenv("PRODUCTS_URL"))
 	client.client.Timeout = 40 * time.Second
 	return &client
 }
@@ -79,18 +80,6 @@ func (p *ProductsApiClient) PayUtility(request UtilityPurchaseRequest) error {
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	err = p.newRequest(http.MethodPost, "/products/utility", dataBytes).send(nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (p *ProductsApiClient) PayMerchant(request MerchantPurchaseRequest) error {
-	jsonData, err := json.Marshal(request)
-	dataBytes := bytes.NewBuffer(jsonData)
-
-	err = p.newRequest(http.MethodPost, "/products/merchant", dataBytes).send(nil)
 	if err != nil {
 		return err
 	}
@@ -133,9 +122,8 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	// TODO: Check/profile if this is better than new(ApiResponse)
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/voucher", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/vouchers/top-up", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -146,25 +134,31 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 func (p *ProductsApiClient) GetSubscription(id string, response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	return cached("subscription_"+id, response, func() (interface{}, error) {
-		err := p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
-		if err != nil {
-			return nil, err
-		}
+	err := cache.Get("subscription_"+id, response)
+	if err == nil {
+		return nil
+	}
 
-		ConvertStruct(apiResponse.Data, response)
+	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
+	if err != nil {
+		return err
+	}
 
-		return response, nil
-	})
+	ConvertStruct(apiResponse.Data, response)
 
+	cache.Set("subscription_"+id, response, 24*time.Hour)
+
+	return nil
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
+	cache.Remove("subscription_" + strconv.Itoa(request.AccountId))
+
 	var response = ApiResponse{}
-	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)
+	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)
 	if err != nil {
 		return err
 	}
@@ -175,19 +169,12 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := cache.Get("default_subscription", response)
-	if err == nil {
-		return nil
-	}
-
-	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/products/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
 	ConvertStruct(apiResponse.Data, response)
-
-	cache.Set("default_subscription", response, 28*24*time.Hour)
 
 	return nil
 }
@@ -220,7 +207,7 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
 	apiResponse := new(ApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/products/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
