@@ -74,6 +74,8 @@ func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error
 func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interface{}) error {
 	var apiResponse = new(ApiResponse)
 
+	// TODO: Test cache
+
 	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(apiResponse)
 	if err != nil {
 		return err
@@ -129,19 +131,12 @@ func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}
 func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
 	var apiResponse = new(ApiResponse)
 
-	err := cache.Get("account_"+id+"_pin", response)
-	if err == nil {
-		return nil
-	}
-
-	err = a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
 
 	ConvertStruct(apiResponse.Data, response)
-
-	cache.Set("account_"+id+"_pin", response, 24*time.Hour)
 
 	return nil
 }

@@ -131,7 +131,7 @@ func (s *Subscription) fetchUserSubscription() {
 
 			expiryTime, err := time.Parse(`2006-01-02 15:04:05`, subscription.EndDate)
 
-			if subscription.Status == utils.EXPIRED || (time.Until(expiryTime) < 3*24*time.Hour && err == nil) {
+			if subscription.Status == utils.EXPIRED || (time.Until(expiryTime) < 3*time.Hour && err == nil) {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
 			}
 

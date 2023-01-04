@@ -4,9 +4,9 @@ import (
 	"USSD.sidooh/cache"
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -135,7 +135,6 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 	apiResponse := new(ApiResponse)
 
 	err := cache.Get("subscription_"+id, response)
-	fmt.Println(response, err)
 	if err == nil {
 		return nil
 	}
@@ -155,6 +154,8 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
+
+	cache.Remove("subscription_" + strconv.Itoa(request.AccountId))
 
 	var response = ApiResponse{}
 	err = p.newRequest(http.MethodPost, "/products/subscriptions", dataBytes).send(&response)

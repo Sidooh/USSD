@@ -37,7 +37,7 @@
         "next": "invite_pin"
       },
       "6": {
-        "label": "Become an Agent",
+        "label": "Earn More",
         "value": "6",
         "next": "subscription"
       },
@@ -52,7 +52,7 @@
   "about": {
     "key": "about",
     "type": "OPEN",
-    "title": "Sidooh is a cashback rewards platform that gives you cash refunds on every item you purchase through the platform. The earned cashback is then automatically saved and invested in financial assets like Treasury Bills and Bonds, Fixed Deposits, etc. so as to generate extra income for you.",
+    "title": "Sidooh is a cashback platform that rewards you with cash points for every item you buy or pay for via the platform. The earned cash points are then automatically saved and invested in financial assets such as Treasury Bills and Bonds so as to generate passive income for you.",
     "paginated": true
   },
 
@@ -336,7 +336,7 @@
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Subscribe as an agent",
+        "label": "Subscribe to Earn More",
         "value": "1",
         "next": "subscription_register"
       }
@@ -344,7 +344,7 @@
   },
   "subscription_renew": {
     "key": "subscription_renew",
-    "title": "Dear{name}, Your subscription to {subscription_type} expires/expired on {subscription_end_date}.",
+    "title": "Your subscription to Earn More expired on {subscription_end_date}.",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -356,16 +356,16 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "Dear{name}, you are already subscribed to {subscription_type} valid until {subscription_end_date}.",
+    "title": "You are already subscribed to Earn More. Valid until {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
     "key": "subscription_register",
-    "title": "By subscribing as a {subscription_type} through paying a fee ({subscription_amount}/{duration}), you will earn sales commissions on every airtime purchased from the platform by your invited customers.",
+    "title": "By subscribing to Earn More through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Proceed to subscribe as an Agent",
+        "label": "Proceed to subscribe to EARN MORE",
         "value": "1",
         "next": "subscription_subscriber_name"
       }
