@@ -22,7 +22,7 @@
         "next": "airtime"
       },
       "3": {
-        "label": "Pay Bill, Buy Goods",
+        "label": "Pay",
         "value": "3",
         "next": "pay"
       },
