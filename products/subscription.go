@@ -26,7 +26,7 @@ func (s *Subscription) Process(input string) {
 func (s *Subscription) processScreen(input string) {
 	switch s.screen.Key {
 	case utils.MAIN_MENU:
-		s.vars["{product}"] = s.productRep + " for"
+		s.vars["{product}"] = s.productRep
 		s.vars["{number}"] = s.vars["{phone}"]
 
 		// TODO: Move to different screen after selection
@@ -120,21 +120,15 @@ func (s *Subscription) fetchUserSubscription() {
 	if accountId, ok := s.vars["{account_id}"]; ok {
 		subscription, _ := service.FetchSubscription(accountId)
 
-		subscription = client.Subscription{
-			Id:        1,
-			Amount:    "10",
-			Status:    utils.ACTIVE,
-			StartDate: "2022-10-06 15:22:12",
-			EndDate:   "2022-11-17 15:22:12",
-		}
-
 		if subscription.Id != 0 {
 
 			endDate := strings.Split(subscription.EndDate, " ")[0]
-			s.vars["{subscription_end_date}"] = "Valid until " + endDate
+			s.vars["{subscription_end_date}"] = "valid until " + endDate
 
 			if subscription.Status == utils.ACTIVE {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_ACTIVE
+			} else {
+				s.vars["{subscription_end_date}"] = "expired"
 			}
 
 			expiryTime, err := time.Parse(`2006-01-02 15:04:05`, subscription.EndDate)
@@ -151,7 +145,7 @@ func (s *Subscription) fetchUserSubscription() {
 				s.vars["{subscription_end_date}"] = "expires on " + endDate
 			}
 
-			if subscription.Status == utils.EXPIRED || (isIn3Days && err == nil) {
+			if subscription.Status == utils.EXPIRED || isPast || (isIn3Days && err == nil) {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
 			}
 
