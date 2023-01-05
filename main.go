@@ -79,18 +79,13 @@ func Recovery() http.Handler {
 				w.WriteHeader(http.StatusInternalServerError)
 				w.Write(jsonBody)
 
-				panic(err) // May be log this error? Send to sentry?
+				panic(err) //TODO: Maybe log this error? Send to sentry?
 			}
 
 		}()
 
 		ussdHandler(w, r)
-
 	})
-}
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
 
 func Logs() http.Handler {
@@ -113,7 +108,7 @@ func Logs() http.Handler {
 			panic(err)
 		}
 
-		enableCors(&w)
+		(w).Header().Set("Access-Control-Allow-Origin", "*")
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
@@ -143,9 +138,6 @@ func main() {
 	}
 
 	initUssd()
-
-	//TODO: Review if this is necessary
-	//defer destroyUssd()
 
 	fmt.Printf("Starting USSD server at port %v\n", port)
 
