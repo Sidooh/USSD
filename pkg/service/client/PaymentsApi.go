@@ -11,7 +11,7 @@ type PaymentsApiClient struct {
 
 func InitPaymentClient() *PaymentsApiClient {
 	client := PaymentsApiClient{}
-	client.ApiClient.init(viper.GetString("PAYMENTS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_PAYMENTS_API_URL"))
 	return &client
 }
 

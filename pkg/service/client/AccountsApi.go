@@ -58,7 +58,7 @@ type SavingAccount struct {
 
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
-	client.ApiClient.init(viper.GetString("ACCOUNTS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_ACCOUNTS_API_URL"))
 	return &client
 }
 

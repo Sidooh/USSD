@@ -104,7 +104,7 @@ func authFailedRequest(t *testing.T) RoundTripFunc {
 }
 
 func TestApiClient_Authenticate(t *testing.T) {
-	viper.Set("ACCOUNTS_URL", "http://localhost:8000")
+	viper.Set("SIDOOH_ACCOUNTS_API_URL", "http://localhost:8000")
 
 	initTestClient(authSuccessRequest(t))
 

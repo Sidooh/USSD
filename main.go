@@ -129,9 +129,8 @@ func main() {
 
 	err := sentry.Init(sentry.ClientOptions{
 		Dsn: viper.GetString("SENTRY_DSN"),
-		// Set TracesSampleRate to 1.0 to capture 100%
-		// of transactions for performance monitoring.
-		// We recommend adjusting this value in production,
+		// Set TracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+		// We recommend adjusting this value in production.
 		TracesSampleRate: sentrySampleRate,
 	})
 	if err != nil {

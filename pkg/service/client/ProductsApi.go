@@ -58,7 +58,7 @@ type EarningRate struct {
 
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
-	client.ApiClient.init(viper.GetString("PRODUCTS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_PRODUCTS_API_URL"))
 	client.client.Timeout = 40 * time.Second
 	return &client
 }
