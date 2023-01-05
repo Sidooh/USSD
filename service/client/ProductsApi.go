@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -162,6 +163,8 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
+
+	cache.Remove("subscription_" + strconv.Itoa(request.AccountId))
 
 	var response = ApiResponse{}
 	err = p.newRequest(http.MethodPost, "/products/subscription", dataBytes).send(&response)

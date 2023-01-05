@@ -52,10 +52,10 @@ func (i *Invite) finalize() {
 		code := "*384*99#"
 
 		message := fmt.Sprintf("Hi, %s has invited you to try out Sidooh, "+
-			"a digital platform that gives you loyalty points on every item you purchase and pay for through "+
-			"the platform. After which, the earned loyalty points are automatically saved and then invested in "+
-			"secure financial assets like Treasury Bills & Bonds so as to generate extra income for you.\n"+
-			"Dial %s NOW for FREE on your Safaricom line to buy airtime & start investing using your points.", name, code)
+			"a cashback platform that rewards you with cash points on every item you buy or pay for via "+
+			"the platform. The earned cash points are then automatically saved and invested in "+
+			"secure financial assets such as Treasury Bills and Bonds so as to generate passive income for you.\n"+
+			"Dial %s NOW on your Safaricom line for FREE to buy airtime and start saving and investing with your cash points.", name, code)
 		request := client.NotificationRequest{
 			Channel:     "SMS",
 			Destination: []string{number},
