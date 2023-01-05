@@ -1,7 +1,6 @@
 package data
 
 import (
-	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"errors"
@@ -23,7 +22,7 @@ var loadScreenKeys = []string{
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := datastore.ReadFile(utils.DATA_FILE)
+	file, err := utils.ReadFile(utils.DATA_FILE)
 	if err != nil {
 		return nil, err
 	}

@@ -1,11 +1,11 @@
-package main
+package server
 
 import (
-	"USSD.sidooh/cache"
 	"USSD.sidooh/data"
-	"USSD.sidooh/datastore"
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
+	"USSD.sidooh/pkg/cache"
+	"USSD.sidooh/pkg/datastore"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/state"
 	"USSD.sidooh/utils"
 	"fmt"
@@ -69,7 +69,7 @@ func Process(code, phone, session, input string) *state.State {
 	return stateData
 }
 
-func processAndRespond(code, phone, session, input string) string {
+func ProcessAndRespond(code, phone, session, input string) string {
 	start := time.Now()
 	//TODO: Update ussd session in table here
 
@@ -96,7 +96,7 @@ func LoadScreens() {
 	screens = loadedScreens
 }
 
-func initUssd() {
+func InitUssd() {
 	fmt.Println("Initializing USSD subsystem")
 	utils.SetupConfig(".")
 

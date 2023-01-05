@@ -1,8 +1,8 @@
 package client
 
 import (
-	"USSD.sidooh/cache"
-	"USSD.sidooh/logger"
+	"USSD.sidooh/pkg/cache"
+	"USSD.sidooh/pkg/logger"
 	"bytes"
 	"encoding/json"
 	"errors"

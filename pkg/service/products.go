@@ -1,36 +1,36 @@
 package service
 
 import (
-	"USSD.sidooh/cache"
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/cache"
+	"USSD.sidooh/pkg/logger"
+	client2 "USSD.sidooh/pkg/service/client"
 	"strconv"
 	"strings"
 )
 
-func PurchaseAirtime(request *client.PurchaseRequest) {
+func PurchaseAirtime(request *client2.PurchaseRequest) {
 	err := productsClient.BuyAirtime(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to buy airtime: ", err)
 	}
 }
 
-func PurchaseUtility(request client.UtilityPurchaseRequest) {
+func PurchaseUtility(request client2.UtilityPurchaseRequest) {
 	err := productsClient.PayUtility(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to pay utility: ", err)
 	}
 }
 
-func PayMerchant(request client.MerchantPurchaseRequest) {
+func PayMerchant(request client2.MerchantPurchaseRequest) {
 	err := productsClient.PayMerchant(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to pay merchant: ", err)
 	}
 }
 
-func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
-	var accounts []client.UtilityAccount
+func FetchAirtimeAccounts(id string) ([]client2.UtilityAccount, error) {
+	var accounts []client2.UtilityAccount
 
 	err := productsClient.GetAirtimeAccounts(id, &accounts)
 	if err != nil {
@@ -45,8 +45,8 @@ func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 	return accounts, nil
 }
 
-func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, error) {
-	var accounts []client.UtilityAccount
+func FetchUtilityAccounts(id string, provider string) ([]client2.UtilityAccount, error) {
+	var accounts []client2.UtilityAccount
 
 	// TODO: Add stack traces for easier log tracing
 	err := productsClient.GetUtilityAccounts(id, &accounts)
@@ -56,7 +56,7 @@ func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, 
 	}
 
 	// TODO: Can we cache the data so we don't have to re-fetch full accounts
-	var providerAccounts []client.UtilityAccount
+	var providerAccounts []client2.UtilityAccount
 	for _, account := range accounts {
 
 		if account.Provider == provider {
@@ -71,20 +71,20 @@ func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, 
 	return providerAccounts, nil
 }
 
-func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
+func PurchaseVoucher(request *client2.VoucherPurchaseRequest) {
 	err := productsClient.PurchaseVoucher(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase voucher: ", err)
 	}
 }
 
-func FetchSubscription(id string) (client.Subscription, error) {
-	var subscription client.Subscription
+func FetchSubscription(id string) (client2.Subscription, error) {
+	var subscription client2.Subscription
 
 	err := productsClient.GetSubscription(id, &subscription)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch subscription: ", err)
-		return client.Subscription{}, err
+		return client2.Subscription{}, err
 	}
 
 	parts := strings.Split(subscription.EndDate, "T")
@@ -96,7 +96,7 @@ func FetchSubscription(id string) (client.Subscription, error) {
 	return subscription, nil
 }
 
-func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
+func PurchaseSubscription(request *client2.SubscriptionPurchaseRequest) {
 	err := productsClient.PurchaseSubscription(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to purchase subscription: ", err)
@@ -106,19 +106,19 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 
 }
 
-func FetchSubscriptionType() (client.SubscriptionType, error) {
-	var subscriptionType client.SubscriptionType
+func FetchSubscriptionType() (client2.SubscriptionType, error) {
+	var subscriptionType client2.SubscriptionType
 
 	err := productsClient.GetSubscriptionType(&subscriptionType)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch subscription type: ", err)
-		return client.SubscriptionType{}, err
+		return client2.SubscriptionType{}, err
 	}
 
 	return subscriptionType, nil
 }
 
-func Notify(request *client.NotificationRequest) {
+func Notify(request *client2.NotificationRequest) {
 	err := notifyClient.SendNotification(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to send notification: ", err)
@@ -126,17 +126,17 @@ func Notify(request *client.NotificationRequest) {
 }
 
 // Move to cache client storage, and enable sync process if changed in products service
-var earningRates = map[string]client.EarningRate{}
+var earningRates = map[string]client2.EarningRate{}
 
-func GetEarningRate(provider string) (*client.EarningRate, error) {
-	var rate client.EarningRate
+func GetEarningRate(provider string) (*client2.EarningRate, error) {
+	var rate client2.EarningRate
 
 	if cachedRate, ok := earningRates[provider]; ok {
 		rate = cachedRate
 		return &rate, nil
 	}
 
-	var rates map[string]client.EarningRate
+	var rates map[string]client2.EarningRate
 	err := productsClient.FetchEarningRates(&rates)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch earning rates: ", err)
@@ -147,4 +147,40 @@ func GetEarningRate(provider string) (*client.EarningRate, error) {
 	rate = earningRates[provider]
 
 	return &rate, nil
+}
+
+func GetPotentialEarnings(provider string, amount int, subscribed bool) float64 {
+	// Get users earning ratio
+	ratio := .6
+
+	// Get ripples
+	ripples := 6
+
+	if subscribed {
+		// Get subscribed users earning ratio
+		ratio = 1.0
+
+		// Get ripples (Subscribed users earn 100% pass-thru at the moment)
+		ripples = 1
+	}
+
+	return calculateEarnings(provider, float64(amount), ratio, float64(ripples))
+}
+
+func calculateEarnings(provider string, amount float64, ratio float64, ripples float64) float64 {
+	var discountAmount float64
+
+	rate, err := GetEarningRate(provider)
+	if err == nil && rate.Value != 0 {
+		switch rate.Type {
+		case "%":
+			discountAmount = rate.Value * amount
+		case "$":
+			discountAmount = rate.Value
+		}
+	} else {
+		discountAmount = float64(amount) * 0
+	}
+
+	return discountAmount * ratio / ripples
 }

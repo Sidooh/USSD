@@ -1,7 +1,7 @@
 package client
 
 import (
-	"USSD.sidooh/cache"
+	"USSD.sidooh/pkg/cache"
 	"bytes"
 	"encoding/json"
 	"github.com/spf13/viper"

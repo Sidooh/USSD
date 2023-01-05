@@ -1,7 +1,7 @@
 package data
 
 import (
-	"USSD.sidooh/datastore"
+	"USSD.sidooh/pkg/datastore"
 	"USSD.sidooh/utils"
 	"os"
 	"testing"

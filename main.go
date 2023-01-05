@@ -1,7 +1,8 @@
 package main
 
 import (
-	"USSD.sidooh/datastore"
+	"USSD.sidooh/pkg/datastore"
+	"USSD.sidooh/server"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -61,7 +62,7 @@ func ussdHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := decodeData(r)
 
-	fmt.Fprintln(w, processAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
+	fmt.Fprintln(w, server.ProcessAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
 }
 
 func Recovery() http.Handler {
@@ -137,7 +138,7 @@ func main() {
 		log.Fatalf("sentry.Init: %s", err)
 	}
 
-	initUssd()
+	server.InitUssd()
 
 	fmt.Printf("Starting USSD server at port %v\n", port)
 

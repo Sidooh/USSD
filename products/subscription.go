@@ -1,9 +1,9 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
 	"strings"
@@ -72,7 +72,7 @@ func (s *Subscription) finalize() {
 
 			// TODO: Make into goroutine if applicable
 			// TODO: Should we check returned value? Or should we make it a void function?
-			_, _ = service.UpdateProfile(s.vars["{account_id}"], profileRequest)
+			_, _ = service2.UpdateProfile(s.vars["{account_id}"], profileRequest)
 		}
 
 		// TODO: Make subscription_type dynamic with api fetch
@@ -95,14 +95,14 @@ func (s *Subscription) finalize() {
 		logger.UssdLog.Println(" -- SUBSCRIPTION: purchase", request)
 
 		// TODO: Make into goroutine if applicable
-		service.PurchaseSubscription(&request)
+		service2.PurchaseSubscription(&request)
 	}
 }
 
 func (s *Subscription) FetchSubscriptionType() {
 	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch default subscription type")
 
-	subscriptionType, err := service.FetchSubscriptionType()
+	subscriptionType, err := service2.FetchSubscriptionType()
 	if err != nil {
 		return
 	}
@@ -118,7 +118,7 @@ func (s *Subscription) fetchUserSubscription() {
 	logger.UssdLog.Println("   ++ SUBSCRIPTION: fetch user subscription")
 
 	if accountId, ok := s.vars["{account_id}"]; ok {
-		subscription, _ := service.FetchSubscription(accountId)
+		subscription, _ := service2.FetchSubscription(accountId)
 
 		if subscription.Id != 0 {
 
