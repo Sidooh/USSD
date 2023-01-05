@@ -336,7 +336,7 @@
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Subscribe to Earn More",
+        "label": "Subscribe to {subscription_type}",
         "value": "1",
         "next": "subscription_register"
       }
@@ -344,7 +344,7 @@
   },
   "subscription_renew": {
     "key": "subscription_renew",
-    "title": "Your subscription to Earn More expired on {subscription_end_date}.",
+    "title": "Your subscription to {subscription_type} expired on {subscription_end_date}.",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -356,16 +356,16 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "You are already subscribed to Earn More. Valid until {subscription_end_date}.",
+    "title": "You are already subscribed to {subscription_type}. Valid until {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
     "key": "subscription_register",
-    "title": "By subscribing to Earn More through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
+    "title": "By subscribing to {subscription_type} through paying {subscription_amount} per {duration}, you will earn (1) HIGHER POINTS on ALL your purchases and payments and (2) EXTRA POINTS on ALL purchases and payments done via Sidooh by your invited friends.",
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Proceed to subscribe to EARN MORE",
+        "label": "Proceed to subscribe to {subscription_type}",
         "value": "1",
         "next": "subscription_subscriber_name"
       }

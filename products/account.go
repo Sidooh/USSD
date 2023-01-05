@@ -235,7 +235,7 @@ func (a *Account) fetchUserSubscription() {
 		subscription, _ := service.FetchSubscription(accountId)
 
 		if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
-			a.vars["{subscription_type}"] = "Sidooh Agent"
+			a.vars["{subscription_type}"] = "Earn More"
 		} else {
 			a.vars["{subscription_type}"] = "None"
 		}

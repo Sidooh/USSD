@@ -31,7 +31,7 @@ func (s *Subscription) processScreen(input string) {
 
 		// TODO: Move to different screen after selection
 		// TODO: Make dynamic with fetch from api
-		s.vars["{subscription_type}"] = "Sidooh Agent"
+		s.vars["{subscription_type}"] = "Earn More"
 		s.vars["{subscription_amount}"] = "KES365"
 		s.vars["{duration}"] = "month"
 		s.vars["{amount}"] = "365"
