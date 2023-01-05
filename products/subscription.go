@@ -26,15 +26,15 @@ func (s *Subscription) Process(input string) {
 func (s *Subscription) processScreen(input string) {
 	switch s.screen.Key {
 	case utils.MAIN_MENU:
-		s.vars["{product}"] = s.productRep + " for"
+		s.vars["{product}"] = s.productRep
 		s.vars["{number}"] = s.vars["{phone}"]
 
 		// TODO: Move to different screen after selection
 		// TODO: Make dynamic with fetch from api
 		s.vars["{subscription_type}"] = "Earn More"
-		s.vars["{subscription_amount}"] = "KES395"
+		s.vars["{subscription_amount}"] = "KES365"
 		s.vars["{duration}"] = "month"
-		s.vars["{amount}"] = "395"
+		s.vars["{amount}"] = "365"
 
 		s.FetchSubscriptionType()
 
@@ -108,7 +108,7 @@ func (s *Subscription) FetchSubscriptionType() {
 	}
 
 	s.vars["{subscription_type_id}"] = strconv.Itoa(subscriptionType.Id)
-	//s.vars["{subscription_type}"] = subscriptionType.Title
+	s.vars["{subscription_type}"] = subscriptionType.Title
 	s.vars["{subscription_amount}"] = "KES" + strconv.Itoa(subscriptionType.Price)
 	s.vars["{amount}"] = strconv.Itoa(subscriptionType.Price)
 
@@ -120,40 +120,18 @@ func (s *Subscription) fetchUserSubscription() {
 	if accountId, ok := s.vars["{account_id}"]; ok {
 		subscription, _ := service.FetchSubscription(accountId)
 
-		subscription = client.Subscription{
-			Id:        1,
-			Amount:    "10",
-			Status:    utils.ACTIVE,
-			StartDate: "2022-10-06 15:22:12",
-			EndDate:   "2022-11-17 15:22:12",
-		}
-
 		if subscription.Id != 0 {
 
 			endDate := strings.Split(subscription.EndDate, " ")[0]
-			s.vars["{subscription_end_date}"] = "valid until " + endDate
+			s.vars["{subscription_end_date}"] = endDate
 
 			if subscription.Status == utils.ACTIVE {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_ACTIVE
-			} else {
-				s.vars["{subscription_end_date}"] = "expired"
 			}
 
 			expiryTime, err := time.Parse(`2006-01-02 15:04:05`, subscription.EndDate)
 
-			isPast := expiryTime.Before(time.Now())
-			isIn3Days := expiryTime.Before(time.Now().Add(3*24*time.Hour)) && !isPast
-			isToday := time.Now().YearDay() == expiryTime.YearDay()
-
-			if isPast {
-				s.vars["{subscription_end_date}"] = "expired on " + endDate
-			} else if isToday {
-				s.vars["{subscription_end_date}"] = "expires today"
-			} else if isIn3Days {
-				s.vars["{subscription_end_date}"] = "expires on " + endDate
-			}
-
-			if subscription.Status == utils.EXPIRED || isPast || (isIn3Days && err == nil) {
+			if subscription.Status == utils.EXPIRED || (time.Until(expiryTime) < 3*time.Hour && err == nil) {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
 			}
 
