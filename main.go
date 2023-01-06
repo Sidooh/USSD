@@ -2,6 +2,7 @@ package main
 
 import (
 	"USSD.sidooh/pkg/datastore"
+	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/server"
 	"USSD.sidooh/utils"
 	"encoding/json"
@@ -62,7 +63,10 @@ func ussdHandler(w http.ResponseWriter, r *http.Request) {
 
 	data := decodeData(r)
 
-	fmt.Fprintln(w, server.ProcessAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
+	_, err := fmt.Fprintln(w, server.ProcessAndRespond(data.NetworkCode, data.PhoneNumber, data.SessionId, data.Text))
+	if err != nil {
+		return
+	}
 }
 
 func Recovery() http.Handler {
@@ -78,7 +82,9 @@ func Recovery() http.Handler {
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write(jsonBody)
+				if _, err := w.Write(jsonBody); err != nil {
+					logger.ServiceLog.Error(err)
+				}
 
 				panic(err) //TODO: Maybe log this error? Send to sentry?
 			}
@@ -104,7 +110,9 @@ func Logs() http.Handler {
 
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write(jsonBody)
+			if _, err := w.Write(jsonBody); err != nil {
+				logger.ServiceLog.Error(err)
+			}
 
 			panic(err)
 		}
@@ -113,7 +121,9 @@ func Logs() http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		w.Write(marshal)
+		if _, err := w.Write(marshal); err != nil {
+			logger.ServiceLog.Error(err)
+		}
 	})
 }
 
