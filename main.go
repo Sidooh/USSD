@@ -2,13 +2,13 @@ package main
 
 import (
 	"USSD.sidooh/datastore"
+	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/getsentry/sentry-go"
 	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
-	"strconv"
 )
 
 type Data struct {
@@ -118,20 +118,21 @@ func Logs() http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(marshal)
-
 	})
 }
 
 func main() {
-	port := os.Getenv("PORT")
+	utils.SetupConfig(".")
+
+	port := viper.GetString("PORT")
 	if port == "" {
 		port = "8004"
 	}
 
-	sentrySampleRate, _ := strconv.ParseFloat(os.Getenv("SENTRY_TRACES_SAMPLE_RATE"), 64)
+	sentrySampleRate := viper.GetFloat64("SENTRY_TRACES_SAMPLE_RATE")
 
 	err := sentry.Init(sentry.ClientOptions{
-		Dsn: os.Getenv("SENTRY_DSN"),
+		Dsn: viper.GetString("SENTRY_DSN"),
 		// Set TracesSampleRate to 1.0 to capture 100%
 		// of transactions for performance monitoring.
 		// We recommend adjusting this value in production,

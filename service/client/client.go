@@ -6,9 +6,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/spf13/viper"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 )
@@ -51,6 +51,19 @@ func (api *ApiClient) getUrl(endpoint string) string {
 	return api.baseUrl + endpoint
 }
 
+func cached(key string, result interface{}, fn func() (interface{}, error)) error {
+	err := cache.Get(key, result)
+	if err == nil {
+		return nil
+	}
+
+	result, err = fn()
+
+	cache.Set(key, result, 28*24*time.Hour)
+
+	return err
+}
+
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
 	logger.ServiceLog.Println("API_REQ: ", api.request)
@@ -72,7 +85,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
-		response.StatusCode != 404 {
+		response.StatusCode != 404 && response.StatusCode != 422 {
 		if response.StatusCode < 500 {
 			var errorMessage map[string][]map[string]string
 			err = json.Unmarshal(body, &errorMessage)
@@ -155,7 +168,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, os.Getenv("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, viper.GetString("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}

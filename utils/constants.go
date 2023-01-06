@@ -63,6 +63,13 @@ const (
 	VOUCHER_AMOUNT        = "voucher_amount"
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
 
+	// MERCHANT
+	MERCHANT                  = "merchant"
+	MERCHANT_PAY_BILL         = "merchant_pay_bill"
+	MERCHANT_PAY_BILL_ACCOUNT = "merchant_pay_bill_account"
+	MERCHANT_BUY_GOODS        = "merchant_buy_goods"
+	MERCHANT_AMOUNT           = "merchant_amount"
+
 	// SAVE
 	SAVE = "save"
 
@@ -115,6 +122,8 @@ const (
 	INT              = "INT"
 	MIN              = "MIN"
 	MAX              = "MAX"
+	ALPHANUM         = "ALPHANUM"
+	MAX_CHARS        = "MAX_CHARS"
 	PHONE            = "PHONE"
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"
@@ -177,4 +186,10 @@ const (
 const (
 	ACTIVE  = "ACTIVE"
 	EXPIRED = "EXPIRED"
+)
+
+// merchant types
+const (
+	MPESA_PAY_BILL  = "MPESA_PAY_BILL"
+	MPESA_BUY_GOODS = "MPESA_BUY_GOODS"
 )

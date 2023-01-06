@@ -35,11 +35,7 @@ type Invite struct {
 	Inviter *Account `json:"inviter"`
 }
 
-var accountsClient = client.InitAccountClient()
-var paymentsClient = client.InitPaymentClient()
-var savingsClient = client.InitSavingsClient()
-
-func FetchAccount(phone string, vars map[string]string) (*Account, error) {
+func FetchAccount(phone string) (*Account, error) {
 	var account = new(Account)
 
 	err := accountsClient.GetAccountWithUser(phone, account)
@@ -150,14 +146,14 @@ func InviteOrAccountExists(phone string) bool {
 }
 
 func CheckPin(id string, pin string) bool {
-	var valid map[string]string
+	var valid bool
 
 	err := accountsClient.CheckPin(id, pin, &valid)
 	if err != nil {
 		return false
 	}
 
-	return valid["message"] == "ok"
+	return valid
 }
 
 func CheckHasPin(id string) bool {
@@ -228,14 +224,14 @@ func CreateInvite(id string, phone string) (*Invite, error) {
 }
 
 func SetPin(id string, pin string) bool {
-	var valid map[string]string
+	var valid bool
 
 	err := accountsClient.SetPin(id, pin, &valid)
 	if err != nil {
 		return false
 	}
 
-	return valid["message"] == "ok"
+	return valid
 }
 
 func UpdateProfile(id string, details client.ProfileDetails) (User, error) {

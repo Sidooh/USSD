@@ -50,27 +50,29 @@ func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
 
+	// Move user to top up flow if balance is not enough
+	if int(voucherBalance) < amount {
+		//TODO: Move user to top up flow
+		p.screen.Next.Options[2].NextKey = utils.VOUCHER_BALANCE_INSUFFICIENT
+	}
+
 	// Delete voucher option if buying voucher for self
 	if p.productRep == "voucher" && p.vars["{number}"] == p.vars["{phone}"] {
 		delete(p.screen.Next.Options, 2)
-		return
 	}
 
 	hasPin := p.checkHasPin()
 	if !hasPin {
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
-			p.screen.Options[2].NextKey = utils.PIN_NOT_SET
-			return
+			if _, ok := p.screen.Options[2]; ok {
+				p.screen.Options[2].NextKey = utils.PIN_NOT_SET
+				return
+			}
 		}
 
-		p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
-		return
-	}
-
-	// Move user to top up flow if balance is not enough
-	if int(voucherBalance) < amount {
-		//TODO: Move user to top up flow
-		p.screen.Next.Options[2].NextKey = utils.VOUCHER_BALANCE_INSUFFICIENT
+		if _, ok := p.screen.Next.Options[2]; ok {
+			p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+		}
 		return
 	}
 }
@@ -81,14 +83,23 @@ func (p *Product) setPaymentMethodText(input string) {
 		p.vars["{payment_method}"] = utils.MPESA
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{phone}"]
 		p.vars["{payment_method_instruction}"] = "PLEASE ENTER MPESA PIN when prompted"
-		break
+
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be debited automatically", p.vars["{payment_method_text}"])
 
-		//delete(p.screen.Next.Next.Options, 3)
-		break
+		next := p.screen.Next
+		for {
+			if next.Key == utils.PAYMENT_CONFIRMATION {
+				delete(next.Options, 3)
+				break
+			}
+			if next.Next == nil {
+				break
+			}
+			next = next.Next
+		}
 	}
 }
 

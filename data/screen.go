@@ -6,7 +6,7 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
-	"os"
+	"github.com/spf13/viper"
 	"regexp"
 	"sort"
 	"strconv"
@@ -207,6 +207,10 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return getIntVal(input) >= validateAgainst
 	case utils.MAX:
 		return getIntVal(input) <= validateAgainst
+	case utils.ALPHANUM:
+		return isAlphaNumeric(input, validateAgainst)
+	case utils.MAX_CHARS:
+		return len(input) <= validateAgainst
 	case utils.PHONE:
 		return isValidPhone(input)
 	case utils.DISALLOW_CURRENT:
@@ -278,7 +282,7 @@ func isValidUtilityAmount(input string, utility string) bool {
 }
 
 func (screen *Screen) isSocialInvite(input string, vars map[string]string) bool {
-	inviteCodes := os.Getenv("INVITE_CODES")
+	inviteCodes := viper.GetString("INVITE_CODES")
 	if inviteCodes == "" {
 		return false
 	}
@@ -427,6 +431,15 @@ func getIntVal(str string) int {
 		return v
 	}
 	return 0
+}
+
+func isAlphaNumeric(str string, count int) bool {
+	if count == 0 {
+		count = 64
+	}
+	alphaNumRegx := regexp.MustCompile(fmt.Sprintf(`^[A-z0-9]{0,%v}$`, count))
+
+	return alphaNumRegx.MatchString(str)
 }
 
 func (screen *Screen) SubstituteVars(vars map[string]string) {

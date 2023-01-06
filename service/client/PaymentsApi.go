@@ -1,8 +1,8 @@
 package client
 
 import (
+	"github.com/spf13/viper"
 	"net/http"
-	"os"
 )
 
 type PaymentsApiClient struct {
@@ -11,12 +11,12 @@ type PaymentsApiClient struct {
 
 func InitPaymentClient() *PaymentsApiClient {
 	client := PaymentsApiClient{}
-	client.ApiClient.init(os.Getenv("PAYMENTS_URL"))
+	client.ApiClient.init(viper.GetString("PAYMENTS_URL"))
 	return &client
 }
 
 func (p *PaymentsApiClient) GetVoucherBalances(id string, response interface{}) error {
-	endpoint := "/accounts/" + id + "/vouchers"
+	endpoint := "/vouchers?account_id=" + id
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)

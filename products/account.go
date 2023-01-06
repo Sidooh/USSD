@@ -234,6 +234,7 @@ func (a *Account) fetchUserSubscription() {
 
 		subscription, _ := service.FetchSubscription(accountId)
 
+		// TODO: Get subscription type as well and use the name
 		if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
 			a.vars["{subscription_type}"] = "Earn More"
 		} else {
@@ -493,14 +494,14 @@ func (a *Account) fetchEarnings() {
 
 	balance := total - withdrawalAccount.Self
 
-	a.vars["{purchase_earnings}"] = fmt.Sprintf("%.4f", pE)
-	a.vars["{self_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Self)
-	a.vars["{invite_purchase_earnings}"] = fmt.Sprintf("%.4f", purchasesAccount.Invite)
-	a.vars["{subscriptions_earnings}"] = fmt.Sprintf("%.4f", sE)
-	a.vars["{self_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Self)
-	a.vars["{invite_subscriptions_earnings}"] = fmt.Sprintf("%.4f", subscriptionsAccount.Invite)
-	a.vars["{withdrawn_earnings}"] = fmt.Sprintf("%.4f", withdrawalAccount.Self)
-	a.vars["{earnings_balance}"] = fmt.Sprintf("%.4f", balance)
+	a.vars["{purchase_earnings}"] = formatAmount(pE, "")
+	a.vars["{self_purchase_earnings}"] = formatAmount(purchasesAccount.Self, "")
+	a.vars["{invite_purchase_earnings}"] = formatAmount(purchasesAccount.Invite, "")
+	a.vars["{subscriptions_earnings}"] = formatAmount(sE, "")
+	a.vars["{self_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Self, "")
+	a.vars["{invite_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Invite, "")
+	a.vars["{withdrawn_earnings}"] = formatAmount(withdrawalAccount.Self, "")
+	a.vars["{earnings_balance}"] = formatAmount(balance, "")
 
 }
 
@@ -537,10 +538,21 @@ func (a *Account) fetchSavings() {
 		wS = math.Floor(cS - 50)
 	}
 
-	a.vars["{current_savings}"] = fmt.Sprintf("%.2f", cS)
-	a.vars["{locked_savings}"] = fmt.Sprintf("%.2f", lS)
-	a.vars["{total_savings}"] = fmt.Sprintf("%.2f", total)
-	a.vars["{withdrawable_savings}"] = fmt.Sprintf("%.0f", wS)
-	a.vars["{interest_savings}"] = fmt.Sprintf("%.4f", interest)
+	a.vars["{current_savings}"] = formatAmount(cS, "%.2f")
+	a.vars["{locked_savings}"] = formatAmount(lS, "%.2f")
+	a.vars["{total_savings}"] = formatAmount(total, "%.2f")
+	a.vars["{withdrawable_savings}"] = formatAmount(wS, "%.0f")
+	a.vars["{interest_savings}"] = formatAmount(interest, "")
 
+}
+
+func formatAmount(amount float64, format string) string {
+	if format == "" {
+		format = "%.4f"
+	}
+	if amount == 0 {
+		format = "%.0f"
+	}
+
+	return fmt.Sprintf(format, amount)
 }

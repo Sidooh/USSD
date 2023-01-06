@@ -2,6 +2,7 @@
 
 # IntelliJ project files
 .idea
+.fleet
 *.iml
 out
 gen
@@ -38,4 +39,8 @@ gen
 
 # Sidooh bin
 USSD.sidooh
-/ab.json
+
+ab.json
+y.hide
+
+cloud_sql_proxy
