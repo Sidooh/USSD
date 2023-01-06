@@ -24,7 +24,7 @@ func (v *Voucher) Process(input string) {
 func (v *Voucher) processScreen(input string) {
 	switch v.screen.Key {
 	case utils.PAY_VOUCHER, utils.VOUCHER_BALANCE_INSUFFICIENT:
-		v.vars["{product}"] = v.productRep + " for"
+		v.vars["{product}"] = v.productRep
 		v.vars["{number}"] = v.vars["{phone}"]
 	case utils.VOUCHER_OTHER_ACCOUNT:
 		v.vars["{number}"], _ = utils.FormatPhone(input)
