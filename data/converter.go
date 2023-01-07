@@ -20,6 +20,10 @@ var loadScreenKeys = []string{
 	//TODO: Remove once save is added
 	utils.SAVE,
 	utils.PROFILE_SECURITY_QUESTIONS_PIN,
+
+	//TODO: Remove once merchant is added
+	utils.MERCHANT_PAY_BILL,
+	utils.MERCHANT_BUY_GOODS,
 }
 
 func LoadData() (map[string]*Screen, error) {
