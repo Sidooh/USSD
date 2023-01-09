@@ -150,11 +150,12 @@ func MarshalToDatabase(session Session) error {
 	return nil
 }
 
-func FetchSessionLogs() ([]SessionLog, error) {
+func FetchSessionLogs(limit int) ([]SessionLog, error) {
 	var sessions []SessionLog
 
-	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT 250`)
+	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT ?`, limit)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 

@@ -9,7 +9,7 @@ import (
 
 func LogSession() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessions, err := datastore.FetchSessionLogs()
+		sessions, err := datastore.FetchSessionLogs(300)
 		if err != nil {
 			return
 		}

@@ -23,4 +23,5 @@ func Setup() {
 	http.Handle("/api/v1/ussd", handlers.Recovery())
 	http.Handle("/api/v1/sessions/logs", handlers.LogSession())
 	http.Handle("/api/v1/dashboard/chart", handlers.GetChartData())
+	http.Handle("/api/v1/dashboard/recent-sessions", handlers.GetRecentSessions())
 }
