@@ -3,13 +3,14 @@ package handlers
 import (
 	"USSD.sidooh/pkg/datastore"
 	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/utils"
 	"encoding/json"
 	"net/http"
 )
 
 func LogSession() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessions, err := datastore.FetchSessionLogs(300)
+		sessions, err := datastore.FetchSessionLogs(utils.DEFAULT_SESSIONS_LIMIT)
 		if err != nil {
 			return
 		}
