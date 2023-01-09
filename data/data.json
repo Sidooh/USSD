@@ -22,7 +22,7 @@
         "next": "airtime"
       },
       "3": {
-        "label": "Pay Bill, Buy Goods",
+        "label": "Pay",
         "value": "3",
         "next": "pay"
       },
@@ -107,12 +107,12 @@
       "1": {
         "label": "Pay Bill",
         "value": "1",
-        "next": "merchant_pay_bill"
+        "next": "coming_soon"
       },
       "2": {
         "label": "Buy Goods",
         "value": "2",
-        "next": "merchant_buy_goods"
+        "next": "coming_soon"
       },
       "3": {
         "label": "Pay Utilities",
@@ -621,7 +621,7 @@
         "next": "earnings"
       },
       "3": {
-        "label": "Saved Points",
+        "label": "Saved & Invested Points",
         "value": "3",
         "next": "savings"
       }
@@ -629,7 +629,7 @@
   },
   "savings": {
     "key": "savings",
-    "title": "Your saved points breakdown\n\nBalance: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nWithdrawable: {withdrawable_savings}",
+    "title": "Your Saved & Invested Points\n\nTotal Balance: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nWithdrawable: {withdrawable_savings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
