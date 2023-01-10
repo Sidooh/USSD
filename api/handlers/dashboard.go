@@ -30,6 +30,8 @@ func GetChartData() http.Handler {
 			panic(err)
 		}
 
+		(w).Header().Set("Access-Control-Allow-Origin", "*")
+
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write(marshal); err != nil {
