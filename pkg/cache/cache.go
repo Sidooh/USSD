@@ -36,6 +36,7 @@ func stringToInterface(from string, to interface{}) {
 func Set(key string, value interface{}, time time.Duration) {
 	if Instance != nil {
 		stringVal := interfaceToString(value)
+		fmt.Println("------------	SET CACHE:", key, stringVal)
 		Instance.Set(key, stringVal, time)
 	}
 }
@@ -48,6 +49,7 @@ func SetString(key string, value string, time time.Duration) {
 
 func Get(key string, to interface{}) error {
 	value := Instance.Get(key)
+	fmt.Println("------------	GET CACHE", key, value)
 	if value != nil && !value.IsExpired() {
 		err := json.Unmarshal([]byte(value.Value()), &to)
 		return err

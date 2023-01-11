@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
-	"time"
 )
 
 type AccountsApiClient struct {
@@ -37,24 +36,10 @@ type SavingAccount struct {
 	Interest float64 `json:"interest"`
 }
 
-// TODO: Understand and use custom unmarshalers
-//type Money struct {
-//	float64
-//}
-//
-//func (m Money) UnmarshalJSON(b []byte) error {
-//	strippedBytes := b[1 : len(b)-1]
-//
-//	val, err := strconv.ParseFloat(string(strippedBytes), 64)
-//	fmt.Println(val, err)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	m = Money{val}
-//	return nil
-//}
+type AccountApiResponse struct {
+	ApiResponse
+	Data *Account `json:"data"`
+}
 
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
@@ -86,22 +71,21 @@ func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) error {
 	return nil
 }
 
-func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{}) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
+	var apiResponse = new(AccountApiResponse)
+	var account Account
 
-	err := cache.Get("account_"+phone, response)
+	err := cache.Get("account_"+phone, account)
 	if err == nil {
-		return nil
+		return &account, nil
 	}
 
 	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return &Account{}, err
 	}
 
-	cache.Set("account_"+phone, response, 24*time.Hour)
-
-	return nil
+	return apiResponse.Data, nil
 }
 
 func (a *AccountsApiClient) CheckInvite(phone string) error {

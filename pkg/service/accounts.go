@@ -7,38 +7,10 @@ import (
 	"strconv"
 )
 
-type Account struct {
-	Id           int    `json:"id,omitempty"`
-	Phone        string `json:"phone"`
-	Active       bool   `json:"active"`
-	InviterId    int    `json:"inviter_id"`
-	User         `json:"user"`
-	Balances     []Balance
-	Subscription client.Subscription
-	HasPin       bool
-}
+func FetchAccount(phone string) (*client.Account, error) {
+	var account *client.Account
 
-type User struct {
-	Email string `json:"email"`
-	Name  string `json:"name"`
-}
-
-type Balance struct {
-	Type    string
-	Balance float64 `json:"balance"`
-}
-
-type Invite struct {
-	Id      int      `json:"id"`
-	Phone   string   `json:"phone"`
-	Status  string   `json:"status"`
-	Inviter *Account `json:"inviter"`
-}
-
-func FetchAccount(phone string) (*Account, error) {
-	var account = new(Account)
-
-	err := accountsClient.GetAccountWithUser(phone, account)
+	account, err := accountsClient.GetAccountWithUser(phone)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch account", err)
 		return nil, err
@@ -80,20 +52,20 @@ func FetchAccount(phone string) (*Account, error) {
 	return account, nil
 }
 
-func FetchInvite(phone string) (*Invite, error) {
-	var invite = new(Invite)
+func FetchInvite(phone string) (*client.Invite, error) {
+	var invite = new(client.Invite)
 
 	// Check invite existence
 	err := accountsClient.CheckInvite(phone)
 	if err != nil {
-		return &Invite{}, err
+		return &client.Invite{}, err
 	}
 
 	return invite, nil
 }
 
-func CheckAccount(phone string) (*Account, error) {
-	var account = new(Account)
+func CheckAccount(phone string) (*client.Account, error) {
+	var account = new(client.Account)
 
 	err := accountsClient.GetAccount(phone)
 	if err != nil {
@@ -105,8 +77,8 @@ func CheckAccount(phone string) (*Account, error) {
 }
 
 // TODO: Add for Id only - may be faster when id is known?
-func CheckAccountByIdOrPhone(search string) (*Account, error) {
-	var account = new(Account)
+func CheckAccountByIdOrPhone(search string) (*client.Account, error) {
+	var account = new(client.Account)
 
 	err := accountsClient.GetAccountByIdOrPhone(search)
 	if err != nil {
@@ -118,7 +90,7 @@ func CheckAccountByIdOrPhone(search string) (*Account, error) {
 }
 
 func InviteOrAccountExists(phone string) bool {
-	var account = new(Account)
+	var account = new(client.Account)
 
 	// Check account existence
 	err := accountsClient.GetAccount(phone)
@@ -130,7 +102,7 @@ func InviteOrAccountExists(phone string) bool {
 		return true
 	}
 
-	var invite = new(Invite)
+	var invite = new(client.Invite)
 
 	// Check invite existence
 	err = accountsClient.CheckInvite(phone)
@@ -178,8 +150,8 @@ func CheckHasSecurityQuestions(id string) bool {
 	return valid["message"]
 }
 
-func CreateAccount(phone string, inviteCode interface{}) (*Account, error) {
-	var account = new(Account)
+func CreateAccount(phone string, inviteCode interface{}) (*client.Account, error) {
+	var account = new(client.Account)
 
 	err := accountsClient.CreateAccount(phone, inviteCode)
 	if err != nil {
@@ -212,8 +184,8 @@ func CreateAccount(phone string, inviteCode interface{}) (*Account, error) {
 	return account, nil
 }
 
-func CreateInvite(id string, phone string) (*Invite, error) {
-	var invite = new(Invite)
+func CreateInvite(id string, phone string) (*client.Invite, error) {
+	var invite = new(client.Invite)
 
 	err := accountsClient.CreateInvite(id, phone)
 	if err != nil {
@@ -234,8 +206,8 @@ func SetPin(id string, pin string) bool {
 	return valid
 }
 
-func UpdateProfile(id string, details client.ProfileDetails) (User, error) {
-	var user = User{}
+func UpdateProfile(id string, details client.ProfileDetails) (client.User, error) {
+	var user = client.User{}
 
 	err := accountsClient.UpdateProfile(id, details)
 	if err != nil {

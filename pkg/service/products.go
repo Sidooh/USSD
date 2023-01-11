@@ -106,13 +106,11 @@ func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {
 
 }
 
-func FetchSubscriptionType() (client.SubscriptionType, error) {
-	var subscriptionType client.SubscriptionType
-
-	err := productsClient.GetSubscriptionType(&subscriptionType)
+func FetchSubscriptionType() (*client.SubscriptionType, error) {
+	subscriptionType, err := productsClient.GetSubscriptionType()
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch subscription type: ", err)
-		return client.SubscriptionType{}, err
+		return &client.SubscriptionType{}, err
 	}
 
 	return subscriptionType, nil

@@ -14,31 +14,9 @@ type ProductsApiClient struct {
 	ApiClient
 }
 
-type UtilityAccount struct {
-	Id            int
-	Provider      string
-	AccountNumber string `json:"account_number"`
-}
-
-type SubscriptionType struct {
-	Id       int
-	Title    string
-	Price    int
-	Duration int
-	Active   bool
-}
-
-type Subscription struct {
-	Id        int
-	Amount    string
-	Status    string
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-}
-
-type EarningRate struct {
-	Type  string
-	Value float64
+type SubscriptionTypeApiResponse struct {
+	ApiResponse
+	Data *SubscriptionType `json:"data"`
 }
 
 func InitProductClient() *ProductsApiClient {
@@ -140,7 +118,6 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 
 		return response, nil
 	})
-
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
@@ -158,22 +135,23 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	return nil
 }
 
-func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
+	apiResponse := new(SubscriptionTypeApiResponse)
+	var subscriptionType *SubscriptionType
 
-	err := cache.Get("default_subscription", response)
+	err := cache.Get("default_subscription", subscriptionType)
 	if err == nil {
-		return nil
+		return subscriptionType, nil
 	}
 
 	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return &SubscriptionType{}, err
 	}
 
-	cache.Set("default_subscription", response, 28*24*time.Hour)
+	cache.Set("default_subscription", subscriptionType, 28*24*time.Hour)
 
-	return nil
+	return apiResponse.Data, nil
 }
 
 func (p *ProductsApiClient) FetchAccountEarnings(id string) error {
