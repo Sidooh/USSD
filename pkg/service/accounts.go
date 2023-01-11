@@ -2,7 +2,7 @@ package service
 
 import (
 	"USSD.sidooh/pkg/logger"
-	client2 "USSD.sidooh/pkg/service/client"
+	"USSD.sidooh/pkg/service/client"
 	"fmt"
 	"strconv"
 )
@@ -14,7 +14,7 @@ type Account struct {
 	InviterId    int    `json:"inviter_id"`
 	User         `json:"user"`
 	Balances     []Balance
-	Subscription client2.Subscription
+	Subscription client.Subscription
 	HasPin       bool
 }
 
@@ -198,7 +198,7 @@ func CreateAccount(phone string, inviteCode interface{}) (*Account, error) {
 				"successfully accessed Sidooh using your invite code. "+
 				"Show them how to buy airtime from Sidooh so as to unlock your earnings."+
 				"The more friends you invite to Sidooh, the more you earn.", account.Phone)
-			request := client2.NotificationRequest{
+			request := client.NotificationRequest{
 				Channel:     "SMS",
 				Destination: []string{inviter.Phone},
 				EventType:   "REFERRAL_JOINED", //TODO: Change notify referral types to invite
@@ -234,7 +234,7 @@ func SetPin(id string, pin string) bool {
 	return valid
 }
 
-func UpdateProfile(id string, details client2.ProfileDetails) (User, error) {
+func UpdateProfile(id string, details client.ProfileDetails) (User, error) {
 	var user = User{}
 
 	err := accountsClient.UpdateProfile(id, details, &user)
@@ -245,10 +245,10 @@ func UpdateProfile(id string, details client2.ProfileDetails) (User, error) {
 	return user, nil
 }
 
-var securityQuestions []client2.SecurityQuestion
+var securityQuestions []client.SecurityQuestion
 
-func FetchSecurityQuestions() ([]client2.SecurityQuestion, error) {
-	var questions []client2.SecurityQuestion
+func FetchSecurityQuestions() ([]client.SecurityQuestion, error) {
+	var questions []client.SecurityQuestion
 
 	if len(securityQuestions) > 0 {
 		return securityQuestions, nil
@@ -269,7 +269,7 @@ func SetSecurityQuestions(id string, answers map[string]string) error {
 
 	for i, answer := range answers {
 		var res interface{}
-		err := accountsClient.SetSecurityQuestion(id, client2.SecurityQuestionRequest{
+		err := accountsClient.SetSecurityQuestion(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
 		}, &res)
@@ -284,8 +284,8 @@ func SetSecurityQuestions(id string, answers map[string]string) error {
 	return nil
 }
 
-func FetchUserSecurityQuestions(id string) ([]client2.UserSecurityQuestion, error) {
-	var questions []client2.UserSecurityQuestion
+func FetchUserSecurityQuestions(id string) ([]client.UserSecurityQuestion, error) {
+	var questions []client.UserSecurityQuestion
 
 	err := accountsClient.FetchUserSecurityQuestions(id, &questions)
 	if err != nil {
@@ -300,7 +300,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 
 	for i, answer := range answers {
 		var res map[string]bool
-		err := accountsClient.CheckSecurityQuestionAnswers(id, client2.SecurityQuestionRequest{
+		err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
 		}, &res)
@@ -314,8 +314,8 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 	return valid
 }
 
-func FetchEarningBalances(id string) ([]client2.EarningAccount, error) {
-	var earnings []client2.EarningAccount
+func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
+	var earnings []client.EarningAccount
 
 	err := productsClient.FetchAccountEarnings(id, &earnings)
 	if err != nil {
@@ -325,8 +325,8 @@ func FetchEarningBalances(id string) ([]client2.EarningAccount, error) {
 	return earnings, nil
 }
 
-func FetchSavingBalances(id string) ([]client2.SavingAccount, error) {
-	var earnings []client2.SavingAccount
+func FetchSavingBalances(id string) ([]client.SavingAccount, error) {
+	var earnings []client.SavingAccount
 
 	err := savingsClient.FetchAccountSavings(id, &earnings)
 	if err != nil {
@@ -336,7 +336,7 @@ func FetchSavingBalances(id string) ([]client2.SavingAccount, error) {
 	return earnings, nil
 }
 
-func RequestEarningsWithdrawal(request *client2.EarningsWithdrawalRequest) error {
+func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error {
 	err := productsClient.WithdrawEarnings(request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to withdraw earnings: ", err)

@@ -3,8 +3,8 @@ package products
 import (
 	"USSD.sidooh/data"
 	"USSD.sidooh/pkg/logger"
-	service2 "USSD.sidooh/pkg/service"
-	client2 "USSD.sidooh/pkg/service/client"
+	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -110,7 +110,7 @@ func (a *Account) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		status := service2.SetPin(accountId, pin)
+		status := service.SetPin(accountId, pin)
 		if !status {
 			a.screen.Next.Title = "Sorry. We failed to set your pin, please try again later."
 			return
@@ -120,13 +120,13 @@ func (a *Account) finalize() {
 
 		name := a.vars["{full_name}"]
 
-		request := client2.ProfileDetails{
+		request := client.ProfileDetails{
 			Name: name,
 		}
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		_, err := service2.UpdateProfile(accountId, request)
+		_, err := service.UpdateProfile(accountId, request)
 		if err != nil {
 			// TODO: Handle this on SMS
 			name, _ := a.vars["{name}"]
@@ -136,13 +136,13 @@ func (a *Account) finalize() {
 			message := fmt.Sprintf("Dear %s"+
 				"we successfully updated your pin but were unable to update your name. "+
 				"Please try again later or contact support at %s", name, email)
-			request := client2.NotificationRequest{
+			request := client.NotificationRequest{
 				Channel:     "SMS",
 				Destination: []string{phone},
 				EventType:   "ERROR_ALERT",
 				Content:     message,
 			}
-			service2.Notify(&request)
+			service.Notify(&request)
 		}
 
 	}
@@ -152,13 +152,13 @@ func (a *Account) finalize() {
 		accountId, _ := a.vars["{account_id}"]
 		name := a.vars["{full_name}"]
 
-		request := client2.ProfileDetails{
+		request := client.ProfileDetails{
 			Name: name,
 		}
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		_, err := service2.UpdateProfile(accountId, request)
+		_, err := service.UpdateProfile(accountId, request)
 		if err != nil {
 			a.screen.Next.Title = "Sorry. We failed to update your details, please try again later."
 		}
@@ -174,7 +174,7 @@ func (a *Account) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		err := service2.SetSecurityQuestions(accountId, questionAnswerVars)
+		err := service.SetSecurityQuestions(accountId, questionAnswerVars)
 		if err != nil {
 			a.vars["{profile_security_questions_end_title}"] = "Sorry. We failed to set your security questions, please try again later."
 		} else {
@@ -192,7 +192,7 @@ func (a *Account) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		valid := service2.CheckSecurityQuestionAnswers(accountId, questionAnswerVars)
+		valid := service.CheckSecurityQuestionAnswers(accountId, questionAnswerVars)
 
 		if !valid {
 			a.screen.NextKey = utils.PROFILE_SECURITY_QUESTIONS_END
@@ -205,8 +205,8 @@ func (a *Account) finalize() {
 		accountId, _ := strconv.Atoi(a.vars["{account_id}"])
 		amount, _ := strconv.Atoi(a.vars["{amount}"])
 
-		request := &client2.EarningsWithdrawalRequest{
-			PurchaseRequest: client2.PurchaseRequest{
+		request := &client.EarningsWithdrawalRequest{
+			PurchaseRequest: client.PurchaseRequest{
 				Initiator: utils.CONSUMER,
 				AccountId: accountId,
 				Amount:    amount,
@@ -219,7 +219,7 @@ func (a *Account) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		err := service2.RequestEarningsWithdrawal(request)
+		err := service.RequestEarningsWithdrawal(request)
 		if err != nil {
 			a.screen.Next.Title = "Sorry. We failed to process your withdrawal request, please try again later."
 		}
@@ -232,7 +232,7 @@ func (a *Account) fetchUserSubscription() {
 
 	if accountId, ok := a.vars["{account_id}"]; ok {
 
-		subscription, _ := service2.FetchSubscription(accountId)
+		subscription, _ := service.FetchSubscription(accountId)
 
 		// TODO: Get subscription type as well and use the name
 		if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
@@ -250,7 +250,7 @@ func (a *Account) checkHasSecurityQuestions() bool {
 	var hasSecurityQuestions bool
 	err := json.Unmarshal([]byte(a.vars["{has_security_questions}"]), &hasSecurityQuestions)
 	if err != nil {
-		hasSecurityQuestions = service2.CheckHasSecurityQuestions(accountId)
+		hasSecurityQuestions = service.CheckHasSecurityQuestions(accountId)
 		stringVars, _ := json.Marshal(hasSecurityQuestions)
 		a.vars["{has_security_questions}"] = string(stringVars)
 	}
@@ -261,12 +261,12 @@ func (a *Account) checkHasSecurityQuestions() bool {
 func (a *Account) fetchSecurityQuestionOptions() {
 	logger.UssdLog.Println("   ++ ACCOUNT: fetch security question options")
 
-	questions, _ := service2.FetchSecurityQuestions()
+	questions, _ := service.FetchSecurityQuestions()
 
 	questionAnswerVars := map[uint]string{}
 	_ = json.Unmarshal([]byte(a.vars["{question_answers}"]), &questionAnswerVars)
 
-	var unansweredQuestions []client2.SecurityQuestion
+	var unansweredQuestions []client.SecurityQuestion
 	for _, question := range questions {
 		if _, ok := questionAnswerVars[question.Id]; !ok {
 			unansweredQuestions = append(unansweredQuestions, question)
@@ -274,7 +274,7 @@ func (a *Account) fetchSecurityQuestionOptions() {
 	}
 
 	if unansweredQuestions != nil {
-		questionOptionVars := map[int]client2.SecurityQuestion{}
+		questionOptionVars := map[int]client.SecurityQuestion{}
 
 		maxQuestions := unansweredQuestions
 		if len(questions) > 5 {
@@ -305,7 +305,7 @@ func (a *Account) processQuestionSelection(input string) {
 	logger.UssdLog.Println("   ++ ACCOUNT: process question selection", input)
 
 	selectedQuestion, _ := strconv.Atoi(input)
-	questionOptionVars := map[int]client2.SecurityQuestion{}
+	questionOptionVars := map[int]client.SecurityQuestion{}
 
 	_ = json.Unmarshal([]byte(a.vars["{question_options}"]), &questionOptionVars)
 
@@ -338,13 +338,13 @@ func (a *Account) fetchUserSecurityQuestionOptions() {
 	logger.UssdLog.Println("   ++ ACCOUNT: fetch user security question options")
 
 	// Check if user already has questions in state
-	var userQuestions []client2.UserSecurityQuestion
+	var userQuestions []client.UserSecurityQuestion
 	_ = json.Unmarshal([]byte(a.vars["{user_questions}"]), &userQuestions)
 
 	// Fetch from API otherwise
 	if len(userQuestions) == 0 {
 		accountId := a.vars["{account_id}"]
-		userQuestions, _ = service2.FetchUserSecurityQuestions(accountId)
+		userQuestions, _ = service.FetchUserSecurityQuestions(accountId)
 
 		stringVars, _ := json.Marshal(userQuestions)
 		a.vars["{user_questions}"] = string(stringVars)
@@ -355,7 +355,7 @@ func (a *Account) fetchUserSecurityQuestionOptions() {
 	_ = json.Unmarshal([]byte(a.vars["{question_answers}"]), &questionAnswerVars)
 
 	// Filter only unanswered questions so we pick from them
-	var unansweredQuestions []client2.UserSecurityQuestion
+	var unansweredQuestions []client.UserSecurityQuestion
 	for _, question := range userQuestions {
 		if _, ok := questionAnswerVars[question.Question.Id]; !ok {
 			unansweredQuestions = append(unansweredQuestions, question)
@@ -465,16 +465,16 @@ func (a *Account) getAccountBalances(input string) {
 func (a *Account) fetchEarnings() {
 	accountId := a.vars["{account_id}"]
 
-	earnings, err := service2.FetchEarningBalances(accountId)
+	earnings, err := service.FetchEarningBalances(accountId)
 	if err != nil {
 		a.screen.Next.Type = "Sorry, we failed to fetch your earnings. Please try again later."
 		logger.UssdLog.Error(err)
 		//return
 	}
 
-	var purchasesAccount client2.EarningAccount
-	var subscriptionsAccount client2.EarningAccount
-	var withdrawalAccount client2.EarningAccount
+	var purchasesAccount client.EarningAccount
+	var subscriptionsAccount client.EarningAccount
+	var withdrawalAccount client.EarningAccount
 	for _, earning := range earnings {
 		if earning.Type == "PURCHASES" {
 			purchasesAccount = earning
@@ -508,15 +508,15 @@ func (a *Account) fetchEarnings() {
 func (a *Account) fetchSavings() {
 	accountId := a.vars["{account_id}"]
 
-	earnings, err := service2.FetchSavingBalances(accountId)
+	earnings, err := service.FetchSavingBalances(accountId)
 	if err != nil {
 		a.screen.Next.Title = "Sorry, we failed to fetch your saved points. Please try again later."
 		logger.UssdLog.Error(err)
 		//return
 	}
 
-	var currentAccount client2.SavingAccount
-	var lockedAccount client2.SavingAccount
+	var currentAccount client.SavingAccount
+	var lockedAccount client.SavingAccount
 	for _, earning := range earnings {
 		if earning.Type == "CURRENT" {
 			currentAccount = earning
