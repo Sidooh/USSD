@@ -49,7 +49,7 @@ func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, 
 	var accounts []client.UtilityAccount
 
 	// TODO: Add stack traces for easier log tracing
-	err := productsClient.GetUtilityAccounts(id, &accounts)
+	err := productsClient.GetUtilityAccounts(id)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch utility accounts: ", err)
 		return nil, err
@@ -137,7 +137,7 @@ func GetEarningRate(provider string) (*client.EarningRate, error) {
 	}
 
 	var rates map[string]client.EarningRate
-	err := productsClient.FetchEarningRates(&rates)
+	err := productsClient.FetchEarningRates()
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch earning rates: ", err)
 		return nil, err

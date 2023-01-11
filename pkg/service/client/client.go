@@ -73,6 +73,7 @@ func (api *ApiClient) send(data interface{}) error {
 		logger.ServiceLog.Error("Error sending request to API endpoint: ", err)
 		return err
 	}
+
 	// Close the connection to reuse it
 	defer response.Body.Close()
 	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
@@ -81,6 +82,7 @@ func (api *ApiClient) send(data interface{}) error {
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
+
 	logger.ServiceLog.Println("API_RES - body: ", string(body))
 
 	//TODO: Perform error handling in a better way
@@ -176,9 +178,4 @@ func (api *ApiClient) Authenticate(data []byte) error {
 	cache.SetString("token", response.Token, 14*time.Minute)
 
 	return nil
-}
-
-func ConvertStruct(from interface{}, to interface{}) {
-	record, _ := json.Marshal(from)
-	_ = json.Unmarshal(record, &to)
 }

@@ -15,7 +15,7 @@ func InitPaymentClient() *PaymentsApiClient {
 	return &client
 }
 
-func (p *PaymentsApiClient) GetVoucherBalances(id string, response interface{}) error {
+func (p *PaymentsApiClient) GetVoucherBalances(id string) error {
 	endpoint := "/vouchers?account_id=" + id
 	apiResponse := new(ApiResponse)
 
@@ -23,8 +23,6 @@ func (p *PaymentsApiClient) GetVoucherBalances(id string, response interface{}) 
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }

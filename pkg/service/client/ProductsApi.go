@@ -41,21 +41,6 @@ type EarningRate struct {
 	Value float64
 }
 
-//const timeFormat = `2006-01-02 15:04:05`
-
-//type Time struct {
-//	time.Time
-//}
-//
-//func (t Time) UnmarshalJSON(b []byte) error {
-//	ret, err := time.Parse(timeFormat, string(b))
-//	if err != nil {
-//		return err
-//	}
-//	t = Time{ret}
-//	return nil
-//}
-
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_PRODUCTS_API_URL"))
@@ -117,15 +102,13 @@ func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) 
 	return nil
 }
 
-func (p *ProductsApiClient) GetUtilityAccounts(id string, response interface{}) error {
+func (p *ProductsApiClient) GetUtilityAccounts(id string) error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -152,8 +135,6 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 		if err != nil {
 			return nil, err
 		}
-
-		ConvertStruct(apiResponse.Data, response)
 
 		cache.Set("subscription_"+id, response, 24*time.Hour)
 
@@ -190,22 +171,18 @@ func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	cache.Set("default_subscription", response, 28*24*time.Hour)
 
 	return nil
 }
 
-func (p *ProductsApiClient) FetchAccountEarnings(id string, response interface{}) error {
+func (p *ProductsApiClient) FetchAccountEarnings(id string) error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -222,15 +199,13 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 	return nil
 }
 
-func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
+func (p *ProductsApiClient) FetchEarningRates() error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
