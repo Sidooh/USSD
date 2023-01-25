@@ -1,6 +1,8 @@
 package service
 
-import "USSD.sidooh/service/client"
+import (
+	"USSD.sidooh/pkg/service/client"
+)
 
 var accountsClient *client.AccountsApiClient
 var paymentsClient *client.PaymentsApiClient

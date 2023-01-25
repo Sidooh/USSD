@@ -1,9 +1,9 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
 )
@@ -24,7 +24,7 @@ func (v *Voucher) Process(input string) {
 func (v *Voucher) processScreen(input string) {
 	switch v.screen.Key {
 	case utils.PAY_VOUCHER, utils.VOUCHER_BALANCE_INSUFFICIENT:
-		v.vars["{product}"] = v.productRep + " for"
+		v.vars["{product}"] = v.productRep
 		v.vars["{number}"] = v.vars["{phone}"]
 	case utils.VOUCHER_OTHER_ACCOUNT:
 		v.vars["{number}"], _ = utils.FormatPhone(input)
@@ -47,7 +47,7 @@ func (v *Voucher) finalize() {
 		if accountId == 0 {
 			logger.UssdLog.Println(" -- VOUCHER: creating acc")
 
-			account, err := service.CreateAccount(v.vars["{phone}"], v.vars["{invite_code_string}"])
+			account, err := service2.CreateAccount(v.vars["{phone}"], v.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error("Failed to create account: ", err)
@@ -76,6 +76,6 @@ func (v *Voucher) finalize() {
 		logger.UssdLog.Println(" -- VOUCHER: purchase", request)
 
 		// TODO: Make into goroutine if applicable
-		service.PurchaseVoucher(&request)
+		service2.PurchaseVoucher(&request)
 	}
 }

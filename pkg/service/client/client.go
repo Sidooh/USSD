@@ -1,8 +1,8 @@
 package client
 
 import (
-	"USSD.sidooh/cache"
-	"USSD.sidooh/logger"
+	"USSD.sidooh/pkg/cache"
+	"USSD.sidooh/pkg/logger"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -73,6 +73,7 @@ func (api *ApiClient) send(data interface{}) error {
 		logger.ServiceLog.Error("Error sending request to API endpoint: ", err)
 		return err
 	}
+
 	// Close the connection to reuse it
 	defer response.Body.Close()
 	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
@@ -81,6 +82,7 @@ func (api *ApiClient) send(data interface{}) error {
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
+
 	logger.ServiceLog.Println("API_RES - body: ", string(body))
 
 	//TODO: Perform error handling in a better way
@@ -168,7 +170,7 @@ func (api *ApiClient) EnsureAuthenticated() {
 func (api *ApiClient) Authenticate(data []byte) error {
 	var response = new(AuthResponse)
 
-	err := api.baseRequest(http.MethodPost, viper.GetString("ACCOUNTS_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
+	err := api.baseRequest(http.MethodPost, viper.GetString("SIDOOH_ACCOUNTS_API_URL")+"/users/signin", bytes.NewBuffer(data)).send(response)
 	if err != nil {
 		return err
 	}
@@ -176,9 +178,4 @@ func (api *ApiClient) Authenticate(data []byte) error {
 	cache.SetString("token", response.Token, 14*time.Minute)
 
 	return nil
-}
-
-func ConvertStruct(from interface{}, to interface{}) {
-	record, _ := json.Marshal(from)
-	_ = json.Unmarshal(record, &to)
 }

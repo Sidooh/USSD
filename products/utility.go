@@ -2,9 +2,9 @@ package products
 
 import (
 	"USSD.sidooh/data"
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -44,7 +44,7 @@ func (u *Utility) processScreen(input string) {
 		u.vars["{product}"] = fmt.Sprintf(
 			"%s (which will earn you %.2f points) for",
 			u.vars["{product}"],
-			utils.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
+			service.GetPotentialEarnings(u.vars["{selected_utility}"], amount, subscription == "ACTIVE"),
 		)
 
 	}

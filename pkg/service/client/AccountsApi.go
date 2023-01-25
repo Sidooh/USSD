@@ -1,12 +1,11 @@
 package client
 
 import (
-	"USSD.sidooh/cache"
+	"USSD.sidooh/pkg/cache"
 	"bytes"
 	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
-	"time"
 )
 
 type AccountsApiClient struct {
@@ -37,32 +36,18 @@ type SavingAccount struct {
 	Interest float64 `json:"interest"`
 }
 
-// TODO: Understand and use custom unmarshalers
-//type Money struct {
-//	float64
-//}
-//
-//func (m Money) UnmarshalJSON(b []byte) error {
-//	strippedBytes := b[1 : len(b)-1]
-//
-//	val, err := strconv.ParseFloat(string(strippedBytes), 64)
-//	fmt.Println(val, err)
-//
-//	if err != nil {
-//		return err
-//	}
-//
-//	m = Money{val}
-//	return nil
-//}
+type AccountApiResponse struct {
+	ApiResponse
+	Data *Account `json:"data"`
+}
 
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
-	client.ApiClient.init(viper.GetString("ACCOUNTS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_ACCOUNTS_API_URL"))
 	return &client
 }
 
-func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error {
+func (a *AccountsApiClient) GetAccount(phone string) error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(apiResponse)
@@ -70,12 +55,10 @@ func (a *AccountsApiClient) GetAccount(phone string, response interface{}) error
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interface{}) error {
+func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) error {
 	var apiResponse = new(ApiResponse)
 
 	// TODO: Test cache
@@ -85,32 +68,27 @@ func (a *AccountsApiClient) GetAccountByIdOrPhone(search string, response interf
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) GetAccountWithUser(phone string, response interface{}) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
+	var apiResponse = new(AccountApiResponse)
+	var account Account
 
-	err := cache.Get("account_"+phone, response)
+	err := cache.Get("account_"+phone, account)
 	if err == nil {
-		return nil
+		return &account, nil
 	}
 
 	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return &Account{}, err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
-	cache.Set("account_"+phone, response, 24*time.Hour)
-
-	return nil
+	return apiResponse.Data, nil
 }
 
-func (a *AccountsApiClient) CheckInvite(phone string, response interface{}) error {
+func (a *AccountsApiClient) CheckInvite(phone string) error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(apiResponse)
@@ -118,12 +96,10 @@ func (a *AccountsApiClient) CheckInvite(phone string, response interface{}) erro
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}) error {
+func (a *AccountsApiClient) CheckPin(id string, pin string) error {
 	var apiResponse = new(ApiResponse)
 
 	values := map[string]string{"pin": pin}
@@ -135,12 +111,10 @@ func (a *AccountsApiClient) CheckPin(id string, pin string, response interface{}
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
+func (a *AccountsApiClient) CheckHasPin(id string) error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
@@ -148,12 +122,10 @@ func (a *AccountsApiClient) CheckHasPin(id string, response interface{}) error {
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CheckHasSecurityQuestions(id string, response interface{}) error {
+func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(apiResponse)
@@ -161,12 +133,10 @@ func (a *AccountsApiClient) CheckHasSecurityQuestions(id string, response interf
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) error {
+func (a *AccountsApiClient) SetPin(id string, pin string) error {
 	var apiResponse = new(ApiResponse)
 
 	values := map[string]string{"pin": pin}
@@ -178,12 +148,10 @@ func (a *AccountsApiClient) SetPin(id string, pin string, response interface{}) 
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}, response interface{}) error {
+func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}) error {
 	var apiResponse = new(ApiResponse)
 
 	values := map[string]interface{}{"phone": phone, "invite_code": inviteCode}
@@ -195,12 +163,10 @@ func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}, 
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CreateInvite(id string, phone string, response interface{}) error {
+func (a *AccountsApiClient) CreateInvite(id string, phone string) error {
 	var apiResponse = new(ApiResponse)
 
 	values := map[string]string{"inviter_id": id, "phone": phone}
@@ -212,12 +178,10 @@ func (a *AccountsApiClient) CreateInvite(id string, phone string, response inter
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails, response interface{}) error {
+func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails) error {
 	var apiResponse = new(ApiResponse)
 
 	jsonData, err := json.Marshal(request)
@@ -228,12 +192,10 @@ func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails, res
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) FetchSecurityQuestions(response interface{}) error {
+func (a *AccountsApiClient) FetchSecurityQuestions() error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(apiResponse)
@@ -241,12 +203,10 @@ func (a *AccountsApiClient) FetchSecurityQuestions(response interface{}) error {
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest, response interface{}) error {
+func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest) error {
 	var apiResponse = new(ApiResponse)
 
 	jsonData, err := json.Marshal(request)
@@ -257,12 +217,10 @@ func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuest
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) FetchUserSecurityQuestions(id string, response interface{}) error {
+func (a *AccountsApiClient) FetchUserSecurityQuestions(id string) error {
 	var apiResponse = new(ApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(apiResponse)
@@ -270,12 +228,10 @@ func (a *AccountsApiClient) FetchUserSecurityQuestions(id string, response inter
 		return err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
-
 	return nil
 }
 
-func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest, response interface{}) error {
+func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest) error {
 	var apiResponse = new(ApiResponse)
 
 	jsonData, err := json.Marshal(request)
@@ -285,8 +241,6 @@ func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request Secu
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }

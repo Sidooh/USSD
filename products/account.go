@@ -2,9 +2,9 @@ package products
 
 import (
 	"USSD.sidooh/data"
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -234,8 +234,9 @@ func (a *Account) fetchUserSubscription() {
 
 		subscription, _ := service.FetchSubscription(accountId)
 
+		// TODO: Get subscription type as well and use the name
 		if subscription.Id != 0 && subscription.Status == utils.ACTIVE {
-			a.vars["{subscription_type}"] = "Sidooh Agent"
+			a.vars["{subscription_type}"] = "Earn More"
 		} else {
 			a.vars["{subscription_type}"] = "None"
 		}

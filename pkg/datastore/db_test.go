@@ -1,6 +1,7 @@
 package datastore
 
 import (
+	"USSD.sidooh/utils"
 	"github.com/spf13/viper"
 	"testing"
 )
@@ -73,7 +74,7 @@ func TestMarshalToDatabase(t *testing.T) {
 func TestFetchSessionLogs(t *testing.T) {
 	initializeDB()
 
-	logs, err := FetchSessionLogs()
+	logs, err := FetchSessionLogs(utils.DEFAULT_SESSIONS_LIMIT)
 	if err != nil {
 		t.Errorf("FetchSessionLogs() = %v; want nil", err)
 	}
@@ -86,7 +87,7 @@ func TestFetchSessionLogs(t *testing.T) {
 								VALUES (1, 'a', '1', '1', 'a', 'a', '1', '{}', '{}'), 
 								       (2, 'b', '1', '1', 'a', 'a', '1', '{}', '{}')`)
 
-	logs, err = FetchSessionLogs()
+	logs, err = FetchSessionLogs(utils.DEFAULT_SESSIONS_LIMIT)
 	if err != nil {
 		t.Errorf("FetchSessionLogs() = %v; want nil", err)
 	}

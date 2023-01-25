@@ -1,7 +1,6 @@
 package data
 
 import (
-	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"errors"
@@ -20,10 +19,14 @@ var loadScreenKeys = []string{
 	//TODO: Remove once save is added
 	utils.SAVE,
 	utils.PROFILE_SECURITY_QUESTIONS_PIN,
+
+	//TODO: Remove once merchant is added
+	utils.MERCHANT_PAY_BILL,
+	utils.MERCHANT_BUY_GOODS,
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := datastore.ReadFile(utils.DATA_FILE)
+	file, err := utils.ReadFile(utils.DATA_FILE)
 	if err != nil {
 		return nil, err
 	}

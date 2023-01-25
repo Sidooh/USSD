@@ -13,7 +13,7 @@ type NotifyApiClient struct {
 
 func InitNotifyClient() *NotifyApiClient {
 	client := NotifyApiClient{}
-	client.ApiClient.init(viper.GetString("NOTIFY_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_NOTIFY_API_URL"))
 	return &client
 }
 

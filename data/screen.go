@@ -1,8 +1,8 @@
 package data
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"

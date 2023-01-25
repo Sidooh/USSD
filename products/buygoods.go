@@ -1,7 +1,7 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
+	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/utils"
 )
 

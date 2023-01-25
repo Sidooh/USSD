@@ -1,7 +1,6 @@
 package data
 
 import (
-	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"os"
 	"testing"
@@ -17,7 +16,7 @@ func TestMain(m *testing.M) {
 }
 
 func createDataTestFile(data interface{}) {
-	_ = datastore.WriteFile(data, utils.DATA_FILE)
+	_ = utils.WriteFile(data, utils.DATA_FILE)
 }
 
 func TestLoadData(t *testing.T) {
