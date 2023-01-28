@@ -13,7 +13,7 @@ type SavingsApiClient struct {
 
 func InitSavingsClient() *SavingsApiClient {
 	client := SavingsApiClient{}
-	client.ApiClient.init(viper.GetString("SAVINGS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_SAVINGS_API_URL"))
 	return &client
 }
 

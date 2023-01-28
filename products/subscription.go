@@ -1,9 +1,9 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
 	"strings"

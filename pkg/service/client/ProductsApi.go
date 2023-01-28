@@ -1,7 +1,7 @@
 package client
 
 import (
-	"USSD.sidooh/cache"
+	"USSD.sidooh/pkg/cache"
 	"bytes"
 	"encoding/json"
 	"github.com/spf13/viper"
@@ -14,51 +14,14 @@ type ProductsApiClient struct {
 	ApiClient
 }
 
-type UtilityAccount struct {
-	Id            int
-	Provider      string
-	AccountNumber string `json:"account_number"`
+type SubscriptionTypeApiResponse struct {
+	ApiResponse
+	Data *SubscriptionType `json:"data"`
 }
-
-type SubscriptionType struct {
-	Id       int
-	Title    string
-	Price    int
-	Duration int
-	Active   bool
-}
-
-type Subscription struct {
-	Id        int
-	Amount    string
-	Status    string
-	StartDate string `json:"start_date"`
-	EndDate   string `json:"end_date"`
-}
-
-type EarningRate struct {
-	Type  string
-	Value float64
-}
-
-//const timeFormat = `2006-01-02 15:04:05`
-
-//type Time struct {
-//	time.Time
-//}
-//
-//func (t Time) UnmarshalJSON(b []byte) error {
-//	ret, err := time.Parse(timeFormat, string(b))
-//	if err != nil {
-//		return err
-//	}
-//	t = Time{ret}
-//	return nil
-//}
 
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
-	client.ApiClient.init(viper.GetString("PRODUCTS_URL"))
+	client.ApiClient.init(viper.GetString("SIDOOH_PRODUCTS_API_URL"))
 	client.client.Timeout = 40 * time.Second
 	return &client
 }
@@ -117,15 +80,13 @@ func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) 
 	return nil
 }
 
-func (p *ProductsApiClient) GetUtilityAccounts(id string, response interface{}) error {
+func (p *ProductsApiClient) GetUtilityAccounts(id string) error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -153,11 +114,10 @@ func (p *ProductsApiClient) GetSubscription(id string, response interface{}) err
 			return nil, err
 		}
 
-		ConvertStruct(apiResponse.Data, response)
+		cache.Set("subscription_"+id, response, 24*time.Hour)
 
 		return response, nil
 	})
-
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
@@ -175,35 +135,32 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 	return nil
 }
 
-func (p *ProductsApiClient) GetSubscriptionType(response interface{}) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
+	apiResponse := new(SubscriptionTypeApiResponse)
+	var subscriptionType *SubscriptionType
 
-	err := cache.Get("default_subscription", response)
+	err := cache.Get("default_subscription", subscriptionType)
 	if err == nil {
-		return nil
+		return subscriptionType, nil
 	}
 
 	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return &SubscriptionType{}, err
 	}
 
-	ConvertStruct(apiResponse.Data, response)
+	cache.Set("default_subscription", subscriptionType, 28*24*time.Hour)
 
-	cache.Set("default_subscription", response, 28*24*time.Hour)
-
-	return nil
+	return apiResponse.Data, nil
 }
 
-func (p *ProductsApiClient) FetchAccountEarnings(id string, response interface{}) error {
+func (p *ProductsApiClient) FetchAccountEarnings(id string) error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
@@ -220,15 +177,13 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 	return nil
 }
 
-func (p *ProductsApiClient) FetchEarningRates(response interface{}) error {
+func (p *ProductsApiClient) FetchEarningRates() error {
 	apiResponse := new(ApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
 	if err != nil {
 		return err
 	}
-
-	ConvertStruct(apiResponse.Data, response)
 
 	return nil
 }
