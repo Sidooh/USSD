@@ -46,7 +46,7 @@ func (a *Airtime) processScreen(input string) {
 		subscription, _ := a.vars["{subscription_status}"]
 		provider, _ := utils.GetPhoneProvider(a.vars["{number}"])
 		a.vars["{product}"] = fmt.Sprintf(
-			"%s (which will earn you %.2f points) for",
+			"%s (which will earn you %.2f points)",
 			a.productRep,
 			service2.GetPotentialEarnings(provider, amount, subscription == "ACTIVE"),
 		)
