@@ -19,6 +19,11 @@ type SubscriptionTypeApiResponse struct {
 	Data *SubscriptionType `json:"data"`
 }
 
+type EarningRatesApiResponse struct {
+	ApiResponse
+	Data *map[string]EarningRate `json:"data"`
+}
+
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_PRODUCTS_API_URL"))
@@ -177,13 +182,13 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 	return nil
 }
 
-func (p *ProductsApiClient) FetchEarningRates() error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) FetchEarningRates() (*map[string]EarningRate, error) {
+	apiResponse := new(EarningRatesApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return apiResponse.Data, nil
 }

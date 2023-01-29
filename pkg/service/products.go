@@ -134,14 +134,13 @@ func GetEarningRate(provider string) (*client.EarningRate, error) {
 		return &rate, nil
 	}
 
-	var rates map[string]client.EarningRate
-	err := productsClient.FetchEarningRates()
+	rates, err := productsClient.FetchEarningRates()
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch earning rates: ", err)
 		return nil, err
 	}
 
-	earningRates = rates
+	earningRates = *rates
 	rate = earningRates[provider]
 
 	return &rate, nil
