@@ -9,20 +9,24 @@ type PaymentsApiClient struct {
 	ApiClient
 }
 
+type VoucherBalancesApiResponse struct {
+	ApiResponse
+	Data *[]Balance `json:"data"`
+}
+
 func InitPaymentClient() *PaymentsApiClient {
 	client := PaymentsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_PAYMENTS_API_URL"))
 	return &client
 }
 
-func (p *PaymentsApiClient) GetVoucherBalances(id string) error {
+func (p *PaymentsApiClient) GetVoucherBalances(id string) (*[]Balance, error) {
 	endpoint := "/vouchers?account_id=" + id
-	apiResponse := new(ApiResponse)
+	apiResponse := new(VoucherBalancesApiResponse)
 
-	err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)
-	if err != nil {
-		return err
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
 	}
 
-	return nil
+	return apiResponse.Data, nil
 }
