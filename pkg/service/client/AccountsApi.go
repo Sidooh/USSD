@@ -46,6 +46,11 @@ type SetPinApiResponse struct {
 	Data *bool `json:"data"`
 }
 
+type CheckHasPinApiResponse struct {
+	ApiResponse
+	Data *bool `json:"data"`
+}
+
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_ACCOUNTS_API_URL"))
@@ -119,15 +124,15 @@ func (a *AccountsApiClient) CheckPin(id string, pin string) error {
 	return nil
 }
 
-func (a *AccountsApiClient) CheckHasPin(id string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CheckHasPin(id string) (*bool, error) {
+	var apiResponse = new(CheckHasPinApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return apiResponse.Data, nil
 }
 
 func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) error {

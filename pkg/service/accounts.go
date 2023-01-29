@@ -129,14 +129,12 @@ func CheckPin(id string, pin string) bool {
 }
 
 func CheckHasPin(id string) bool {
-	var valid bool
-
-	err := accountsClient.CheckHasPin(id)
+	valid, err := accountsClient.CheckHasPin(id)
 	if err != nil {
 		return false
 	}
 
-	return valid
+	return *valid
 }
 
 func CheckHasSecurityQuestions(id string) bool {
