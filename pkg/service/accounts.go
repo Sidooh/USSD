@@ -196,14 +196,12 @@ func CreateInvite(id string, phone string) (*client.Invite, error) {
 }
 
 func SetPin(id string, pin string) bool {
-	var valid bool
-
-	err := accountsClient.SetPin(id, pin)
+	valid, err := accountsClient.SetPin(id, pin)
 	if err != nil {
 		return false
 	}
 
-	return valid
+	return *valid
 }
 
 func UpdateProfile(id string, details client.ProfileDetails) (client.User, error) {
