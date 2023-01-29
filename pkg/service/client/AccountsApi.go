@@ -51,6 +51,11 @@ type CheckHasPinApiResponse struct {
 	Data *bool `json:"data"`
 }
 
+type CheckPinApiResponse struct {
+	ApiResponse
+	Data *bool `json:"data"`
+}
+
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_ACCOUNTS_API_URL"))
@@ -109,8 +114,8 @@ func (a *AccountsApiClient) CheckInvite(phone string) error {
 	return nil
 }
 
-func (a *AccountsApiClient) CheckPin(id string, pin string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CheckPin(id string, pin string) (*bool, error) {
+	var apiResponse = new(CheckPinApiResponse)
 
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
@@ -118,10 +123,10 @@ func (a *AccountsApiClient) CheckPin(id string, pin string) error {
 
 	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(apiResponse)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return apiResponse.Data, nil
 }
 
 func (a *AccountsApiClient) CheckHasPin(id string) (*bool, error) {

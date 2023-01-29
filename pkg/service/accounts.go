@@ -27,25 +27,19 @@ func FetchAccount(phone string) (*client.Account, error) {
 			if err != nil {
 				logger.ServiceLog.Error("Failed to fetch user subscription: ", err)
 			}
+
 			account.Subscription = subscription
-			//if account.Subscription.Id != 0 {
-			//	vars["{subscription_status}"] = account.Subscription.Status
-			//}
 
 			// Check Voucher
-			err = paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id))
+			balances, err := paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id))
 			if err != nil {
 				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 			}
-			//if len(account.Balances) != 0 {
-			//	vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
-			//}
+
+			account.Balances = *balances
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
-			//if account.HasPin {
-			//	vars["{has_pin}"] = "true"
-			//}
 		}
 	}()
 
@@ -118,14 +112,12 @@ func InviteOrAccountExists(phone string) bool {
 }
 
 func CheckPin(id string, pin string) bool {
-	var valid bool
-
-	err := accountsClient.CheckPin(id, pin)
+	valid, err := accountsClient.CheckPin(id, pin)
 	if err != nil {
 		return false
 	}
 
-	return valid
+	return *valid
 }
 
 func CheckHasPin(id string) bool {
