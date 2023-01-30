@@ -31,8 +31,7 @@ func (option *Option) Validate() error {
 	} else if option.Acyclic {
 		return nil
 	} else {
-		err := option.Next.Validate(true, true)
-		if err != nil {
+		if err := option.Next.Validate(true, true); err != nil {
 			panic(err)
 		}
 	}

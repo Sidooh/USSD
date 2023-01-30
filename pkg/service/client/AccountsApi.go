@@ -88,11 +88,10 @@ func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) error {
 
 func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
 	var apiResponse = new(AccountApiResponse)
-	var account Account
 
-	err := cache.Get("account_"+phone, account)
+	account, err := cache.Get[Account]("account_" + phone)
 	if err == nil {
-		return &account, nil
+		return account, nil
 	}
 
 	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(apiResponse)

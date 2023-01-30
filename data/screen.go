@@ -72,6 +72,7 @@ func (screen *Screen) GetStringRep() string {
 	for k := range screen.Options {
 		keys = append(keys, k)
 	}
+
 	sort.Ints(keys)
 
 	optionsString := ""
@@ -83,6 +84,7 @@ func (screen *Screen) GetStringRep() string {
 
 		optionsString += screen.Options[k].GetStringRep() + "\n"
 	}
+
 	return fmt.Sprintf("%v\n\n%v", screen.Title, optionsString)
 }
 
@@ -459,12 +461,15 @@ func (screen *Screen) SubstituteVars(vars map[string]string) {
 // Strtr("baab", "ab", "01") will return "1001", a => 0; b => 1.
 func Strtr(haystack string, params ...interface{}) string {
 	ac := len(params)
+
 	if ac == 1 {
 		pairs := params[0].(map[string]string)
 		length := len(pairs)
+
 		if length == 0 {
 			return haystack
 		}
+
 		oldnew := make([]string, length*2)
 		for o, n := range pairs {
 			if o == "" {
@@ -472,14 +477,17 @@ func Strtr(haystack string, params ...interface{}) string {
 			}
 			oldnew = append(oldnew, o, n)
 		}
+
 		return strings.NewReplacer(oldnew...).Replace(haystack)
 	} else if ac == 2 {
 		from := params[0].(string)
 		to := params[1].(string)
 		trlen, lt := len(from), len(to)
+
 		if trlen > lt {
 			trlen = lt
 		}
+
 		if trlen == 0 {
 			return haystack
 		}
@@ -488,6 +496,7 @@ func Strtr(haystack string, params ...interface{}) string {
 		var xlat [256]uint8
 		var i int
 		var j uint8
+
 		if trlen == 1 {
 			for i = 0; i < len(haystack); i++ {
 				if haystack[i] == from[0] {
@@ -496,11 +505,14 @@ func Strtr(haystack string, params ...interface{}) string {
 					str[i] = haystack[i]
 				}
 			}
+
 			return string(str)
 		}
+
 		// trlen != 1
 		for {
 			xlat[j] = j
+
 			if j++; j == 0 {
 				break
 			}
@@ -511,6 +523,7 @@ func Strtr(haystack string, params ...interface{}) string {
 		for i = 0; i < len(haystack); i++ {
 			str[i] = xlat[haystack[i]]
 		}
+
 		return string(str)
 	}
 

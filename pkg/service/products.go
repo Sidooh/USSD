@@ -79,9 +79,7 @@ func PurchaseVoucher(request *client.VoucherPurchaseRequest) {
 }
 
 func FetchSubscription(id string) (client.Subscription, error) {
-	var subscription client.Subscription
-
-	err := productsClient.GetSubscription(id, &subscription)
+	subscription, err := productsClient.GetSubscription(id)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch subscription: ", err)
 		return client.Subscription{}, err
@@ -93,7 +91,7 @@ func FetchSubscription(id string) (client.Subscription, error) {
 		subscription.EndDate = parts[0] + " " + timeParts[0]
 	}
 
-	return subscription, nil
+	return *subscription, nil
 }
 
 func PurchaseSubscription(request *client.SubscriptionPurchaseRequest) {

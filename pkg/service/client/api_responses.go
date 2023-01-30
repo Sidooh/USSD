@@ -44,8 +44,7 @@ type SubscriptionType struct {
 
 type Subscription struct {
 	Id        int
-	Amount    string
-	Status    string
+	Status    string `json:"status"`
 	StartDate string `json:"start_date"`
 	EndDate   string `json:"end_date"`
 }
