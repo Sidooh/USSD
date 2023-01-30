@@ -72,9 +72,7 @@ func CheckAccount(phone string) (*client.Account, error) {
 
 // TODO: Add for Id only - may be faster when id is known?
 func CheckAccountByIdOrPhone(search string) (*client.Account, error) {
-	var account = new(client.Account)
-
-	err := accountsClient.GetAccountByIdOrPhone(search)
+	account, err := accountsClient.GetAccountByIdOrPhone(search)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to search account: ", err)
 		return nil, err
@@ -122,7 +120,7 @@ func CheckPin(id string, pin string) bool {
 
 func CheckHasPin(id string) bool {
 	valid, err := accountsClient.CheckHasPin(id)
-	if err != nil {
+	if err != nil || valid == nil {
 		return false
 	}
 
