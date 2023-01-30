@@ -73,17 +73,15 @@ func (a *AccountsApiClient) GetAccount(phone string) error {
 	return nil
 }
 
-func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) error {
-	var apiResponse = new(ApiResponse)
-
-	// TODO: Test cache
+func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) (*Account, error) {
+	var apiResponse = new(AccountApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(apiResponse)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return apiResponse.Data, nil
 }
 
 func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
