@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
 
 type AccountsApiClient struct {
@@ -96,6 +97,8 @@ func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
 	if err != nil {
 		return &Account{}, err
 	}
+
+	cache.Set("account_"+phone, apiResponse.Data, 24*time.Hour)
 
 	return apiResponse.Data, nil
 }
