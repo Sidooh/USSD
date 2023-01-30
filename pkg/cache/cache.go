@@ -46,14 +46,17 @@ func SetString(key string, value string, time time.Duration) {
 	}
 }
 
-func Get(key string, to interface{}) error {
+func Get[K interface{}](key string) (*K, error) {
 	value := Instance.Get(key)
 	if value != nil && !value.IsExpired() {
-		err := json.Unmarshal([]byte(value.Value()), &to)
-		return err
+		var v *K
+
+		err := json.Unmarshal([]byte(value.Value()), &v)
+
+		return v, err
 	}
 
-	return errors.New("item not found")
+	return nil, errors.New("item not found")
 }
 
 func Remove(key string) {

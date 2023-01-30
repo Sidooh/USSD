@@ -14,6 +14,11 @@ type ProductsApiClient struct {
 	ApiClient
 }
 
+type SubscriptionApiResponse struct {
+	ApiResponse
+	Data *Subscription `json:"data"`
+}
+
 type SubscriptionTypeApiResponse struct {
 	ApiResponse
 	Data *SubscriptionType `json:"data"`
@@ -110,19 +115,23 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 	return nil
 }
 
-func (p *ProductsApiClient) GetSubscription(id string, response interface{}) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) GetSubscription(id string) (*Subscription, error) {
+	apiResponse := new(SubscriptionApiResponse)
+	var subscription *Subscription
 
-	return cached("subscription_"+id, response, func() (interface{}, error) {
-		err := p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
-		if err != nil {
-			return nil, err
-		}
+	subscription, err := cache.Get[Subscription]("subscription_" + id)
+	if err == nil {
+		return subscription, nil
+	}
 
-		cache.Set("subscription_"+id, response, 24*time.Hour)
+	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
+	if err != nil {
+		return nil, err
+	}
 
-		return response, nil
-	})
+	cache.Set("subscription_"+id, apiResponse.Data, 24*time.Hour)
+
+	return apiResponse.Data, nil
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
@@ -144,7 +153,7 @@ func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
 	apiResponse := new(SubscriptionTypeApiResponse)
 	var subscriptionType *SubscriptionType
 
-	err := cache.Get("default_subscription", subscriptionType)
+	subscriptionType, err := cache.Get[SubscriptionType]("default_subscription")
 	if err == nil {
 		return subscriptionType, nil
 	}
@@ -154,7 +163,7 @@ func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
 		return &SubscriptionType{}, err
 	}
 
-	cache.Set("default_subscription", subscriptionType, 28*24*time.Hour)
+	cache.Set("default_subscription", apiResponse.Data, 28*24*time.Hour)
 
 	return apiResponse.Data, nil
 }

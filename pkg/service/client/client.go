@@ -51,18 +51,18 @@ func (api *ApiClient) getUrl(endpoint string) string {
 	return api.baseUrl + endpoint
 }
 
-func cached(key string, result interface{}, fn func() (interface{}, error)) error {
-	err := cache.Get(key, result)
+/*func cached[R interface{}](key string, fn func() (*R, error)) (*R, error) {
+	result, err := cache.Get[R](key)
 	if err == nil {
-		return nil
+		return nil, nil
 	}
 
 	result, err = fn()
 
 	cache.Set(key, result, 28*24*time.Hour)
 
-	return err
-}
+	return result, err
+}*/
 
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
