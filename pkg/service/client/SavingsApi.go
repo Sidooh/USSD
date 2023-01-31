@@ -11,29 +11,27 @@ type SavingsApiClient struct {
 	ApiClient
 }
 
+type SavingsAccountApiResponse struct {
+	ApiResponse
+	Data []SavingAccount `json:"data"`
+}
+
 func InitSavingsClient() *SavingsApiClient {
 	client := SavingsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_SAVINGS_API_URL"))
 	return &client
 }
 
-func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) error {
+func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) ([]SavingAccount, error) {
 	endpoint := "/accounts/" + id + "/earnings"
 
-	apiResponse := new(ApiResponse)
-	err := s.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse)
+	res := new(SavingsAccountApiResponse)
+	err := s.newRequest(http.MethodGet, endpoint, nil).send(&res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, response)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return res.Data, nil
 }
 
 func (s *SavingsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {

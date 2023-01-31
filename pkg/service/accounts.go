@@ -8,8 +8,6 @@ import (
 )
 
 func FetchAccount(phone string) (*client.Account, error) {
-	var account *client.Account
-
 	account, err := accountsClient.GetAccountWithUser(phone)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch account", err)
@@ -47,10 +45,8 @@ func FetchAccount(phone string) (*client.Account, error) {
 }
 
 func FetchInvite(phone string) (*client.Invite, error) {
-	var invite = new(client.Invite)
-
 	// Check invite existence
-	err := accountsClient.CheckInvite(phone)
+	invite, err := accountsClient.CheckInvite(phone)
 	if err != nil {
 		return &client.Invite{}, err
 	}
@@ -59,9 +55,7 @@ func FetchInvite(phone string) (*client.Invite, error) {
 }
 
 func CheckAccount(phone string) (*client.Account, error) {
-	var account = new(client.Account)
-
-	err := accountsClient.GetAccount(phone)
+	account, err := accountsClient.GetAccount(phone)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to check account: ", err)
 		return nil, err
@@ -82,10 +76,8 @@ func CheckAccountByIdOrPhone(search string) (*client.Account, error) {
 }
 
 func InviteOrAccountExists(phone string) bool {
-	var account = new(client.Account)
-
 	// Check account existence
-	err := accountsClient.GetAccount(phone)
+	account, err := accountsClient.GetAccount(phone)
 	if err != nil && err.Error() != "record not found" {
 		logger.ServiceLog.Error("Failed to check invite/account - account: ", err)
 	}
@@ -94,10 +86,8 @@ func InviteOrAccountExists(phone string) bool {
 		return true
 	}
 
-	var invite = new(client.Invite)
-
 	// Check invite existence
-	err = accountsClient.CheckInvite(phone)
+	invite, err := accountsClient.CheckInvite(phone)
 	if err != nil && err.Error() != "record not found" {
 		logger.ServiceLog.Error("Failed to check invite/account - invite: ", err)
 	}
@@ -128,9 +118,7 @@ func CheckHasPin(id string) bool {
 }
 
 func CheckHasSecurityQuestions(id string) bool {
-	var valid map[string]bool
-
-	err := accountsClient.CheckHasSecurityQuestions(id)
+	valid, err := accountsClient.CheckHasSecurityQuestions(id)
 	if err != nil {
 		return false
 	}
@@ -139,9 +127,7 @@ func CheckHasSecurityQuestions(id string) bool {
 }
 
 func CreateAccount(phone string, inviteCode interface{}) (*client.Account, error) {
-	var account = new(client.Account)
-
-	err := accountsClient.CreateAccount(phone, inviteCode)
+	account, err := accountsClient.CreateAccount(phone, inviteCode)
 	if err != nil {
 		return nil, err
 	}
@@ -173,9 +159,7 @@ func CreateAccount(phone string, inviteCode interface{}) (*client.Account, error
 }
 
 func CreateInvite(id string, phone string) (*client.Invite, error) {
-	var invite = new(client.Invite)
-
-	err := accountsClient.CreateInvite(id, phone)
+	invite, err := accountsClient.CreateInvite(id, phone)
 	if err != nil {
 		return nil, err
 	}
@@ -192,10 +176,8 @@ func SetPin(id string, pin string) bool {
 	return *valid
 }
 
-func UpdateProfile(id string, details client.ProfileDetails) (client.User, error) {
-	var user = client.User{}
-
-	err := accountsClient.UpdateProfile(id, details)
+func UpdateProfile(id string, details client.ProfileDetails) (*client.User, error) {
+	user, err := accountsClient.UpdateProfile(id, details)
 	if err != nil {
 		return user, err
 	}
@@ -206,13 +188,11 @@ func UpdateProfile(id string, details client.ProfileDetails) (client.User, error
 var securityQuestions []client.SecurityQuestion
 
 func FetchSecurityQuestions() ([]client.SecurityQuestion, error) {
-	var questions []client.SecurityQuestion
-
 	if len(securityQuestions) > 0 {
 		return securityQuestions, nil
 	}
 
-	err := accountsClient.FetchSecurityQuestions()
+	questions, err := accountsClient.FetchSecurityQuestions()
 	if err != nil {
 		return nil, err
 	}
@@ -226,8 +206,7 @@ func SetSecurityQuestions(id string, answers map[string]string) error {
 	var results []interface{}
 
 	for i, answer := range answers {
-		var res interface{}
-		err := accountsClient.SetSecurityQuestion(id, client.SecurityQuestionRequest{
+		res, err := accountsClient.SetSecurityQuestion(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
 		})
@@ -243,9 +222,7 @@ func SetSecurityQuestions(id string, answers map[string]string) error {
 }
 
 func FetchUserSecurityQuestions(id string) ([]client.UserSecurityQuestion, error) {
-	var questions []client.UserSecurityQuestion
-
-	err := accountsClient.FetchUserSecurityQuestions(id)
+	questions, err := accountsClient.FetchUserSecurityQuestions(id)
 	if err != nil {
 		return nil, err
 	}
@@ -258,7 +235,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 
 	for i, answer := range answers {
 		var res map[string]bool
-		err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
+		res, err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
 		})
@@ -273,9 +250,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 }
 
 func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
-	var earnings []client.EarningAccount
-
-	err := productsClient.FetchAccountEarnings(id)
+	earnings, err := productsClient.FetchAccountEarnings(id)
 	if err != nil {
 		return nil, err
 	}
@@ -286,7 +261,7 @@ func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
 func FetchSavingBalances(id string) ([]client.SavingAccount, error) {
 	var earnings []client.SavingAccount
 
-	err := savingsClient.FetchAccountSavings(id, &earnings)
+	earnings, err := savingsClient.FetchAccountSavings(id, &earnings)
 	if err != nil {
 		return nil, err
 	}
