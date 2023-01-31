@@ -1,9 +1,9 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
 )
@@ -71,7 +71,7 @@ func (m *Merchant) finalize() {
 			logger.UssdLog.Println(" -- MERCHANT: creating acc")
 
 			//	TODO: Fix nil value for invite code
-			account, err := service.CreateAccount(m.vars["{phone}"], nil)
+			account, err := service2.CreateAccount(m.vars["{phone}"], nil)
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error(err)
@@ -97,6 +97,6 @@ func (m *Merchant) finalize() {
 
 		logger.UssdLog.Println(" -- PAY_MERCHANT: payment", request)
 
-		service.PayMerchant(request)
+		service2.PayMerchant(request)
 	}
 }

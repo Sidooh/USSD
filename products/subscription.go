@@ -1,9 +1,9 @@
 package products
 
 import (
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
 	"strings"
@@ -121,7 +121,6 @@ func (s *Subscription) fetchUserSubscription() {
 		subscription, _ := service.FetchSubscription(accountId)
 
 		if subscription.Id != 0 {
-
 			endDate := strings.Split(subscription.EndDate, " ")[0]
 			s.vars["{subscription_end_date}"] = "valid until " + endDate
 
@@ -148,7 +147,6 @@ func (s *Subscription) fetchUserSubscription() {
 			if subscription.Status == utils.EXPIRED || isPast || (isIn3Days && err == nil) {
 				s.screen.Options[6].NextKey = utils.SUBSCRIPTION_RENEW
 			}
-
 		}
 	}
 }

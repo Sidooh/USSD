@@ -2,10 +2,10 @@ package state
 
 import (
 	"USSD.sidooh/data"
-	"USSD.sidooh/datastore"
-	"USSD.sidooh/logger"
+	"USSD.sidooh/pkg/datastore"
+	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/products"
-	"USSD.sidooh/service"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"

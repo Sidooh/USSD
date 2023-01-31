@@ -2,9 +2,9 @@ package products
 
 import (
 	"USSD.sidooh/data"
-	"USSD.sidooh/logger"
-	"USSD.sidooh/service"
-	"USSD.sidooh/service/client"
+	"USSD.sidooh/pkg/logger"
+	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -48,7 +48,7 @@ func (a *Airtime) processScreen(input string) {
 		a.vars["{product}"] = fmt.Sprintf(
 			"%s (which will earn you %.2f points)",
 			a.productRep,
-			utils.GetPotentialEarnings(provider, amount, subscription == "ACTIVE"),
+			service2.GetPotentialEarnings(provider, amount, subscription == "ACTIVE"),
 		)
 		break
 	}
@@ -65,7 +65,7 @@ func (a *Airtime) finalize() {
 		if accountId == 0 {
 			logger.UssdLog.Println(" -- AIRTIME: creating acc")
 
-			account, err := service.CreateAccount(a.vars["{phone}"], a.vars["{invite_code_string}"])
+			account, err := service2.CreateAccount(a.vars["{phone}"], a.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error("Failed to create account: ", err)
@@ -92,7 +92,7 @@ func (a *Airtime) finalize() {
 		logger.UssdLog.Println(" -- AIRTIME: purchase", request)
 
 		// TODO: Make into goroutine if applicable
-		service.PurchaseAirtime(&request)
+		service2.PurchaseAirtime(&request)
 	}
 }
 
@@ -101,7 +101,7 @@ func (a *Airtime) setOtherNumberOptions(input string) {
 
 	if input == "2" {
 		accountId := a.vars["{account_id}"]
-		accounts, _ := service.FetchAirtimeAccounts(accountId)
+		accounts, _ := service2.FetchAirtimeAccounts(accountId)
 
 		if accounts != nil {
 			airtimeAccountOptionVars := map[int]string{}

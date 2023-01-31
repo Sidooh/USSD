@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	_ "modernc.org/sqlite"
 	"strings"
@@ -149,11 +150,12 @@ func MarshalToDatabase(session Session) error {
 	return nil
 }
 
-func FetchSessionLogs() ([]SessionLog, error) {
+func FetchSessionLogs(limit int) ([]SessionLog, error) {
 	var sessions []SessionLog
 
-	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT 250`)
+	rows, err := db.Query(`SELECT * FROM sessions ORDER BY id DESC LIMIT ?`, limit)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -193,4 +195,36 @@ func FetchSessionLogs() ([]SessionLog, error) {
 	}
 
 	return sessions, nil
+}
+
+func ReadTimeSeriesCount(limit int) (interface{}, error) {
+	type Dataset struct {
+		Date  int `json:"date"`
+		Count int `json:"count"`
+	}
+
+	var datasets []Dataset
+
+	rows, err := db.Query(
+		`SELECT CONCAT(EXTRACT(YEAR_MONTH FROM created_at), EXTRACT(DAY FROM created_at)) as date, COUNT(id) as count 
+				FROM sessions
+				GROUP BY date
+				ORDER BY date DESC
+				LIMIT ?`,
+		limit)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		dataset := new(Dataset)
+
+		if err := rows.Scan(&dataset.Date, &dataset.Count); err != nil {
+			log.Fatal(err)
+		}
+
+		datasets = append(datasets, *dataset)
+	}
+
+	return datasets, nil
 }

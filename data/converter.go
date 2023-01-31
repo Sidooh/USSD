@@ -1,7 +1,6 @@
 package data
 
 import (
-	"USSD.sidooh/datastore"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"errors"
@@ -27,7 +26,7 @@ var loadScreenKeys = []string{
 }
 
 func LoadData() (map[string]*Screen, error) {
-	file, err := datastore.ReadFile(utils.DATA_FILE)
+	file, err := utils.ReadFile(utils.DATA_FILE)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +62,10 @@ func LoadData() (map[string]*Screen, error) {
 func setNextScreens(screens map[string]*Screen, current *Screen) {
 	next, ok := screens[current.NextKey]
 	if ok {
-
 		if current.Next == nil {
 			current.setNext(next)
 			setNextScreens(screens, next)
 		}
-
 	} else {
 		// Set default type
 		if current.Type == "" {
@@ -79,16 +76,12 @@ func setNextScreens(screens map[string]*Screen, current *Screen) {
 			next, ok = screens[option.NextKey]
 
 			if ok {
-
 				if option.Next == nil {
 					option.setNext(next)
 					setNextScreens(screens, next)
 				}
-
 			}
-
 		}
-
 	}
 }
 
@@ -99,5 +92,6 @@ func validateScreens(screens map[string]*Screen) error {
 			return err
 		}
 	}
+
 	return nil
 }
