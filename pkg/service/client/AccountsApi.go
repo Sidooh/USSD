@@ -37,9 +37,34 @@ type SavingAccount struct {
 	Interest float64 `json:"interest"`
 }
 
+type UserApiResponse struct {
+	ApiResponse
+	Data *User `json:"data"`
+}
+
 type AccountApiResponse struct {
 	ApiResponse
 	Data *Account `json:"data"`
+}
+
+type InviteApiResponse struct {
+	ApiResponse
+	Data *Invite `json:"data"`
+}
+
+type SecurityQuestionsApiResponse struct {
+	ApiResponse
+	Data []SecurityQuestion `json:"data"`
+}
+
+type UserSecurityQuestionsApiResponse struct {
+	ApiResponse
+	Data []UserSecurityQuestion `json:"data"`
+}
+
+type CheckSecurityQuestionAnswersApiResponse struct {
+	ApiResponse
+	Data map[string]bool `json:"data"`
 }
 
 type SetPinApiResponse struct {
@@ -57,205 +82,210 @@ type CheckPinApiResponse struct {
 	Data *bool `json:"data"`
 }
 
+type HasSecurityQuestionsApiResponse struct {
+	ApiResponse
+	Data *map[string]bool `json:"data"`
+}
+
 func InitAccountClient() *AccountsApiClient {
 	client := AccountsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_ACCOUNTS_API_URL"))
 	return &client
 }
 
-func (a *AccountsApiClient) GetAccount(phone string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) GetAccount(phone string) (*Account, error) {
+	var res = new(AccountApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(apiResponse)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) (*Account, error) {
-	var apiResponse = new(AccountApiResponse)
-
-	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return res.Data, nil
+}
+
+func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) (*Account, error) {
+	var res = new(AccountApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/search/id_or_phone?search="+search, nil).send(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
 }
 
 func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
-	var apiResponse = new(AccountApiResponse)
+	var res = new(AccountApiResponse)
 
 	account, err := cache.Get[Account]("account_" + phone)
 	if err == nil {
 		return account, nil
 	}
 
-	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(apiResponse)
+	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(res)
 	if err != nil {
 		return &Account{}, err
 	}
 
-	cache.Set("account_"+phone, apiResponse.Data, 24*time.Hour)
+	cache.Set("account_"+phone, res.Data, 24*time.Hour)
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckInvite(phone string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CheckInvite(phone string) (*Invite, error) {
+	var res = new(InviteApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/invites/phone/"+phone, nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
 func (a *AccountsApiClient) CheckPin(id string, pin string) (*bool, error) {
-	var apiResponse = new(CheckPinApiResponse)
+	var res = new(CheckPinApiResponse)
 
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
 func (a *AccountsApiClient) CheckHasPin(id string) (*bool, error) {
-	var apiResponse = new(CheckHasPinApiResponse)
+	var res = new(CheckHasPinApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) (map[string]bool, error) {
+	var res = new(HasSecurityQuestionsApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return *res.Data, nil
 }
 
 func (a *AccountsApiClient) SetPin(id string, pin string) (*bool, error) {
-	var apiResponse = new(SetPinApiResponse)
+	var res = new(SetPinApiResponse)
 
 	values := map[string]string{"pin": pin}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}) (*Account, error) {
+	var res = new(AccountApiResponse)
 
 	values := map[string]interface{}{"phone": phone, "invite_code": inviteCode}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts", dataBytes).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CreateInvite(id string, phone string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CreateInvite(id string, phone string) (*Invite, error) {
+	var res = new(InviteApiResponse)
 
 	values := map[string]string{"inviter_id": id, "phone": phone}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/invites", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/invites", dataBytes).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) UpdateProfile(id string, request ProfileDetails) (*User, error) {
+	var res = new(UserApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/update-profile", dataBytes).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) FetchSecurityQuestions() error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) FetchSecurityQuestions() ([]SecurityQuestion, error) {
+	var res = new(SecurityQuestionsApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/security-questions", nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuestionRequest) (interface{}, error) {
+	var res = new(ApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) FetchUserSecurityQuestions(id string) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) FetchUserSecurityQuestions(id string) ([]UserSecurityQuestion, error) {
+	var res = new(UserSecurityQuestionsApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(apiResponse)
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest) error {
-	var apiResponse = new(ApiResponse)
+func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest) (map[string]bool, error) {
+	var res = new(CheckSecurityQuestionAnswersApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/check", dataBytes).send(apiResponse)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/check", dataBytes).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
