@@ -250,9 +250,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 }
 
 func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
-	var earnings []client.EarningAccount
-
-	err := productsClient.FetchAccountEarnings(id)
+	earnings, err := productsClient.FetchAccountEarnings(id)
 	if err != nil {
 		return nil, err
 	}

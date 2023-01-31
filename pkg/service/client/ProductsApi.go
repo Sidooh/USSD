@@ -24,9 +24,19 @@ type SubscriptionTypeApiResponse struct {
 	Data *SubscriptionType `json:"data"`
 }
 
+type AccountEarningsApiResponse struct {
+	ApiResponse
+	Data []EarningAccount `json:"data"`
+}
+
 type EarningRatesApiResponse struct {
 	ApiResponse
 	Data *map[string]EarningRate `json:"data"`
+}
+
+type UtilityAccountApiResponse struct {
+	ApiResponse
+	Data []UtilityAccount `json:"data"`
 }
 
 func InitProductClient() *ProductsApiClient {
@@ -72,33 +82,26 @@ func (p *ProductsApiClient) PayMerchant(request MerchantPurchaseRequest) error {
 	return nil
 }
 
-func (p *ProductsApiClient) GetAirtimeAccounts(id string, response interface{}) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) GetAirtimeAccounts(id string) ([]UtilityAccount, error) {
+	res := new(UtilityAccountApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/airtime-accounts", nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	// TODO: Can we get rid of this round trip?
-	dbByte, err := json.Marshal(apiResponse.Data)
-	err = json.Unmarshal(dbByte, &response)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return res.Data, nil
 }
 
-func (p *ProductsApiClient) GetUtilityAccounts(id string) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) GetUtilityAccounts(id string) ([]UtilityAccount, error) {
+	res := new(UtilityAccountApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/utility-accounts", nil).send(res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
 func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) error {
@@ -116,22 +119,21 @@ func (p *ProductsApiClient) PurchaseVoucher(request *VoucherPurchaseRequest) err
 }
 
 func (p *ProductsApiClient) GetSubscription(id string) (*Subscription, error) {
-	apiResponse := new(SubscriptionApiResponse)
-	var subscription *Subscription
+	res := new(SubscriptionApiResponse)
 
 	subscription, err := cache.Get[Subscription]("subscription_" + id)
-	if err == nil {
+	if err == nil && subscription != nil {
 		return subscription, nil
 	}
 
-	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(apiResponse)
+	err = p.newRequest(http.MethodGet, "/accounts/"+id+"/current-subscription", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	cache.Set("subscription_"+id, apiResponse.Data, 24*time.Hour)
+	cache.Set("subscription_"+id, res.Data, 24*time.Hour)
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
 func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRequest) error {
@@ -150,33 +152,32 @@ func (p *ProductsApiClient) PurchaseSubscription(request *SubscriptionPurchaseRe
 }
 
 func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
-	apiResponse := new(SubscriptionTypeApiResponse)
-	var subscriptionType *SubscriptionType
+	res := new(SubscriptionTypeApiResponse)
 
 	subscriptionType, err := cache.Get[SubscriptionType]("default_subscription")
-	if err == nil {
+	if err == nil && subscriptionType != nil {
 		return subscriptionType, nil
 	}
 
-	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(apiResponse)
+	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(res)
 	if err != nil {
 		return &SubscriptionType{}, err
 	}
 
-	cache.Set("default_subscription", apiResponse.Data, 28*24*time.Hour)
+	cache.Set("default_subscription", res.Data, 28*24*time.Hour)
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }
 
-func (p *ProductsApiClient) FetchAccountEarnings(id string) error {
-	apiResponse := new(ApiResponse)
+func (p *ProductsApiClient) FetchAccountEarnings(id string) ([]EarningAccount, error) {
+	res := new(AccountEarningsApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&apiResponse)
+	err := p.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&res)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return res.Data, nil
 }
 
 func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {
@@ -192,12 +193,12 @@ func (p *ProductsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest)
 }
 
 func (p *ProductsApiClient) FetchEarningRates() (*map[string]EarningRate, error) {
-	apiResponse := new(EarningRatesApiResponse)
+	res := new(EarningRatesApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(apiResponse)
+	err := p.newRequest(http.MethodGet, "/earnings/rates", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return res.Data, nil
 }

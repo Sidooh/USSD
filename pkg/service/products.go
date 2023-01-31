@@ -30,9 +30,7 @@ func PayMerchant(request client.MerchantPurchaseRequest) {
 }
 
 func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
-	var accounts []client.UtilityAccount
-
-	err := productsClient.GetAirtimeAccounts(id, &accounts)
+	accounts, err := productsClient.GetAirtimeAccounts(id)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch airtime accounts: ", err)
 		return nil, err
@@ -46,10 +44,8 @@ func FetchAirtimeAccounts(id string) ([]client.UtilityAccount, error) {
 }
 
 func FetchUtilityAccounts(id string, provider string) ([]client.UtilityAccount, error) {
-	var accounts []client.UtilityAccount
-
 	// TODO: Add stack traces for easier log tracing
-	err := productsClient.GetUtilityAccounts(id)
+	accounts, err := productsClient.GetUtilityAccounts(id)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to fetch utility accounts: ", err)
 		return nil, err
