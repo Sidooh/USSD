@@ -17,7 +17,6 @@ var loadScreenKeys = []string{
 	utils.VOUCHER_BALANCE_INSUFFICIENT,
 
 	//TODO: Remove once save is added
-	utils.SAVE,
 	utils.PROFILE_SECURITY_QUESTIONS_PIN,
 
 	//TODO: Remove once merchant is added

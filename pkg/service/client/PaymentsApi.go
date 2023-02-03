@@ -20,7 +20,7 @@ func InitPaymentClient() *PaymentsApiClient {
 	return &client
 }
 
-func (p *PaymentsApiClient) GetVoucherBalances(id string) (*[]Balance, error) {
+func (p *PaymentsApiClient) GetVoucherBalances(id string) ([]Balance, error) {
 	endpoint := "/vouchers?account_id=" + id
 	apiResponse := new(VoucherBalancesApiResponse)
 
@@ -28,5 +28,5 @@ func (p *PaymentsApiClient) GetVoucherBalances(id string) (*[]Balance, error) {
 		return nil, err
 	}
 
-	return apiResponse.Data, nil
+	return *apiResponse.Data, nil
 }
