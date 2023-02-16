@@ -5,6 +5,7 @@ import (
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/utils"
+	"USSD.sidooh/utils/constants"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -56,13 +57,14 @@ func (p *Product) setPaymentMethods(input string) {
 		p.screen.Next.Options[2].NextKey = utils.VOUCHER_BALANCE_INSUFFICIENT
 	}
 
-	// Delete voucher option if buying voucher for self
-	if p.productRep == "voucher" && p.vars["{number}"] == p.vars["{phone}"] {
+	// Delete voucher option if buying voucher for self or inactive
+	if (p.productRep == "voucher" && p.vars["{number}"] == p.vars["{phone}"]) || p.vars["{voucher_status}"] == status.INACTIVE {
 		delete(p.screen.Next.Options, 2)
 	}
 
 	hasPin := p.checkHasPin()
 	if !hasPin {
+		fmt.Println("hasPin")
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
 			if _, ok := p.screen.Options[2]; ok {
 				p.screen.Options[2].NextKey = utils.PIN_NOT_SET
@@ -73,6 +75,7 @@ func (p *Product) setPaymentMethods(input string) {
 		if _, ok := p.screen.Next.Options[2]; ok {
 			p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
 		}
+
 		return
 	}
 }

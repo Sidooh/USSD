@@ -11,9 +11,9 @@ type PaymentsApiClient struct {
 	ApiClient
 }
 
-type VoucherBalancesApiResponse struct {
+type VouchersApiResponse struct {
 	ApiResponse
-	Data *[]Balance `json:"data"`
+	Data *[]Voucher `json:"data"`
 }
 
 type ChargesApiResponse struct {
@@ -27,9 +27,9 @@ func InitPaymentClient() *PaymentsApiClient {
 	return &client
 }
 
-func (p *PaymentsApiClient) GetVoucherBalances(id string) ([]Balance, error) {
+func (p *PaymentsApiClient) GetVouchers(id string) ([]Voucher, error) {
 	endpoint := "/vouchers?account_id=" + id
-	apiResponse := new(VoucherBalancesApiResponse)
+	apiResponse := new(VouchersApiResponse)
 
 	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
 		return nil, err
