@@ -35,7 +35,7 @@ gen
 
 # USSD test files
 */*test.file
-*/*test-data.json
+**/*test-data.json
 
 # Sidooh bin
 USSD.sidooh
