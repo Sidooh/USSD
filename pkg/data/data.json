@@ -34,7 +34,7 @@
       "4": {
         "label": "Save & Invest",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save"
       },
       "5": {
         "label": "Invite",
