@@ -29,12 +29,12 @@ func FetchAccount(phone string) (*client.Account, error) {
 			account.Subscription = subscription
 
 			// Check Voucher
-			balances, err := paymentsClient.GetVoucherBalances(strconv.Itoa(account.Id))
+			vouchers, err := paymentsClient.GetVouchers(strconv.Itoa(account.Id))
 			if err != nil {
 				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 			}
 
-			account.Balances = balances
+			account.Vouchers = vouchers
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
