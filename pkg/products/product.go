@@ -64,7 +64,6 @@ func (p *Product) setPaymentMethods(input string) {
 
 	hasPin := p.checkHasPin()
 	if !hasPin {
-		fmt.Println("hasPin")
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
 			if _, ok := p.screen.Options[2]; ok {
 				p.screen.Options[2].NextKey = utils.PIN_NOT_SET
