@@ -34,7 +34,7 @@ func FetchAccount(phone string) (*client.Account, error) {
 				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 			}
 
-			account.Balances = *balances
+			account.Balances = balances
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
@@ -259,9 +259,7 @@ func FetchEarningBalances(id string) ([]client.EarningAccount, error) {
 }
 
 func FetchSavingBalances(id string) ([]client.SavingAccount, error) {
-	var earnings []client.SavingAccount
-
-	earnings, err := savingsClient.FetchAccountSavings(id, &earnings)
+	earnings, err := savingsClient.FetchAccountSavings(id)
 	if err != nil {
 		return nil, err
 	}

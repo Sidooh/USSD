@@ -1,8 +1,6 @@
 package client
 
 import (
-	"bytes"
-	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
 )
@@ -22,26 +20,12 @@ func InitSavingsClient() *SavingsApiClient {
 	return &client
 }
 
-func (s *SavingsApiClient) FetchAccountSavings(id string, response interface{}) ([]SavingAccount, error) {
-	endpoint := "/accounts/" + id + "/earnings"
-
+func (s *SavingsApiClient) FetchAccountSavings(id string) ([]SavingAccount, error) {
 	res := new(SavingsAccountApiResponse)
-	err := s.newRequest(http.MethodGet, endpoint, nil).send(&res)
+	err := s.newRequest(http.MethodGet, "/accounts/"+id+"/earnings", nil).send(&res)
 	if err != nil {
 		return nil, err
 	}
 
 	return res.Data, nil
-}
-
-func (s *SavingsApiClient) WithdrawEarnings(request *EarningsWithdrawalRequest) error {
-	jsonData, err := json.Marshal(request)
-	dataBytes := bytes.NewBuffer(jsonData)
-
-	err = s.newRequest(http.MethodPost, "/personal-accounts/withdraw", dataBytes).send(nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

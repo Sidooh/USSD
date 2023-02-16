@@ -29,7 +29,7 @@
       "4": {
         "label": "Save & Invest",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save"
       },
       "5": {
         "label": "Invite",
@@ -787,24 +787,9 @@
     "key": "payment_other_number_mpesa",
     "title": "Enter MPESA number",
     "type": "OPEN",
-    "next": "payment_confirmation_final",
-    "validations": "SAFARICOM,DISALLOW_CURRENT"
-  },
-  "payment_confirmation_final": {
-    "key": "payment_confirmation_final",
-    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
-    "options": {
-      "1": {
-        "label": "Accept",
-        "value": "1",
-        "next": "payment_end"
-      },
-      "2": {
-        "label": "Cancel",
-        "value": "2",
-        "next": "cancel"
-      }
-    }
+    "next": "payment_confirmation",
+    "validations": "SAFARICOM,DISALLOW_CURRENT",
+    "acyclic": true
   },
   "payment_end": {
     "key": "payment_end",
