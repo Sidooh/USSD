@@ -1,7 +1,7 @@
 package products
 
 import (
-	"USSD.sidooh/data"
+	"USSD.sidooh/pkg/data"
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/pkg/service/client"
