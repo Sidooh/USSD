@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 go build -o /server
 FROM gcr.io/distroless/static-debian11
 
 COPY --from=build /server /server
-COPY data/data.json data/
+COPY pkg/data/data.json pkg/data/
 
 EXPOSE 8004
 

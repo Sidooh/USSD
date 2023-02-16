@@ -2,7 +2,7 @@ package utils
 
 var (
 	DATA_FILE      = "data.json"
-	DATA_DIRECTORY = "data"
+	DATA_DIRECTORY = "pkg/data"
 )
 
 // types of screens
@@ -20,8 +20,9 @@ const (
 
 // screen keys
 const (
-	MAIN_MENU   = "main_menu"
-	INVITE_CODE = "invite_code"
+	MAIN_MENU        = "main_menu"
+	INVITE_CODE      = "invite_code"
+	INACTIVE_ACCOUNT = "inactive_account"
 
 	// static
 	ABOUT                        = "about"

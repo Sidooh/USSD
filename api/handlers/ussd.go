@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"USSD.sidooh/data"
+	"USSD.sidooh/pkg/data"
 	"USSD.sidooh/pkg/logger"
-	"USSD.sidooh/state"
+	"USSD.sidooh/pkg/state"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
