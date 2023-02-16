@@ -6,7 +6,7 @@ type Account struct {
 	Active       bool   `json:"active"`
 	InviterId    int    `json:"inviter_id"`
 	User         `json:"user"`
-	Balances     []Balance
+	Vouchers     []Voucher
 	Subscription Subscription
 	HasPin       bool
 }
@@ -16,9 +16,12 @@ type User struct {
 	Name  string `json:"name"`
 }
 
-type Balance struct {
-	Type    string
-	Balance float64 `json:"balance"`
+type Voucher struct {
+	Balance     float64 `json:"balance"`
+	Status      string  `json:"status"`
+	VoucherType struct {
+		Name string `json:"name"`
+	}
 }
 
 type Invite struct {
