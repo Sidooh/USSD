@@ -6,6 +6,11 @@
     "next": "main_menu",
     "validations": "INVITE_CODE_VALIDATION"
   },
+  "inactive_account": {
+    "key": "inactive_account",
+    "title": "Hi{name}, Welcome to Sidooh.\n\nUnfortunately, your account has been deactivated. To activate it, please reach out to us on {customer_support_email}.",
+    "type": "END"
+  },
   "main_menu": {
     "key": "main_menu",
     "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",

@@ -1,11 +1,11 @@
 package state
 
 import (
-	"USSD.sidooh/data"
+	"USSD.sidooh/pkg/data"
 	"USSD.sidooh/pkg/datastore"
 	"USSD.sidooh/pkg/logger"
+	"USSD.sidooh/pkg/products"
 	"USSD.sidooh/pkg/service"
-	"USSD.sidooh/products"
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
@@ -79,16 +79,20 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{full_name}"] = account.User.Name
 		}
 
-		if len(account.Balances) != 0 {
-			s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
-		}
+		if !account.Active {
+			s.ScreenPath.Screen = *screens[utils.INACTIVE_ACCOUNT]
+		} else {
+			if len(account.Balances) != 0 {
+				s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
+			}
 
-		if account.Subscription.Id != 0 {
-			s.Vars["{subscription_status}"] = account.Subscription.Status
-		}
+			if account.Subscription.Id != 0 {
+				s.Vars["{subscription_status}"] = account.Subscription.Status
+			}
 
-		if account.HasPin {
-			s.Vars["{has_pin}"] = "true"
+			if account.HasPin {
+				s.Vars["{has_pin}"] = "true"
+			}
 		}
 	}
 }
