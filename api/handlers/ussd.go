@@ -86,7 +86,7 @@ func process(code, phone, session, input string) *state.State {
 
 	// Check for global Navigation
 	if input == "0" || input == "00" {
-		stateData.NavigateBackOrHome(screens, input)
+		stateData.NavigateBackOrHome(input)
 
 		saveState(stateData)
 
@@ -96,7 +96,7 @@ func process(code, phone, session, input string) *state.State {
 
 	if stateData.ScreenPath.Type == utils.OPEN {
 		if stateData.ScreenPath.ValidateInput(input, stateData.Vars) {
-			stateData.ProcessOpenInput(screens, input)
+			stateData.ProcessOpenInput(input)
 
 			saveState(stateData)
 		}
@@ -113,7 +113,7 @@ func process(code, phone, session, input string) *state.State {
 	} else {
 		if v, e := strconv.Atoi(input); e == nil {
 			if option, ok := stateData.ScreenPath.Options[v]; ok {
-				stateData.ProcessOptionInput(screens, option)
+				stateData.ProcessOptionInput(option)
 
 				saveState(stateData)
 			}

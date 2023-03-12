@@ -45,6 +45,14 @@ var screens = map[string]*data.Screen{}
 
 func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
+
+	// TODO: Test efficiency/ time comp of this
+	//tempScreens, err := json.Marshal(sc)
+	//err = json.Unmarshal(tempScreens, &screens)
+	//if err != nil {
+	//	screens = sc
+	//}
+
 	screens = sc
 	s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
 
@@ -179,27 +187,19 @@ func (s *State) unsetState() {
 	//_ = datastore.RemoveFile(s.Session + utils.STATE_FILE)
 }
 
-func (s *State) ProcessOpenInput(m map[string]*data.Screen, input string) {
+func (s *State) ProcessOpenInput(input string) {
 	logger.UssdLog.Println("Processing open input: ", input)
-	screens = m
 
-	s.ScreenPath.Screen.Next = getScreen(screens, s.ScreenPath.Screen.NextKey)
+	s.ScreenPath.Screen.Next = getScreen(s.ScreenPath.Screen.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
 
 	s.MoveNext("")
-
-	//if s.ScreenPath.Next != nil && s.ScreenPath.NextKey != s.ScreenPath.Next.Key {
-	//	s.MoveNext(s.ScreenPath.NextKey)
-	//} else {
-	//	s.MoveNext("")
-	//}
 }
 
-func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Option) {
+func (s *State) ProcessOptionInput(option *data.Option) {
 	logger.UssdLog.Println("Processing option input: ", option.Value)
-	screens = m
 
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
@@ -230,7 +230,7 @@ func (s *State) ProcessOptionInput(m map[string]*data.Screen, option *data.Optio
 		s.setProduct(products.PAY_VOUCHER)
 	}
 
-	s.ScreenPath.Screen.Next = getScreen(screens, option.NextKey)
+	s.ScreenPath.Screen.Next = getScreen(option.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
@@ -268,13 +268,13 @@ func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
 
 	if screenKey != "" {
-		s.ScreenPath.Screen = *getScreen(screens, screenKey)
+		s.ScreenPath.Screen = *getScreen(screenKey)
 	} else {
 		s.ScreenPath.Screen = *s.ScreenPath.Next
 	}
 }
 
-func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string) {
+func (s *State) NavigateBackOrHome(input string) {
 	if input == "0" && s.ScreenPath.Previous != nil {
 		if s.ScreenPath.Previous.Validations == utils.PIN {
 			s.ScreenPath.Screen = s.ScreenPath.Previous.Previous.Screen
@@ -286,7 +286,7 @@ func (s *State) NavigateBackOrHome(screens map[string]*data.Screen, input string
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = *getScreen(screens, utils.MAIN_MENU)
+		s.ScreenPath.Screen = *getScreen(utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
 		s.setProduct(0)
 	}
@@ -318,7 +318,7 @@ func (s *State) GetStringResponse() string {
 	return response
 }
 
-func getScreen(screens map[string]*data.Screen, screenKey string) *data.Screen {
+func getScreen(screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated, and we don't want to change the original
 	screen := *screens[screenKey]
 

@@ -1,12 +1,10 @@
 package client
 
 import (
-	"USSD.sidooh/pkg/cache"
 	"bytes"
 	"encoding/json"
 	"github.com/spf13/viper"
 	"net/http"
-	"time"
 )
 
 type AccountsApiClient struct {
@@ -69,22 +67,22 @@ type CheckSecurityQuestionAnswersApiResponse struct {
 
 type SetPinApiResponse struct {
 	ApiResponse
-	Data *bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 type CheckHasPinApiResponse struct {
 	ApiResponse
-	Data *bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 type CheckPinApiResponse struct {
 	ApiResponse
-	Data *bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 type HasSecurityQuestionsApiResponse struct {
 	ApiResponse
-	Data *map[string]bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 func InitAccountClient() *AccountsApiClient {
@@ -118,17 +116,11 @@ func (a *AccountsApiClient) GetAccountByIdOrPhone(search string) (*Account, erro
 func (a *AccountsApiClient) GetAccountWithUser(phone string) (*Account, error) {
 	var res = new(AccountApiResponse)
 
-	account, err := cache.Get[Account]("account_" + phone)
-	if err == nil {
-		return account, nil
-	}
-
-	err = a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(res)
+	// TODO: Only add cache once we can invalidate cache from UI/endpoint
+	err := a.newRequest(http.MethodGet, "/accounts/phone/"+phone+"?with_user=true", nil).send(res)
 	if err != nil {
-		return &Account{}, err
+		return nil, err
 	}
-
-	cache.Set("account_"+phone, res.Data, 24*time.Hour)
 
 	return res.Data, nil
 }
@@ -144,7 +136,7 @@ func (a *AccountsApiClient) CheckInvite(phone string) (*Invite, error) {
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckPin(id string, pin string) (*bool, error) {
+func (a *AccountsApiClient) CheckPin(id string, pin string) (bool, error) {
 	var res = new(CheckPinApiResponse)
 
 	values := map[string]string{"pin": pin}
@@ -153,35 +145,35 @@ func (a *AccountsApiClient) CheckPin(id string, pin string) (*bool, error) {
 
 	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/check-pin", dataBytes).send(res)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckHasPin(id string) (*bool, error) {
+func (a *AccountsApiClient) CheckHasPin(id string) (bool, error) {
 	var res = new(CheckHasPinApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-pin", nil).send(res)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) (map[string]bool, error) {
+func (a *AccountsApiClient) CheckHasSecurityQuestions(id string) (bool, error) {
 	var res = new(HasSecurityQuestionsApiResponse)
 
 	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/has-security-questions", nil).send(res)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	return *res.Data, nil
+	return res.Data, nil
 }
 
-func (a *AccountsApiClient) SetPin(id string, pin string) (*bool, error) {
+func (a *AccountsApiClient) SetPin(id string, pin string) (bool, error) {
 	var res = new(SetPinApiResponse)
 
 	values := map[string]string{"pin": pin}
@@ -190,7 +182,7 @@ func (a *AccountsApiClient) SetPin(id string, pin string) (*bool, error) {
 
 	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/set-pin", dataBytes).send(res)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
 	return res.Data, nil
