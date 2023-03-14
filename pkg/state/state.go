@@ -275,6 +275,9 @@ func (s *State) MoveNext(screenKey string) {
 }
 
 func (s *State) NavigateBackOrHome(input string) {
+	if s.ScreenPath.Key == utils.INVITE_CODE || s.ScreenPath.Type == utils.GENESIS {
+		return
+	}
 	if input == "0" && s.ScreenPath.Previous != nil {
 		if s.ScreenPath.Previous.Validations == utils.PIN {
 			s.ScreenPath.Screen = s.ScreenPath.Previous.Previous.Screen
@@ -304,7 +307,7 @@ func (s *State) GetStringResponse() string {
 
 	response += s.ScreenPath.GetStringRep()
 
-	if s.ScreenPath.Type != utils.GENESIS && s.ScreenPath.Type != utils.END {
+	if s.ScreenPath.Type != utils.GENESIS && s.ScreenPath.Key != utils.INVITE_CODE && s.ScreenPath.Type != utils.END {
 		if s.ScreenPath.Type == utils.CLOSED {
 			response += "\n"
 		}

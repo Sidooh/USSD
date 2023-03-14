@@ -78,21 +78,21 @@ func CheckAccountByIdOrPhone(search string) (*client.Account, error) {
 func InviteOrAccountExists(phone string) bool {
 	// Check account existence
 	account, err := accountsClient.GetAccount(phone)
-	if err != nil && err.Error() != "record not found" {
+	if err != nil {
 		logger.ServiceLog.Error("Failed to check invite/account - account: ", err)
 	}
 
-	if account.Id != 0 {
+	if account != nil {
 		return true
 	}
 
 	// Check invite existence
 	invite, err := accountsClient.CheckInvite(phone)
-	if err != nil && err.Error() != "record not found" {
+	if err != nil {
 		logger.ServiceLog.Error("Failed to check invite/account - invite: ", err)
 	}
 
-	if invite.Id != 0 {
+	if invite != nil {
 		return true
 	}
 
