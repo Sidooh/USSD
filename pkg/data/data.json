@@ -393,7 +393,7 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "you are already subscribed to {subscription_type} {subscription_end_date}.",
+    "title": "You are already subscribed to {subscription_type} {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
@@ -712,7 +712,7 @@
   },
   "withdraw_confirm": {
     "key": "withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES{amount}\nTo {account_type}: {account_number}",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nFee: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",

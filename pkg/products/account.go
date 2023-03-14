@@ -80,6 +80,7 @@ func (a *Account) processScreen(input string) {
 	case utils.ACCOUNT_WITHDRAW:
 		a.vars["{points}"] = input
 		a.vars["{amount}"] = input
+		a.getCharge(input)
 
 	case utils.WITHDRAW_DESTINATION:
 		switch input {
@@ -555,4 +556,12 @@ func formatAmount(amount float64, format string) string {
 	}
 
 	return fmt.Sprintf(format, amount)
+}
+
+func (a *Account) getCharge(input string) {
+	amount, _ := strconv.Atoi(input)
+
+	charge := service.GetWithdrawalCharge(amount)
+
+	a.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 }

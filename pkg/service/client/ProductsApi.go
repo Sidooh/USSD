@@ -42,7 +42,6 @@ type UtilityAccountApiResponse struct {
 func InitProductClient() *ProductsApiClient {
 	client := ProductsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_PRODUCTS_API_URL"))
-	client.client.Timeout = 40 * time.Second
 	return &client
 }
 
@@ -161,7 +160,7 @@ func (p *ProductsApiClient) GetSubscriptionType() (*SubscriptionType, error) {
 
 	err = p.newRequest(http.MethodGet, "/subscription-types/default", nil).send(res)
 	if err != nil {
-		return &SubscriptionType{}, err
+		return nil, err
 	}
 
 	cache.Set("default_subscription", res.Data, 28*24*time.Hour)
