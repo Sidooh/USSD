@@ -75,6 +75,7 @@ func (screen *Screen) GetStringRep() string {
 
 	sort.Ints(keys)
 
+	// TODO: optimize by using strings.builder
 	optionsString := ""
 	for _, k := range keys {
 		// Add new line between dynamic options and static one

@@ -48,7 +48,7 @@ func FetchInvite(phone string) (*client.Invite, error) {
 	// Check invite existence
 	invite, err := accountsClient.CheckInvite(phone)
 	if err != nil {
-		return &client.Invite{}, err
+		return nil, err
 	}
 
 	return invite, nil
@@ -105,16 +105,16 @@ func CheckPin(id string, pin string) bool {
 		return false
 	}
 
-	return *valid
+	return valid
 }
 
 func CheckHasPin(id string) bool {
 	valid, err := accountsClient.CheckHasPin(id)
-	if err != nil || valid == nil {
+	if err != nil {
 		return false
 	}
 
-	return *valid
+	return valid
 }
 
 func CheckHasSecurityQuestions(id string) bool {
@@ -123,7 +123,7 @@ func CheckHasSecurityQuestions(id string) bool {
 		return false
 	}
 
-	return valid["message"]
+	return valid
 }
 
 func CreateAccount(phone string, inviteCode interface{}) (*client.Account, error) {
@@ -173,7 +173,7 @@ func SetPin(id string, pin string) bool {
 		return false
 	}
 
-	return *valid
+	return valid
 }
 
 func UpdateProfile(id string, details client.ProfileDetails) (*client.User, error) {
