@@ -26,8 +26,9 @@ func (s *Subscription) Process(input string) {
 func (s *Subscription) processScreen(input string) {
 	switch s.screen.Key {
 	case utils.MAIN_MENU:
-		s.vars["{product}"] = s.productRep
+		s.vars["{product}"] = s.productRep + " for"
 		s.vars["{number}"] = s.vars["{phone}"]
+		s.vars["{payment_charge_text}"] = ""
 
 		// TODO: Move to different screen after selection
 		// TODO: Make dynamic with fetch from api

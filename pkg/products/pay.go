@@ -20,6 +20,6 @@ func (p *Pay) Process(input string) {
 func (p *Pay) processScreen(input string) {
 	switch p.screen.Key {
 	case utils.PAY:
-
+		p.vars["{payment_charge_text}"] = ""
 	}
 }

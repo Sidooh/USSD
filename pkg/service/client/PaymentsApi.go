@@ -55,3 +55,21 @@ func (p *PaymentsApiClient) GetWithdrawalCharges() ([]AmountCharge, error) {
 
 	return *apiResponse.Data, nil
 }
+
+func (p *PaymentsApiClient) GetPaybillCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/paybill"
+	apiResponse := new(ChargesApiResponse)
+
+	charges, err := cache.Get[[]AmountCharge](endpoint)
+	if err == nil && len(*charges) > 0 {
+		return *charges, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
+
+	return *apiResponse.Data, nil
+}

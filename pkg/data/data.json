@@ -112,12 +112,12 @@
       "1": {
         "label": "Pay Bill",
         "value": "1",
-        "next": "coming_soon"
+        "next": "merchant_pay_bill"
       },
       "2": {
         "label": "Buy Goods",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchant_buy_goods"
       },
       "3": {
         "label": "Pay Utilities",
@@ -746,7 +746,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} for {number} using:",
+    "title": "Pay KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -769,7 +769,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
     "options": {
       "1": {
         "label": "Accept",
