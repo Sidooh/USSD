@@ -2,7 +2,7 @@ package products
 
 import (
 	"USSD.sidooh/pkg/logger"
-	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
@@ -31,30 +31,27 @@ func (m *Merchant) processScreen(input string) {
 		}
 		m.vars["{product}"] = "to Merchant"
 
-	case utils.MERCHANT_PAY_BILL, utils.MERCHANT_BUY_GOODS:
-		m.vars["{merchant_number}"] = input
-
-	case utils.MERCHANT_PAY_BILL_ACCOUNT:
-		m.vars["{merchant_account}"] = input
-
 	case utils.MERCHANT_AMOUNT:
 		m.vars["{amount}"] = input
+
 		m.setPaymentMethods(input)
-		m.setProduct()
+
+		m.getCharge(input)
+		m.setChargeText()
 
 	}
 }
 
-func (m *Merchant) setProduct() {
-	number := ""
+func (m *Merchant) setChargeText() {
+	charge := ""
 
 	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
-		number = "Paybill " + m.vars["{merchant_number}"] + ", Account " + m.vars["{merchant_account}"]
+		charge = "\nFee: KES" + m.vars["{paybill_charge}"]
 	} else {
-		number = "Till " + m.vars["{merchant_number}"]
+		charge = ""
 	}
 
-	m.vars["{number}"] = number
+	m.vars["{payment_charge_text}"] = charge
 }
 
 func (m *Merchant) finalize() {
@@ -71,7 +68,7 @@ func (m *Merchant) finalize() {
 			logger.UssdLog.Println(" -- MERCHANT: creating acc")
 
 			//	TODO: Fix nil value for invite code
-			account, err := service2.CreateAccount(m.vars["{phone}"], nil)
+			account, err := service.CreateAccount(m.vars["{phone}"], nil)
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error(err)
@@ -97,6 +94,14 @@ func (m *Merchant) finalize() {
 
 		logger.UssdLog.Println(" -- PAY_MERCHANT: payment", request)
 
-		service2.PayMerchant(request)
+		service.PayMerchant(request)
 	}
+}
+
+func (m *Merchant) getCharge(input string) {
+	amount, _ := strconv.Atoi(input)
+
+	charge := service.GetPaybillCharge(amount)
+
+	m.vars["{paybill_charge}"] = strconv.Itoa(charge)
 }

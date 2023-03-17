@@ -13,7 +13,7 @@ func (m *PayBill) Process(input string) {
 	logger.UssdLog.Println(" -- PAY_MPESA_PAY_BILL: process", m.screen.Key, input)
 	m.productRep = "pay_mpesa_pay_bill"
 
-	m.Product.Process(input)
+	m.Merchant.Process(input)
 	m.processScreen(input)
 	m.finalize()
 }
@@ -27,15 +27,7 @@ func (m *PayBill) processScreen(input string) {
 
 	case utils.MERCHANT_PAY_BILL_ACCOUNT:
 		m.vars["{merchant_account}"] = input
-
-	case utils.MERCHANT_AMOUNT:
-		m.vars["{amount}"] = input
-		m.setPaymentMethods(input)
-		m.setProduct()
+		m.vars["{number}"] = "for Account " + m.vars["{merchant_account}"]
 
 	}
-}
-
-func (m *PayBill) setProduct() {
-	m.vars["{number}"] = "for Account " + m.vars["{merchant_account}"]
 }

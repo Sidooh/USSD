@@ -53,3 +53,9 @@ type EarningRate struct {
 	Type  string
 	Value float64
 }
+
+type AmountCharge struct {
+	Min    int
+	Max    int
+	Charge int
+}

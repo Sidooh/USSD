@@ -112,12 +112,12 @@
       "1": {
         "label": "Pay Bill",
         "value": "1",
-        "next": "coming_soon"
+        "next": "merchant_pay_bill"
       },
       "2": {
         "label": "Buy Goods",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchant_buy_goods"
       },
       "3": {
         "label": "Pay Utilities",
@@ -393,7 +393,7 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "you are already subscribed to {subscription_type} {subscription_end_date}.",
+    "title": "You are already subscribed to {subscription_type} {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
@@ -712,7 +712,7 @@
   },
   "withdraw_confirm": {
     "key": "withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES{amount}\nTo {account_type}: {account_number}",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nFee: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",
@@ -746,7 +746,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} for {number} using:",
+    "title": "Pay KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -769,7 +769,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
     "options": {
       "1": {
         "label": "Accept",
