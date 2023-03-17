@@ -13,6 +13,7 @@ func (p *Pay) Process(input string) {
 	logger.UssdLog.Println(" -- PAY: process", p.screen.Key, input)
 	p.productRep = "pay"
 
+	p.Product.Process(input)
 	p.processScreen(input)
 	p.finalize()
 }
