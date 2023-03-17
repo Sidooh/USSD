@@ -16,7 +16,7 @@ func (m *Merchant) Process(input string) {
 	logger.UssdLog.Println(" -- PAY_MERCHANT: process", m.screen.Key, input)
 	m.productRep = "pay_merchant"
 
-	m.Product.Process(input)
+	m.Pay.Process(input)
 	m.processScreen(input)
 	m.finalize()
 }

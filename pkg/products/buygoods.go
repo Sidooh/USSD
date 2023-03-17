@@ -15,7 +15,6 @@ func (m *BuyGoods) Process(input string) {
 
 	m.Merchant.Process(input)
 	m.processScreen(input)
-	m.finalize()
 }
 
 func (m *BuyGoods) processScreen(input string) {
