@@ -10,6 +10,10 @@ import (
 type NotifyApiClient struct {
 	ApiClient
 }
+type USSDBalanceApiResponse struct {
+	ApiResponse
+	Data *int `json:"data"`
+}
 
 func InitNotifyClient() *NotifyApiClient {
 	client := NotifyApiClient{}
@@ -27,4 +31,14 @@ func (n *NotifyApiClient) SendNotification(request *NotificationRequest) error {
 	}
 
 	return nil
+}
+
+func (n *NotifyApiClient) GetUSSDBalance() (int, error) {
+	res := new(USSDBalanceApiResponse)
+
+	if err := n.newRequest(http.MethodGet, "/dashboard/ussd-balance", nil).send(&res); err != nil {
+		return 0, err
+	}
+
+	return *res.Data, nil
 }
