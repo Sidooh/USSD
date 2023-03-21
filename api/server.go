@@ -24,5 +24,5 @@ func Setup() {
 	http.Handle("/api/v1/sessions/logs", handlers.LogSession())
 	http.Handle("/api/v1/dashboard/chart", handlers.GetChartData())
 	http.Handle("/api/v1/dashboard/recent-sessions", handlers.GetRecentSessions())
-	http.Handle("/api/v1/dashboard/providers/balances", handlers.GetProviderBalances())
+	http.Handle("/api/v1/dashboard/summaries", handlers.GetSummaries())
 }

@@ -4,6 +4,7 @@ import (
 	"USSD.sidooh/pkg/datastore"
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/utils"
 	"encoding/json"
 	"net/http"
 )
@@ -16,7 +17,7 @@ func GetChartData() http.Handler {
 			return
 		}
 
-		marshal, err := json.Marshal(sessions)
+		marshal, err := json.Marshal(utils.SuccessResponse(sessions))
 		if err != nil {
 			jsonBody, _ := json.Marshal(map[string]string{
 				"error": "There was an internal server error",
@@ -48,7 +49,7 @@ func GetRecentSessions() http.Handler {
 			return
 		}
 
-		marshal, err := json.Marshal(sessions)
+		marshal, err := json.Marshal(utils.SuccessResponse(sessions))
 		if err != nil {
 			jsonBody, _ := json.Marshal(map[string]string{
 				"error": "There was an internal server error",
@@ -73,14 +74,27 @@ func GetRecentSessions() http.Handler {
 	})
 }
 
-func GetProviderBalances() http.Handler {
+func GetSummaries() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ussdBalance, err := service.GetUSSDBalance()
 		if err != nil {
 			return
 		}
 
-		marshal, err := json.Marshal(ussdBalance)
+		sessionsCount, err := datastore.ReadSummaries()
+		if err != nil {
+			return
+		}
+
+		var summaries = struct {
+			UssdBalance   float64     `json:"ussd_balance"`
+			SessionsCount interface{} `json:"sessions_count"`
+		}{
+			ussdBalance,
+			sessionsCount,
+		}
+
+		marshal, err := json.Marshal(utils.SuccessResponse(summaries))
 		if err != nil {
 			jsonBody, _ := json.Marshal(map[string]string{
 				"error": "There was an internal server error",
