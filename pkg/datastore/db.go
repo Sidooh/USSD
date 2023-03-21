@@ -197,7 +197,7 @@ func FetchSessionLogs(limit int) ([]SessionLog, error) {
 	return sessions, nil
 }
 
-func ReadTimeSeriesCount(limit int) (interface{}, error) {
+func ReadTimeSeriesCount() (interface{}, error) {
 	type Dataset struct {
 		Date  int `json:"date"`
 		Count int `json:"count"`
@@ -206,12 +206,8 @@ func ReadTimeSeriesCount(limit int) (interface{}, error) {
 	var datasets []Dataset
 
 	rows, err := db.Query(
-		`SELECT CONCAT(EXTRACT(YEAR_MONTH FROM created_at), EXTRACT(DAY FROM created_at)) as date, COUNT(id) as count 
-				FROM sessions
-				GROUP BY date
-				ORDER BY date DESC
-				LIMIT ?`,
-		limit)
+		`SELECT DATE_FORMAT(created_at, '%Y%m%d%H') as date, COUNT(id) as count 
+				FROM sessions GROUP BY date ORDER BY date DESC`)
 	if err != nil {
 		return nil, err
 	}

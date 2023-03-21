@@ -11,7 +11,7 @@ import (
 
 func GetChartData() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		sessions, err := datastore.ReadTimeSeriesCount(700)
+		sessions, err := datastore.ReadTimeSeriesCount()
 		if err != nil {
 			logger.ServiceLog.Error(err)
 			return
