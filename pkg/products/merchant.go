@@ -92,6 +92,10 @@ func (m *Merchant) finalize() {
 			request.AccountNumber = m.vars["{merchant_account}"]
 		}
 
+		if _, ok := m.vars["{mpesa_number}"]; ok {
+			request.DebitAccount = m.vars["{mpesa_number}"]
+		}
+
 		logger.UssdLog.Println(" -- PAY_MERCHANT: payment", request)
 
 		service.PayMerchant(request)

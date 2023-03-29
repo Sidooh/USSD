@@ -440,7 +440,7 @@ func isAlphaNumeric(str string, count int) bool {
 	if count == 0 {
 		count = 64
 	}
-	alphaNumRegx := regexp.MustCompile(fmt.Sprintf(`^[A-z0-9]{0,%v}$`, count))
+	alphaNumRegx := regexp.MustCompile(fmt.Sprintf(`^[A-z0-9 ]{0,%v}$`, count))
 
 	return alphaNumRegx.MatchString(str)
 }
