@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/spf13/viper"
 	"io"
 	"net/http"
@@ -66,7 +67,7 @@ func (api *ApiClient) getUrl(endpoint string) string {
 
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
-	logger.ServiceLog.WithField("req", api.request).Println("API_REQ: ", api.request)
+	logger.ServiceLog.WithField("req", fmt.Sprint(api.request)).Println("API_REQ: ")
 	start := time.Now()
 	response, err := api.client.Do(api.request)
 	if err != nil {
@@ -76,7 +77,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.WithField("latency", time.Since(start)).Println("API_RES - raw: ", response)
+	logger.ServiceLog.WithField("latency (ms)", time.Since(start).Milliseconds()).Println("API_RES - raw: ", response)
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
