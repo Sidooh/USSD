@@ -26,12 +26,10 @@ func Init() {
 
 	logger := viper.GetString("LOGGER")
 
-	fmt.Println(logger)
-
 	if env != "TEST" {
 		if logger == "GCP" {
-			UssdLog.SetFormatter(NewGCEFormatter(true))
-			ServiceLog.SetFormatter(NewGCEFormatter(true))
+			UssdLog.SetFormatter(NewGCEFormatter(false))
+			ServiceLog.SetFormatter(NewGCEFormatter(false))
 		} else {
 			UssdLog.SetOutput(utils.GetLogFile("ussd-" + time.Now().Format("2006-01-02") + ".log"))
 			ServiceLog.SetOutput(utils.GetLogFile("service-" + time.Now().Format("2006-01-02") + ".log"))
