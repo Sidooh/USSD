@@ -66,7 +66,7 @@ func (api *ApiClient) getUrl(endpoint string) string {
 
 func (api *ApiClient) send(data interface{}) error {
 	//TODO: Can we encode the data for security purposes and decode when necessary? Same to response logging...
-	logger.ServiceLog.Println("API_REQ: ", api.request)
+	logger.ServiceLog.WithField("req", api.request).Println("API_REQ: ", api.request)
 	start := time.Now()
 	response, err := api.client.Do(api.request)
 	if err != nil {
@@ -76,14 +76,14 @@ func (api *ApiClient) send(data interface{}) error {
 
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.Println("API_RES - raw: ", response, time.Since(start))
+	logger.ServiceLog.WithField("res", response).WithField("latency", time.Since(start)).Println("API_RES - raw: ", response, time.Since(start))
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
 
-	logger.ServiceLog.Println("API_RES - body: ", string(body))
+	logger.ServiceLog.WithField("body", body).Println("API_RES - body: ", string(body))
 
 	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
