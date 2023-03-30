@@ -487,7 +487,7 @@ func (a *Account) fetchEarnings() {
 		if earning.Type == "WITHDRAWALS" {
 			withdrawalAccount = earning
 		}
-		if earning.Type == "MERCHANTS" {
+		if earning.Type == "MERCHANT" {
 			merchantAccount = earning
 		}
 	}
