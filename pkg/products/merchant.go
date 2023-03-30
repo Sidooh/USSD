@@ -103,7 +103,7 @@ func (m *Merchant) getCharge(input string) {
 	fee := 0
 
 	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
-		fee = service.GetPaybillCharge(amount)
+		fee = service.GetPayBillCharge(amount)
 	} else {
 		fee = service.GetBuyGoodsCharge(amount)
 	}

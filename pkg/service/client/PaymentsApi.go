@@ -56,8 +56,8 @@ func (p *PaymentsApiClient) GetWithdrawalCharges() ([]AmountCharge, error) {
 	return *apiResponse.Data, nil
 }
 
-func (p *PaymentsApiClient) GetPaybillCharges() ([]AmountCharge, error) {
-	endpoint := "/charges/paybill"
+func (p *PaymentsApiClient) GetPayBillCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/pay-bill"
 	apiResponse := new(ChargesApiResponse)
 
 	charges, err := cache.Get[[]AmountCharge](endpoint)
@@ -75,7 +75,7 @@ func (p *PaymentsApiClient) GetPaybillCharges() ([]AmountCharge, error) {
 }
 
 func (p *PaymentsApiClient) GetBuyGoodsCharges() ([]AmountCharge, error) {
-	endpoint := "/charges/buygoods"
+	endpoint := "/charges/buy-goods"
 	apiResponse := new(ChargesApiResponse)
 
 	charges, err := cache.Get[[]AmountCharge](endpoint)

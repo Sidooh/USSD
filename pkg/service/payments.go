@@ -15,8 +15,8 @@ func GetWithdrawalCharge(amount int) int {
 	return 0
 }
 
-func GetPaybillCharge(amount int) int {
-	charges, err := paymentsClient.GetPaybillCharges()
+func GetPayBillCharge(amount int) int {
+	charges, err := paymentsClient.GetPayBillCharges()
 	if err != nil {
 		return 0
 	}
