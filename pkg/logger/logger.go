@@ -23,7 +23,6 @@ func Init() {
 	ServiceLog = logrus.New()
 
 	env := viper.GetString("APP_ENV")
-
 	logger := viper.GetString("LOGGER")
 
 	if env != "TEST" {

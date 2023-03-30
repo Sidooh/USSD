@@ -76,14 +76,14 @@ func (api *ApiClient) send(data interface{}) error {
 
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.WithField("res", response).WithField("latency", time.Since(start)).Println("API_RES - raw: ", response, time.Since(start))
+	logger.ServiceLog.WithField("latency", time.Since(start)).Println("API_RES - raw: ", response)
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		logger.ServiceLog.Error("Couldn't parse response body: ", err)
 	}
 
-	logger.ServiceLog.WithField("body", body).Println("API_RES - body: ", string(body))
+	logger.ServiceLog.WithField("body", string(body)).Println("API_RES - body: ")
 
 	//TODO: Perform error handling in a better way
 	if response.StatusCode != 200 && response.StatusCode != 201 && response.StatusCode != 401 &&
