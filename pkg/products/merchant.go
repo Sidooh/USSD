@@ -45,11 +45,7 @@ func (m *Merchant) processScreen(input string) {
 func (m *Merchant) setChargeText() {
 	charge := ""
 
-	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
-		charge = "\nFee: KES" + m.vars["{paybill_charge}"]
-	} else {
-		charge = ""
-	}
+	charge = "\nSave: KES" + m.vars["{merchant_fee}"]
 
 	m.vars["{payment_charge_text}"] = charge
 }
@@ -104,8 +100,13 @@ func (m *Merchant) finalize() {
 
 func (m *Merchant) getCharge(input string) {
 	amount, _ := strconv.Atoi(input)
+	fee := 0
 
-	charge := service.GetPaybillCharge(amount)
+	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
+		fee = service.GetPaybillCharge(amount)
+	} else {
+		fee = service.GetBuyGoodsCharge(amount)
+	}
 
-	m.vars["{paybill_charge}"] = strconv.Itoa(charge)
+	m.vars["{merchant_fee}"] = strconv.Itoa(fee)
 }

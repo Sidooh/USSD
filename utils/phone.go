@@ -6,13 +6,15 @@ import (
 	"regexp"
 )
 
-func GetPhoneProvider(input string) (string, error) {
-	sReg := regexp.MustCompile(SAFARICOM_REGEX)
-	aReg := regexp.MustCompile(AIRTEL_REGEX)
-	tReg := regexp.MustCompile(TELKOM_REGEX)
-	eReg := regexp.MustCompile(EQUITEL_REGEX)
-	fReg := regexp.MustCompile(FAIBA_REGEX)
+var (
+	sReg = regexp.MustCompile(SAFARICOM_REGEX)
+	aReg = regexp.MustCompile(AIRTEL_REGEX)
+	tReg = regexp.MustCompile(TELKOM_REGEX)
+	eReg = regexp.MustCompile(EQUITEL_REGEX)
+	fReg = regexp.MustCompile(FAIBA_REGEX)
+)
 
+func GetPhoneProvider(input string) (string, error) {
 	switch true {
 	case sReg.MatchString(input):
 		return SAFARICOM, nil

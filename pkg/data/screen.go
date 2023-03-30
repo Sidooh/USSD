@@ -423,6 +423,7 @@ func (screen *Screen) isValidPhoneAndProvider(input string, requiredProvider str
 func isValidPhone(input string) bool {
 	_, err := utils.GetPhoneProvider(input)
 	if err != nil {
+		logger.UssdLog.Println("isValidPhoneError", err)
 		return false
 	}
 

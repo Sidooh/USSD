@@ -108,8 +108,8 @@ func (a *Airtime) setOtherNumberOptions(input string) {
 			airtimeAccountOptionVars := map[int]string{}
 
 			maxAccounts := accounts
-			if len(accounts) > 5 {
-				maxAccounts = accounts[:5]
+			if len(accounts) > 7 {
+				maxAccounts = accounts[:7]
 			}
 
 			for i, account := range maxAccounts {
