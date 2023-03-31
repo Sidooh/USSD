@@ -77,7 +77,7 @@ func (api *ApiClient) send(data interface{}) error {
 
 	// Close the connection to reuse it
 	defer response.Body.Close()
-	logger.ServiceLog.WithField("latency (ms)", time.Since(start).Milliseconds()).Println("API_RES - raw: ", response)
+	logger.ServiceLog.WithField("res", fmt.Sprint(response)).WithField("latency (ms)", time.Since(start).Milliseconds()).Println("API_RES - raw: ")
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
