@@ -84,6 +84,9 @@ func process(code, phone, session, input string) *state.State {
 		return stateData
 	}
 
+	// On server restart, session may still be viable, we need to ensure screens are set
+	stateData.EnsureScreensAreSet(screens)
+
 	// Check for global Navigation
 	if input == "0" || input == "00" {
 		stateData.NavigateBackOrHome(input)

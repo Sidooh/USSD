@@ -34,7 +34,8 @@
       "4": {
         "label": "Save & Invest",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save",
+        "rules": "BETA"
       },
       "5": {
         "label": "Invite",
@@ -112,12 +113,14 @@
       "1": {
         "label": "Pay Bill",
         "value": "1",
-        "next": "merchant_pay_bill"
+        "next": "merchant_pay_bill",
+        "rules": "BETA"
       },
       "2": {
         "label": "Buy Goods",
         "value": "2",
-        "next": "merchant_buy_goods"
+        "next": "merchant_buy_goods",
+        "rules": "BETA"
       },
       "3": {
         "label": "Pay Utilities",
