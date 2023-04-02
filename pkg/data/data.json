@@ -459,7 +459,8 @@
       "4": {
         "label": "Account Security",
         "value": "4",
-        "next": "profile_security"
+        "next": "profile_security",
+        "rules": "BETA"
       }
     }
   },
@@ -524,7 +525,8 @@
       "3": {
         "label": "Security Questions",
         "value": "3",
-        "next": "coming_soon"
+        "next": "profile_security_questions_pin",
+        "rules": "BETA"
       }
     }
   },
