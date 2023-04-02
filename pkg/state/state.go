@@ -9,6 +9,8 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/spf13/viper"
+	"golang.org/x/exp/slices"
 	"strconv"
 	"strings"
 )
@@ -42,6 +44,12 @@ func (s *State) ToSession() *datastore.Session {
 }
 
 var screens = map[string]*data.Screen{}
+
+func (s *State) EnsureScreensAreSet(sc map[string]*data.Screen) {
+	if len(screens) == 0 {
+		screens = sc
+	}
+}
 
 func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
@@ -201,6 +209,16 @@ func (s *State) ProcessOpenInput(input string) {
 func (s *State) ProcessOptionInput(option *data.Option) {
 	logger.UssdLog.Println("Processing option input: ", option.Value)
 
+	for i, o := range s.ScreenPath.Options {
+		if o.Rules == "BETA" {
+			betaAccounts := strings.Split(viper.GetString("BETA_ACCOUNTS"), ",")
+
+			if !slices.Contains(betaAccounts, s.Vars["{account_id}"]) {
+				s.ScreenPath.Options[i].NextKey = utils.COMING_SOON
+			}
+		}
+	}
+
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
 
@@ -333,6 +351,7 @@ func getScreen(screenKey string) *data.Screen {
 			NextKey: v.NextKey,
 			Next:    v.Next,
 			Acyclic: v.Acyclic,
+			Rules:   v.Rules,
 		}
 	}
 	screen.Options = options

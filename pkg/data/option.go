@@ -11,6 +11,7 @@ type Option struct {
 	NextKey string  `json:"next"`
 	Next    *Screen `json:"-"`
 	Acyclic bool    `json:"acyclic,omitempty"`
+	Rules   string  `json:"rules"`
 }
 
 func (option *Option) setNext(s *Screen) {

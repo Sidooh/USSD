@@ -34,7 +34,8 @@
       "4": {
         "label": "Save & Invest",
         "value": "4",
-        "next": "coming_soon"
+        "next": "save",
+        "rules": "BETA"
       },
       "5": {
         "label": "Invite",
@@ -112,12 +113,14 @@
       "1": {
         "label": "Pay Bill",
         "value": "1",
-        "next": "coming_soon"
+        "next": "merchant_pay_bill",
+        "rules": "BETA"
       },
       "2": {
         "label": "Buy Goods",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchant_buy_goods",
+        "rules": "BETA"
       },
       "3": {
         "label": "Pay Utilities",
@@ -393,7 +396,7 @@
   },
   "subscription_active": {
     "key": "subscription_active",
-    "title": "you are already subscribed to {subscription_type} {subscription_end_date}.",
+    "title": "You are already subscribed to {subscription_type} {subscription_end_date}.",
     "type": "OPEN"
   },
   "subscription_register": {
@@ -452,6 +455,11 @@
         "label": "Withdraw",
         "value": "3",
         "next": "account_withdraw_pin"
+      },
+      "4": {
+        "label": "Account Security",
+        "value": "4",
+        "next": "profile_security"
       }
     }
   },
@@ -641,7 +649,7 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\nBalance: {earnings_balance}\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}",
+    "title": "Your earnings breakdown\n\nBalance: {earnings_balance}\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\n3. MERCHANTS: {merchant_earnings}\n\nWithdrawn: {withdrawn_earnings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"
@@ -712,7 +720,7 @@
   },
   "withdraw_confirm": {
     "key": "withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES{amount}\nTo {account_type}: {account_number}",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nFee: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",
@@ -746,7 +754,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} for {number} using:",
+    "title": "Pay KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -769,7 +777,7 @@
   },
   "payment_confirmation": {
     "key": "payment_confirmation",
-    "title": "KES{amount} {product} for {number} will be deducted from {payment_method_text}:",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
     "options": {
       "1": {
         "label": "Accept",

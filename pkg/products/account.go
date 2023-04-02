@@ -80,6 +80,7 @@ func (a *Account) processScreen(input string) {
 	case utils.ACCOUNT_WITHDRAW:
 		a.vars["{points}"] = input
 		a.vars["{amount}"] = input
+		a.getCharge(input)
 
 	case utils.WITHDRAW_DESTINATION:
 		switch input {
@@ -475,6 +476,7 @@ func (a *Account) fetchEarnings() {
 	var purchasesAccount client.EarningAccount
 	var subscriptionsAccount client.EarningAccount
 	var withdrawalAccount client.EarningAccount
+	var merchantAccount client.EarningAccount
 	for _, earning := range earnings {
 		if earning.Type == "PURCHASES" {
 			purchasesAccount = earning
@@ -484,6 +486,9 @@ func (a *Account) fetchEarnings() {
 		}
 		if earning.Type == "WITHDRAWALS" {
 			withdrawalAccount = earning
+		}
+		if earning.Type == "MERCHANT" {
+			merchantAccount = earning
 		}
 	}
 
@@ -500,6 +505,7 @@ func (a *Account) fetchEarnings() {
 	a.vars["{subscriptions_earnings}"] = formatAmount(sE, "")
 	a.vars["{self_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Self, "")
 	a.vars["{invite_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Invite, "")
+	a.vars["{merchant_earnings}"] = formatAmount(merchantAccount.Self, "")
 	a.vars["{withdrawn_earnings}"] = formatAmount(withdrawalAccount.Self, "")
 	a.vars["{earnings_balance}"] = formatAmount(balance, "")
 
@@ -555,4 +561,12 @@ func formatAmount(amount float64, format string) string {
 	}
 
 	return fmt.Sprintf(format, amount)
+}
+
+func (a *Account) getCharge(input string) {
+	amount, _ := strconv.Atoi(input)
+
+	charge := service.GetWithdrawalCharge(amount)
+
+	a.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 }

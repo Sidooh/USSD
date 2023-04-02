@@ -13,11 +13,6 @@ const (
 	END     = "END"
 )
 
-// file that stores session state
-const (
-	STATE_FILE = "_state.json"
-)
-
 // screen keys
 const (
 	MAIN_MENU        = "main_menu"
@@ -27,7 +22,6 @@ const (
 	// static
 	ABOUT                        = "about"
 	COMING_SOON                  = "coming_soon"
-	BETA                         = "beta"
 	CANCEL                       = "cancel"
 	PIN_NOT_SET                  = "pin_not_set"
 	SECURITY_QUESTIONS_NOT_SET   = "security_questions_not_set"
@@ -37,8 +31,6 @@ const (
 
 	// global
 	PAYMENT_METHOD             = "payment_method"
-	PAYMENT_CONFIRMATION       = "payment_confirmation"
-	PAYMENT_END                = "payment_end"
 	PAYMENT_OTHER_NUMBER_MPESA = "payment_other_number_mpesa"
 
 	PIN_BLOCKED = "pin_blocked"
@@ -80,7 +72,6 @@ const (
 	INVITE_END = "invite_end"
 
 	// SUBSCRIPTION
-	SUBSCRIPTION                    = "subscription"
 	SUBSCRIPTION_RENEW              = "subscription_renew"
 	SUBSCRIPTION_ACTIVE             = "subscription_active"
 	SUBSCRIPTION_REGISTER           = "subscription_register"
@@ -108,14 +99,11 @@ const (
 
 	HAS_SECURITY_QUESTIONS = "has_security_questions"
 
-	ACCOUNT_BALANCES_PIN = "balances_pin"
-
 	ACCOUNT_WITHDRAW_PIN        = "account_withdraw_pin"
 	WITHDRAW_DESTINATION        = "withdraw_destination"
 	WITHDRAW_MPESA              = "withdraw_mpesa"
 	WITHDRAW_OTHER_NUMBER_MPESA = "withdraw_other_number_mpesa"
 	WITHDRAW_CONFIRM_PIN        = "withdraw_confirm_pin"
-	WITHDRAW_END                = "withdraw_end"
 )
 
 // validation keys

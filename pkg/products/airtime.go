@@ -27,8 +27,9 @@ func (a *Airtime) Process(input string) {
 func (a *Airtime) processScreen(input string) {
 	switch a.screen.Key {
 	case utils.AIRTIME:
-		a.vars["{product}"] = a.productRep
+		a.vars["{product}"] = a.productRep + " for"
 		a.vars["{number}"] = a.vars["{phone}"]
+		a.vars["{payment_charge_text}"] = ""
 
 		a.setOtherNumberOptions(input)
 		break
@@ -46,7 +47,7 @@ func (a *Airtime) processScreen(input string) {
 		subscription, _ := a.vars["{subscription_status}"]
 		provider, _ := utils.GetPhoneProvider(a.vars["{number}"])
 		a.vars["{product}"] = fmt.Sprintf(
-			"%s (which will earn you %.2f points)",
+			"%s (which will earn you %.2f points) for",
 			a.productRep,
 			service.GetPotentialEarnings(provider, amount, subscription == "ACTIVE"),
 		)
@@ -107,8 +108,8 @@ func (a *Airtime) setOtherNumberOptions(input string) {
 			airtimeAccountOptionVars := map[int]string{}
 
 			maxAccounts := accounts
-			if len(accounts) > 5 {
-				maxAccounts = accounts[:5]
+			if len(accounts) > 7 {
+				maxAccounts = accounts[:7]
 			}
 
 			for i, account := range maxAccounts {

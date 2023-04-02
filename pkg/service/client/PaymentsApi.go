@@ -1,8 +1,10 @@
 package client
 
 import (
+	"USSD.sidooh/pkg/cache"
 	"github.com/spf13/viper"
 	"net/http"
+	"time"
 )
 
 type PaymentsApiClient struct {
@@ -12,6 +14,11 @@ type PaymentsApiClient struct {
 type VoucherBalancesApiResponse struct {
 	ApiResponse
 	Data *[]Balance `json:"data"`
+}
+
+type ChargesApiResponse struct {
+	ApiResponse
+	Data *[]AmountCharge `json:"data"`
 }
 
 func InitPaymentClient() *PaymentsApiClient {
@@ -27,6 +34,60 @@ func (p *PaymentsApiClient) GetVoucherBalances(id string) ([]Balance, error) {
 	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
 		return nil, err
 	}
+
+	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) GetWithdrawalCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/withdrawal"
+	apiResponse := new(ChargesApiResponse)
+
+	charges, err := cache.Get[[]AmountCharge](endpoint)
+	if err == nil && len(*charges) > 0 {
+		return *charges, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
+
+	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) GetPayBillCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/pay-bill"
+	apiResponse := new(ChargesApiResponse)
+
+	charges, err := cache.Get[[]AmountCharge](endpoint)
+	if err == nil && len(*charges) > 0 {
+		return *charges, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
+
+	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) GetBuyGoodsCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/buy-goods"
+	apiResponse := new(ChargesApiResponse)
+
+	charges, err := cache.Get[[]AmountCharge](endpoint)
+	if err == nil && len(*charges) > 0 {
+		return *charges, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
 
 	return *apiResponse.Data, nil
 }
