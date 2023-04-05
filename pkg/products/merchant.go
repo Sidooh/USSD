@@ -110,3 +110,12 @@ func (m *Merchant) getCharge(input string) {
 
 	m.vars["{merchant_fee}"] = strconv.Itoa(fee)
 }
+
+func (m *Merchant) searchMerchant(input string) {
+	merchant, _ := service.SearchMerchant(input)
+	if merchant != nil {
+		m.vars["{merchant_name}"] = merchant.Name
+	} else {
+		delete(m.vars, "{merchant_name}")
+	}
+}

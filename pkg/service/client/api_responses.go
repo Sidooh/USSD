@@ -59,3 +59,8 @@ type AmountCharge struct {
 	Max    int
 	Charge int
 }
+
+type Merchant struct {
+	Code string
+	Name string
+}
