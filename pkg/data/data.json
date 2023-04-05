@@ -629,16 +629,28 @@
         "next": "voucher_balance"
       },
       "2": {
-        "label": "Earnings",
+        "label": "Cashback",
         "value": "2",
         "next": "earnings"
       },
       "3": {
-        "label": "Saved & Invested Points",
+        "label": "Saved Cashback",
         "value": "3",
         "next": "savings"
+      },
+      "4": {
+        "label": "Merchant Savings",
+        "value": "4",
+        "next": "savings_merchant"
       }
     }
+  },
+  "savings_merchant": {
+    "key": "savings_merchant",
+    "title": "Your Merchant Savings\n\n1. Savings: {merchant_savings}\n\n2. Interest: {merchant_interest}",
+    "type": "OPEN",
+    "paginated": true,
+    "next": "cancel"
   },
   "savings": {
     "key": "savings",
@@ -649,7 +661,7 @@
   },
   "earnings": {
     "key": "earnings",
-    "title": "Your earnings breakdown\n\nBalance: {earnings_balance}\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\n3. MERCHANTS: {merchant_earnings}\n\nWithdrawn: {withdrawn_earnings}",
+    "title": "Your Cashback breakdown\n\nBalance: {earnings_balance}\n\n1. PURCHASES: {purchase_earnings}\n  a. Self: {self_purchase_earnings}\n  b. Invites: {invite_purchase_earnings}\n\n2. SUBSCRIPTIONS: {subscriptions_earnings}\n  a. Self: {self_subscriptions_earnings}\n  b. Invites: {invite_subscriptions_earnings}\n\nWithdrawn: {withdrawn_earnings}",
     "type": "OPEN",
     "paginated": true,
     "next": "cancel"

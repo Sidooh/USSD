@@ -3,6 +3,7 @@ package products
 import (
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/utils"
+	"fmt"
 )
 
 type BuyGoods struct {
@@ -25,5 +26,7 @@ func (m *BuyGoods) processScreen(input string) {
 		m.vars["{product}"] = "to Till Number " + m.vars["{merchant_number}"]
 		m.vars["{number}"] = ""
 
+	case utils.MERCHANT_AMOUNT:
+		m.vars["{number}"] = fmt.Sprintf("(plus KES%s Savings)", m.vars["{merchant_fee}"])
 	}
 }

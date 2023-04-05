@@ -37,18 +37,18 @@ func (m *Merchant) processScreen(input string) {
 		m.setPaymentMethods(input)
 
 		m.getCharge(input)
-		m.setChargeText()
+		//m.setChargeText()
 
 	}
 }
 
-func (m *Merchant) setChargeText() {
-	charge := ""
-
-	charge = "\nSave: KES" + m.vars["{merchant_fee}"]
-
-	m.vars["{payment_charge_text}"] = charge
-}
+//func (m *Merchant) setChargeText() {
+//	charge := ""
+//
+//	charge = "\nSave: KES" + m.vars["{merchant_fee}"]
+//
+//	m.vars["{payment_charge_text}"] = charge
+//}
 
 func (m *Merchant) finalize() {
 	logger.UssdLog.Println(" -- PAY_MERCHANT: finalize", m.screen.Next.Type)

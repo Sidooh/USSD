@@ -3,6 +3,7 @@ package products
 import (
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/utils"
+	"fmt"
 )
 
 type PayBill struct {
@@ -26,7 +27,8 @@ func (m *PayBill) processScreen(input string) {
 
 	case utils.MERCHANT_PAY_BILL_ACCOUNT:
 		m.vars["{merchant_account}"] = input
-		m.vars["{number}"] = "for Account " + m.vars["{merchant_account}"]
 
+	case utils.MERCHANT_AMOUNT:
+		m.vars["{number}"] = fmt.Sprintf("for Account %s (plus KES%s Savings)", m.vars["{merchant_account}"], m.vars["{merchant_fee}"])
 	}
 }
