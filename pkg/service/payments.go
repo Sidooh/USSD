@@ -1,5 +1,7 @@
 package service
 
+import "USSD.sidooh/pkg/service/client"
+
 func GetWithdrawalCharge(amount int) int {
 	charges, err := paymentsClient.GetWithdrawalCharges()
 	if err != nil {
@@ -43,4 +45,8 @@ func GetBuyGoodsCharge(amount int) int {
 	}
 
 	return 0
+}
+
+func SearchMerchant(code string) (*client.Merchant, error) {
+	return paymentsClient.SearchMerchant(code)
 }

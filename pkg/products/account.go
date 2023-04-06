@@ -458,7 +458,7 @@ func (a *Account) getAccountBalances(input string) {
 
 	if input == "2" {
 		a.fetchEarnings()
-	} else if input == "3" {
+	} else if input == "3" || input == "4" {
 		a.fetchSavings()
 	}
 }
@@ -523,12 +523,16 @@ func (a *Account) fetchSavings() {
 
 	var currentAccount client.SavingAccount
 	var lockedAccount client.SavingAccount
+	var merchantAccount client.SavingAccount
 	for _, earning := range earnings {
 		if earning.Type == "CURRENT" {
 			currentAccount = earning
 		}
 		if earning.Type == "LOCKED" {
 			lockedAccount = earning
+		}
+		if earning.Type == "MERCHANT" {
+			merchantAccount = earning
 		}
 	}
 
@@ -540,8 +544,9 @@ func (a *Account) fetchSavings() {
 	interest := currentAccount.Interest + lockedAccount.Interest
 
 	wS := 0.0
-	if cS > 50 {
-		wS = math.Floor(cS - 50)
+	likelyCharge := float64(service.GetWithdrawalCharge(int(cS)))
+	if cS > 25 {
+		wS = math.Floor(cS - likelyCharge)
 	}
 
 	a.vars["{current_savings}"] = formatAmount(cS, "%.2f")
@@ -550,6 +555,8 @@ func (a *Account) fetchSavings() {
 	a.vars["{withdrawable_savings}"] = formatAmount(wS, "%.0f")
 	a.vars["{interest_savings}"] = formatAmount(interest, "")
 
+	a.vars["{merchant_savings}"] = formatAmount(merchantAccount.Balance, "%.2f")
+	a.vars["{merchant_interest}"] = formatAmount(merchantAccount.Interest, "%.2f")
 }
 
 func formatAmount(amount float64, format string) string {

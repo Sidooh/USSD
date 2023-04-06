@@ -21,6 +21,11 @@ type ChargesApiResponse struct {
 	Data *[]AmountCharge `json:"data"`
 }
 
+type MerchantSearchApiResponse struct {
+	ApiResponse
+	Data *Merchant `json:"data"`
+}
+
 func InitPaymentClient() *PaymentsApiClient {
 	client := PaymentsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_PAYMENTS_API_URL"))
@@ -90,4 +95,22 @@ func (p *PaymentsApiClient) GetBuyGoodsCharges() ([]AmountCharge, error) {
 	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
 
 	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) SearchMerchant(code string) (*Merchant, error) {
+	endpoint := "/merchants/search/" + code
+	apiResponse := new(MerchantSearchApiResponse)
+
+	merchant, err := cache.Get[Merchant](code)
+	if merchant != nil {
+		return merchant, err
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 180*24*time.Hour)
+
+	return apiResponse.Data, err
 }

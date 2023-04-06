@@ -87,7 +87,7 @@ func (p *Product) setPaymentMethodText(input string) {
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
-		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be debited automatically", p.vars["{payment_method_text}"])
+		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be deducted automatically", p.vars["{payment_method_text}"])
 
 		//next := p.screen.Next
 		//for {
