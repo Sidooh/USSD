@@ -647,16 +647,20 @@
   },
   "savings_merchant": {
     "key": "savings_merchant",
-    "title": "Your Merchant Savings\n\n1. Savings: {merchant_savings}\n\n2. Interest: {merchant_interest}",
-    "type": "OPEN",
-    "paginated": true,
-    "next": "cancel"
+    "title": "Your Merchant Savings\n\n{merchant_withdrawal_text}\n\n - Total: {merchant_earnings}\n - Invested Savings: {merchant_savings}\n - Interest: {merchant_interest}",
+    "type": "CLOSED",
+    "options": {
+      "9": {
+        "label": "Withdraw",
+        "value": "9",
+        "next": "coming_soon"
+      }
+    }
   },
   "savings": {
     "key": "savings",
     "title": "Your Saved & Invested Points\n\nTotal Balance: {total_savings}\n\n1. Current: {current_savings}\n\n2. Locked: {locked_savings}\n\n3. Interest Earned: {interest_savings}\n\nWithdrawable: {withdrawable_savings}",
     "type": "OPEN",
-    "paginated": true,
     "next": "cancel"
   },
   "earnings": {
@@ -681,7 +685,7 @@
   },
   "account_withdraw": {
     "key": "account_withdraw",
-    "title": "Enter points you wish to withdraw (MIN. KES50):\n\nWithdrawable Points: {withdrawable_savings}",
+    "title": "Enter points you wish to withdraw (MIN. KES25):\n\nWithdrawable Points: {withdrawable_savings}",
     "type": "OPEN",
     "next": "withdraw_destination",
     "validations": "WITHDRAW_LIMITS"

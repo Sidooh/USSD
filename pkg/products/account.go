@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"time"
 )
 
 type Account struct {
@@ -458,8 +459,20 @@ func (a *Account) getAccountBalances(input string) {
 
 	if input == "2" {
 		a.fetchEarnings()
-	} else if input == "3" || input == "4" {
+	} else if input == "3" {
 		a.fetchSavings()
+	} else if input == "4" {
+
+		nextWithdrawal := "July 1st"
+		if time.Now().Month() >= time.July {
+			nextWithdrawal = "January 1st"
+		}
+
+		a.vars["{merchant_withdrawal_text}"] = "Locked for 6 months. Withdraw on " + nextWithdrawal
+
+		a.fetchEarnings()
+		a.fetchSavings()
+
 	}
 }
 
@@ -505,9 +518,10 @@ func (a *Account) fetchEarnings() {
 	a.vars["{subscriptions_earnings}"] = formatAmount(sE, "")
 	a.vars["{self_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Self, "")
 	a.vars["{invite_subscriptions_earnings}"] = formatAmount(subscriptionsAccount.Invite, "")
-	a.vars["{merchant_earnings}"] = formatAmount(merchantAccount.Self, "")
 	a.vars["{withdrawn_earnings}"] = formatAmount(withdrawalAccount.Self, "")
 	a.vars["{earnings_balance}"] = formatAmount(balance, "")
+
+	a.vars["{merchant_earnings}"] = formatAmount(merchantAccount.Self, "")
 
 }
 

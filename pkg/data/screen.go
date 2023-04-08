@@ -249,7 +249,7 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 }
 
 func isValidWithdrawalAmount(input string, points string) bool {
-	min := 50
+	min := 25
 	max := 1000
 
 	val := getIntVal(input)
