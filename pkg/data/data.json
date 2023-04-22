@@ -641,7 +641,7 @@
         "next": "savings"
       },
       "4": {
-        "label": "Merchant Savings",
+        "label": "Paybill & Till Savings",
         "value": "4",
         "next": "savings_merchant"
       }
@@ -649,7 +649,7 @@
   },
   "savings_merchant": {
     "key": "savings_merchant",
-    "title": "Your Merchant Savings\n\n{merchant_withdrawal_text}\n\n - Total: {merchant_earnings}\n - Invested Savings: {merchant_savings}\n - Interest: {merchant_interest}",
+    "title": "Your Paybill & Till Savings\n\n{merchant_withdrawal_text}\n\n - Today: {merchant_earnings_today}\n - Invested Savings: {merchant_savings}\n - Interest: {merchant_interest}",
     "type": "CLOSED",
     "options": {
       "9": {

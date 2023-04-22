@@ -44,3 +44,4 @@ ab.json
 y.hide
 
 cloud_sql_proxy
+/pkg/data/test-data.json

@@ -569,6 +569,13 @@ func (a *Account) fetchSavings() {
 	a.vars["{withdrawable_savings}"] = formatAmount(wS, "%.0f")
 	a.vars["{interest_savings}"] = formatAmount(interest, "")
 
+	mE, _ := strconv.ParseFloat(a.vars["{merchant_earnings}"], 64)
+	mEToday := mE - merchantAccount.Balance
+	if mEToday < 0 {
+		mEToday = 0
+	}
+	a.vars["{merchant_earnings_today}"] = formatAmount(mEToday, "%.0f")
+
 	a.vars["{merchant_savings}"] = formatAmount(merchantAccount.Balance, "%.2f")
 	a.vars["{merchant_interest}"] = formatAmount(merchantAccount.Interest, "%.2f")
 }
