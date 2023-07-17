@@ -99,10 +99,10 @@
   },
   "airtime_amount": {
     "key": "airtime_amount",
-    "title": "Enter airtime amount (MIN: KES20)",
+    "title": "Enter airtime amount (MIN: KES50)",
     "type": "OPEN",
     "next": "payment_method",
-    "validations": "INT,MIN:20,MAX:10000"
+    "validations": "INT,MIN:50,MAX:10000"
   },
 
   "pay": {
@@ -304,10 +304,10 @@
   },
   "personal_savings_amount": {
     "key": "personal_savings_amount",
-    "title": "Enter amount (MIN: KES20)",
+    "title": "Enter amount (MIN: KES50)",
     "type": "OPEN",
     "next": "coming_soon",
-    "validations": "INT,MIN:20"
+    "validations": "INT,MIN:50"
   },
   "monthly_income": {
     "key": "monthly_income",
