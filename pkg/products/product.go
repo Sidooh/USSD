@@ -82,7 +82,7 @@ func (p *Product) setPaymentMethodText(input string) {
 	case "1":
 		p.vars["{payment_method}"] = utils.MPESA
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{phone}"]
-		p.vars["{payment_method_instruction}"] = "PLEASE ENTER YOUR MPESA PIN in the next screen that displays kcb-bank Account no: 7617541."
+		p.vars["{payment_method_instruction}"] = "PLEASE ENTER YOUR MPESA PIN in the next screen that displays kcb-bank Account no: 7617541"
 
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
