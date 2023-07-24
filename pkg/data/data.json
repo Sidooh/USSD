@@ -824,7 +824,7 @@
   },
   "payment_end": {
     "key": "payment_end",
-    "title": "Your request has been received and is being processed.\n\n{payment_method_instruction}",
+    "title": "{payment_method_instruction}",
     "type": "END"
   },
   "pin_blocked": {
