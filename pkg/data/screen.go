@@ -325,7 +325,7 @@ func (screen *Screen) isSidoohAccountIdOrPhone(input string, vars map[string]str
 
 	if account != nil {
 		vars["{invite_code}"] = strconv.Itoa(account.Id)
-		_, _ = service.CreateInvite(vars["{invite_code}"], vars["{phone}"])
+		_, _ = service.CreateInvite(vars["{invite_code}"], vars["{phone}"], "CODE")
 		return true
 	}
 

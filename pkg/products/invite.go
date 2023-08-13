@@ -2,7 +2,7 @@ package products
 
 import (
 	"USSD.sidooh/pkg/logger"
-	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"fmt"
@@ -42,7 +42,7 @@ func (i *Invite) finalize() {
 
 		// TODO: Make into goroutine if applicable
 		// TODO: Should we check returned value? Or should we make it a void function?
-		_, err := service2.CreateInvite(accountId, number)
+		_, err := service.CreateInvite(accountId, number, "INVITED")
 		if err != nil {
 			i.screen.Next.Title = "Sorry. We failed to process your invite, please try again later."
 			return
@@ -63,6 +63,6 @@ func (i *Invite) finalize() {
 			Content:     message,
 		}
 
-		service2.Notify(&request)
+		service.Notify(&request)
 	}
 }

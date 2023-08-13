@@ -203,10 +203,10 @@ func (a *AccountsApiClient) CreateAccount(phone string, inviteCode interface{}) 
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CreateInvite(id string, phone string) (*Invite, error) {
+func (a *AccountsApiClient) CreateInvite(id, phone, inviteType string) (*Invite, error) {
 	var res = new(InviteApiResponse)
 
-	values := map[string]string{"inviter_id": id, "phone": phone}
+	values := map[string]string{"inviter_id": id, "phone": phone, "type": inviteType}
 	jsonData, err := json.Marshal(values)
 	dataBytes := bytes.NewBuffer(jsonData)
 

@@ -158,8 +158,8 @@ func CreateAccount(phone string, inviteCode interface{}) (*client.Account, error
 	return account, nil
 }
 
-func CreateInvite(id string, phone string) (*client.Invite, error) {
-	invite, err := accountsClient.CreateInvite(id, phone)
+func CreateInvite(id, phone, inviteType string) (*client.Invite, error) {
+	invite, err := accountsClient.CreateInvite(id, phone, inviteType)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +167,7 @@ func CreateInvite(id string, phone string) (*client.Invite, error) {
 	return invite, nil
 }
 
-func SetPin(id string, pin string) bool {
+func SetPin(id, pin string) bool {
 	valid, err := accountsClient.SetPin(id, pin)
 	if err != nil {
 		return false
