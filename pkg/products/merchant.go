@@ -32,35 +32,53 @@ func (m *Merchant) processScreen(input string) {
 		m.vars["{name}"] = m.vars["{first_name}"] + " " + input
 	case utils.MERCHANT_ID_NUMBER:
 		m.vars["{id_number}"] = input
-
 	case utils.MERCHANT_KYB:
 		m.vars["{business_name}"] = input
 		//case utils.MERCHANT_LOCATION:
 		m.fetchCountyOptions()
-
 	case utils.MERCHANT_COUNTY:
 		m.processCountySelection(input)
-
 	case utils.MERCHANT_SUB_COUNTY:
 		m.processSubCountySelection(input)
-
 	case utils.MERCHANT_WARD:
 		m.processWardSelection(input)
-
 	case utils.MERCHANT_LANDMARK:
 		m.processLandmarkSelection(input)
-
 	case utils.MERCHANT_LANDMARK_OTHER:
 		m.vars["{landmark_id}"] = input
 		m.vars["{landmark}"] = input
 
-	case utils.MERCHANT_AMOUNT:
+	case utils.MERCHANT_FLOAT_AGENT:
+		m.vars["{product}"] = "float purchase for"
+		m.vars["{agent}"] = input
+
+	case utils.MERCHANT_FLOAT_STORE:
+		m.vars["{store}"] = input
+		m.vars["{number}"] = m.vars["{agent}"] + " - " + input
+
+	case utils.MERCHANT_FLOAT_AMOUNT:
+		m.vars["{amount}"] = input
+		m.setPaymentMethods(input)
+		m.vars["{payment_charge_text}"] = ""
 
 	}
 }
 
 func (m *Merchant) finalize() {
 	logger.UssdLog.Println(" -- MERCHANT: finalize", m.screen.Next.Type)
+
+	if m.screen.Key == utils.PAYMENT_CONFIRMATION {
+		amount, _ := strconv.Atoi(m.vars["{amount}"])
+		agent, _ := strconv.Atoi(m.vars["{agent}"])
+		store, _ := strconv.Atoi(m.vars["{store}"])
+
+		request := client.FloatPurchaseRequest{
+			Amount: amount,
+			Agent:  agent,
+			Store:  store,
+		}
+		service.BuyFloat(m.vars["{merchant_id}"], request)
+	}
 
 	if m.screen.Key == utils.MERCHANT_TERMS {
 		accountId, _ := strconv.Atoi(m.vars["{account_id}"])
@@ -101,16 +119,12 @@ func (m *Merchant) fetchCountyOptions() {
 
 	m.screen.Next.Options = map[int]*data.Option{}
 
-	//countyOptionVars := map[int]client.County{}
-
 	for i, county := range *counties {
 		m.screen.Next.Options[i+1] = &data.Option{
 			Label:   county.County,
 			Value:   i + 1,
 			NextKey: utils.MERCHANT_SUB_COUNTY,
 		}
-
-		//countyOptionVars[i+1] = county
 	}
 }
 

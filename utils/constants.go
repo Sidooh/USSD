@@ -32,6 +32,8 @@ const (
 	// global
 	PAYMENT_METHOD             = "payment_method"
 	PAYMENT_OTHER_NUMBER_MPESA = "payment_other_number_mpesa"
+	PAYMENT_PIN_CONFIRMATION   = "payment_pin_confirmation"
+	PAYMENT_CONFIRMATION       = "payment_confirmation"
 
 	PIN_BLOCKED = "pin_blocked"
 
@@ -72,6 +74,10 @@ const (
 	MERCHANT_LANDMARK         = "merchant_landmark"
 	MERCHANT_LANDMARK_OTHER   = "merchant_landmark_other"
 	MERCHANT_KYB_CONFIRMATION = "merchant_kyb_confirmation"
+
+	MERCHANT_FLOAT_AGENT  = "merchant_float_agent"
+	MERCHANT_FLOAT_STORE  = "merchant_float_store"
+	MERCHANT_FLOAT_AMOUNT = "merchant_float_amount"
 
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
 	MERCHANT_PAY_BILL_ACCOUNT = "merchant_pay_bill_account"
@@ -155,6 +161,7 @@ const (
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
+	FLOAT   = "FLOAT"
 	BANK    = "BANK"
 )
 

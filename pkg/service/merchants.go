@@ -1,6 +1,7 @@
 package service
 
 import (
+	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service/client"
 )
 
@@ -37,4 +38,11 @@ func UpdateMerchant(id string, request client.MerchantKYBDetails) (merchant *cli
 func GetMerchantByAccount(accountId string) (merchant *client.Merchant, err error) {
 	merchant, err = merchantsClient.GetMerchantByAccount(accountId)
 	return
+}
+
+func BuyFloat(id string, request client.FloatPurchaseRequest) {
+	err := merchantsClient.BuyFloat(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to buy float: ", err)
+	}
 }

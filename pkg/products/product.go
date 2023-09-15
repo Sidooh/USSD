@@ -61,6 +61,16 @@ func (p *Product) setPaymentMethods(input string) {
 		delete(p.screen.Next.Options, 2)
 	}
 
+	if p.productRep == "merchant" {
+		delete(p.screen.Next.Options, 1)
+		delete(p.screen.Next.Options, 2)
+		p.screen.Next.Options[3] = &data.Option{
+			Label:   "FLOAT (KES{float_balance})",
+			Value:   3,
+			NextKey: utils.PAYMENT_PIN_CONFIRMATION,
+		}
+	}
+
 	hasPin := p.checkHasPin()
 	if !hasPin {
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
@@ -87,6 +97,11 @@ func (p *Product) setPaymentMethodText(input string) {
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
+		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be deducted automatically", p.vars["{payment_method_text}"])
+
+	case "3":
+		p.vars["{payment_method}"] = utils.FLOAT
+		p.vars["{payment_method_text}"] = utils.FLOAT + "(KES" + p.vars["{float_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be deducted automatically", p.vars["{payment_method_text}"])
 
 		//next := p.screen.Next

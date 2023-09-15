@@ -154,3 +154,11 @@ func (a *MerchantsApiClient) UpdateKYBData(id string, request MerchantKYBDetails
 
 	return res.Data, nil
 }
+
+func (a *MerchantsApiClient) BuyFloat(id string, request FloatPurchaseRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = a.newRequest(http.MethodPost, "/merchants/"+id+"/buy-float", dataBytes).send(nil)
+	return err
+}

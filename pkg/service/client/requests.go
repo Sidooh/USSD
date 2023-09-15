@@ -63,3 +63,9 @@ type MerchantKYBDetails struct {
 	BusinessName string `json:"business_name"`
 	Landmark     string `json:"landmark"`
 }
+
+type FloatPurchaseRequest struct {
+	Agent  int `json:"agent"`
+	Store  int `json:"store"`
+	Amount int `json:"amount"`
+}
