@@ -239,7 +239,7 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 			for _, k := range keys {
 				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
 			}
-			s.ScreenPath.Options[8].NextKey = utils.MERCHANT_CONSENT
+			s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
 		} else {
 			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
 				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
