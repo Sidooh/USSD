@@ -69,13 +69,11 @@ func (m *Merchant) finalize() {
 
 	if m.screen.Key == utils.PAYMENT_CONFIRMATION {
 		amount, _ := strconv.Atoi(m.vars["{amount}"])
-		agent, _ := strconv.Atoi(m.vars["{agent}"])
-		store, _ := strconv.Atoi(m.vars["{store}"])
 
 		request := client.FloatPurchaseRequest{
 			Amount: amount,
-			Agent:  agent,
-			Store:  store,
+			Agent:  m.vars["{agent}"],
+			Store:  m.vars["{store}"],
 		}
 		service.BuyFloat(m.vars["{merchant_id}"], request)
 	}
