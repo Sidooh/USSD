@@ -57,7 +57,22 @@ const (
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
 
 	// MERCHANT
-	MERCHANT                  = "merchant"
+	MERCHANT            = "merchant"
+	MERCHANT_CONSENT    = "merchant_consent"
+	MERCHANT_FIRST_NAME = "merchant_first_name"
+	MERCHANT_LAST_NAME  = "merchant_last_name"
+	MERCHANT_ID_NUMBER  = "merchant_id_number"
+	MERCHANT_TERMS      = "merchant_terms"
+
+	MERCHANT_KYB              = "merchant_kyb"
+	MERCHANT_LOCATION         = "merchant_location"
+	MERCHANT_COUNTY           = "merchant_county"
+	MERCHANT_SUB_COUNTY       = "merchant_sub_county"
+	MERCHANT_WARD             = "merchant_ward"
+	MERCHANT_LANDMARK         = "merchant_landmark"
+	MERCHANT_LANDMARK_OTHER   = "merchant_landmark_other"
+	MERCHANT_KYB_CONFIRMATION = "merchant_kyb_confirmation"
+
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
 	MERCHANT_PAY_BILL_ACCOUNT = "merchant_pay_bill_account"
 	MERCHANT_BUY_GOODS        = "merchant_buy_goods"
@@ -113,6 +128,7 @@ const (
 	MAX              = "MAX"
 	ALPHANUM         = "ALPHANUM"
 	MAX_CHARS        = "MAX_CHARS"
+	LENGTH           = "LENGTH"
 	PHONE            = "PHONE"
 	DISALLOW_CURRENT = "DISALLOW_CURRENT"
 	PIN              = "PIN"

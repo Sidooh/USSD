@@ -110,6 +110,13 @@ func (s *State) Init(sc map[string]*data.Screen) {
 				s.Vars["{has_pin}"] = "true"
 			}
 		}
+
+		if account.Merchant != nil {
+			s.Vars["{merchant_id}"] = strconv.Itoa(int(account.Merchant.Id))
+			if account.Merchant.BusinessName != "" {
+				s.Vars["{merchant_business_name}"] = account.Merchant.BusinessName
+			}
+		}
 	}
 }
 
@@ -145,6 +152,9 @@ func (s *State) setProduct(option int) {
 	case products.ACCOUNT:
 		s.product = &products.Account{}
 		s.ProductKey = products.ACCOUNT
+	case products.MERCHANT:
+		s.product = &products.Merchant{}
+		s.ProductKey = products.MERCHANT
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -229,9 +239,20 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 			for _, k := range keys {
 				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
 			}
+			s.ScreenPath.Options[8].NextKey = utils.MERCHANT_CONSENT
 		} else {
 			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
 				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
+			}
+		}
+
+		_, ok = s.Vars["{merchant_id}"]
+		if !ok {
+			s.ScreenPath.Options[8].NextKey = utils.MERCHANT_CONSENT
+		} else {
+			_, ok = s.Vars["{merchant_business_name}"]
+			if !ok {
+				s.ScreenPath.Options[8].NextKey = utils.MERCHANT_KYB
 			}
 		}
 	}

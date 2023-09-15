@@ -9,6 +9,7 @@ type Account struct {
 	Balances     []Balance
 	Subscription Subscription
 	HasPin       bool
+	Merchant     *Merchant
 }
 
 type User struct {
@@ -61,6 +62,31 @@ type AmountCharge struct {
 }
 
 type Merchant struct {
-	Code string
-	Name string
+	Code         string
+	Name         string
+	Id           uint
+	AccountId    uint   `json:"account_id"`
+	BusinessName string `json:"business_name"`
+	FirstName    string `json:"first_name"`
+	IdNumber     string `json:"id_number"`
+}
+
+type County struct {
+	Id     int
+	County string `json:"county"`
+}
+
+type SubCounty struct {
+	Id        int
+	SubCounty string `json:"sub_county"`
+}
+
+type Ward struct {
+	Id   int
+	Ward string `json:"ward"`
+}
+
+type Landmark struct {
+	Id       int
+	Landmark string `json:"landmark"`
 }

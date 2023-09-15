@@ -58,6 +58,10 @@ var dynamicOptionScreens = map[string]bool{
 
 var optionsExceptionScreens = map[string]bool{
 	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS: true,
+	utils.MERCHANT_COUNTY:                    true,
+	utils.MERCHANT_SUB_COUNTY:                true,
+	utils.MERCHANT_WARD:                      true,
+	utils.MERCHANT_LANDMARK:                  true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -212,6 +216,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return getIntVal(input) <= validateAgainst
 	case utils.ALPHANUM:
 		return isAlphaNumeric(input, validateAgainst)
+	case utils.LENGTH:
+		return len(input) == validateAgainst
 	case utils.MAX_CHARS:
 		return len(input) <= validateAgainst
 	case utils.PHONE:

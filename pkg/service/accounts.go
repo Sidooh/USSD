@@ -38,6 +38,12 @@ func FetchAccount(phone string) (*client.Account, error) {
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
+
+			// Check Merchant
+			merchant, err := GetMerchantByAccount(strconv.Itoa(account.Id))
+			if err == nil {
+				account.Merchant = merchant
+			}
 		}
 	}()
 

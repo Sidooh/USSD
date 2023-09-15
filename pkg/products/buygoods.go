@@ -7,26 +7,26 @@ import (
 )
 
 type BuyGoods struct {
-	Merchant
+	Pay
 }
 
-func (m *BuyGoods) Process(input string) {
-	logger.UssdLog.Println(" -- PAY_MPESA_BUY_GOODS: process", m.screen.Key, input)
-	m.productRep = "pay_mpesa_buy_goods"
+func (b *BuyGoods) Process(input string) {
+	logger.UssdLog.Println(" -- PAY_MPESA_BUY_GOODS: process", b.screen.Key, input)
+	b.productRep = "pay_mpesa_buy_goods"
 
-	m.Merchant.Process(input)
-	m.processScreen(input)
+	b.Pay.Process(input)
+	b.processScreen(input)
 }
 
-func (m *BuyGoods) processScreen(input string) {
-	switch m.screen.Key {
+func (b *BuyGoods) processScreen(input string) {
+	switch b.screen.Key {
 	case utils.MERCHANT_BUY_GOODS:
-		m.vars["{merchant_type}"] = utils.MPESA_BUY_GOODS
-		m.vars["{merchant_number}"] = input
-		m.vars["{product}"] = "to Till Number " + m.vars["{merchant_number}"]
-		m.vars["{number}"] = ""
+		b.vars["{merchant_type}"] = utils.MPESA_BUY_GOODS
+		b.vars["{merchant_number}"] = input
+		b.vars["{product}"] = "to Till Number " + b.vars["{merchant_number}"]
+		b.vars["{number}"] = ""
 
 	case utils.MERCHANT_AMOUNT:
-		m.vars["{number}"] = fmt.Sprintf("(plus KES%s Savings)", m.vars["{merchant_fee}"])
+		b.vars["{number}"] = fmt.Sprintf("(plus KES%s Savings)", b.vars["{merchant_fee}"])
 	}
 }

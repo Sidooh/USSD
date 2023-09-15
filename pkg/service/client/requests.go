@@ -43,10 +43,6 @@ type SecurityQuestionRequest struct {
 
 type EarningsWithdrawalRequest struct {
 	PurchaseRequest
-	//Amount       int    `json:"amount"`
-	//Method       string `json:"method,omitempty"`
-	//AccountId    int    `json:"account_id"`
-	//TargetNumber string `json:"target_number,omitempty"`
 }
 
 type NotificationRequest struct {
@@ -56,35 +52,14 @@ type NotificationRequest struct {
 	Content     string   `json:"content"`
 }
 
-//TODO: Remove these once verified not needed
-//func (r *AirtimePurchaseRequest) Marshal() ([]byte, error) {
-//	request := map[string]interface{}{
-//		"initiator":  r.Initiator,
-//		"account_id": r.AccountId,
-//		"amount":     r.Amount,
-//		"method":     r.Method,
-//	}
-//
-//	if r.TargetNumber != "" {
-//		request["target_number"] = r.TargetNumber
-//	}
-//
-//	if r.DebitAccount != "" {
-//		request["debit_account"] = r.DebitAccount
-//	}
-//
-//	return json.Marshal(r)
-//}
-//
-//func (r *UtilityPurchaseRequest) Marshal() ([]byte, error) {
-//	request := map[string]interface{}{
-//		"initiator":      r.Initiator,
-//		"account_id":     r.AccountId,
-//		"amount":         r.Amount,
-//		"method":         r.Method,
-//		"provider":       r.Provider,
-//		"account_number": r.AccountNumber,
-//	}
-//
-//	return json.Marshal(request)
-//}
+type MerchantKYCDetails struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	IdNumber  string `json:"id_number"`
+	AccountId int    `json:"account_id"`
+}
+
+type MerchantKYBDetails struct {
+	BusinessName string `json:"business_name"`
+	Landmark     string `json:"landmark"`
+}
