@@ -88,7 +88,7 @@ func process(code, phone, session, input string) *state.State {
 	stateData.EnsureScreensAreSet(screens)
 
 	// Check for global Navigation
-	if input == "0" || input == "00" {
+	if stateData.ScreenPath.Type != utils.GENESIS && (input == "0" || input == "00") {
 		stateData.NavigateBackOrHome(input)
 
 		saveState(stateData)

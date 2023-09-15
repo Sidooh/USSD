@@ -12,5 +12,5 @@ const (
 	INVITE              = 5
 	SUBSCRIPTION        = 6
 	ACCOUNT             = 7
-	MERCHANT            = 8
+	MERCHANT            = 0
 )

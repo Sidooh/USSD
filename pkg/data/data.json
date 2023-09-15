@@ -16,9 +16,9 @@
     "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",
     "type": "GENESIS",
     "options": {
-      "8": {
+      "0": {
         "label": "Merchant Account",
-        "value": "8",
+        "value": "0",
         "next": "merchant"
       },
       "1": {

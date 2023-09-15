@@ -155,9 +155,9 @@ func (s *State) setProduct(option int) {
 	case products.MERCHANT:
 		s.product = &products.Merchant{}
 		s.ProductKey = products.MERCHANT
-	default:
-		s.product = &products.Product{}
-		s.ProductKey = products.DEFAULT
+		//default:
+		//s.product = &products.Product{}
+		//s.ProductKey = products.DEFAULT
 	}
 }
 
