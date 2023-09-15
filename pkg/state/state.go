@@ -248,11 +248,11 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 
 		_, ok = s.Vars["{merchant_id}"]
 		if !ok {
-			s.ScreenPath.Options[8].NextKey = utils.MERCHANT_CONSENT
+			s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
 		} else {
 			_, ok = s.Vars["{merchant_business_name}"]
 			if !ok {
-				s.ScreenPath.Options[8].NextKey = utils.MERCHANT_KYB
+				s.ScreenPath.Options[0].NextKey = utils.MERCHANT_KYB
 			}
 		}
 	}
