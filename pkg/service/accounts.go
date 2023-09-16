@@ -34,7 +34,7 @@ func FetchAccount(phone string) (*client.Account, error) {
 				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 			}
 
-			account.Balances = balances
+			account.Vouchers = balances
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
@@ -43,6 +43,12 @@ func FetchAccount(phone string) (*client.Account, error) {
 			merchant, err := GetMerchantByAccount(strconv.Itoa(account.Id))
 			if err == nil {
 				account.Merchant = merchant
+
+				float, err := paymentsClient.GetFloatBalance(strconv.Itoa(int(merchant.FloatAccountId)))
+				if err != nil {
+					logger.ServiceLog.Error("Failed to fetch float balance: ", err)
+				}
+				account.Float = float
 			}
 		}
 	}()

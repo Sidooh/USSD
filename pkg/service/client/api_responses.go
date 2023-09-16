@@ -6,7 +6,8 @@ type Account struct {
 	Active       bool   `json:"active"`
 	InviterId    int    `json:"inviter_id"`
 	User         `json:"user"`
-	Balances     []Balance
+	Vouchers     []Balance
+	Float        *Balance
 	Subscription Subscription
 	HasPin       bool
 	Merchant     *Merchant
@@ -62,13 +63,14 @@ type AmountCharge struct {
 }
 
 type Merchant struct {
-	Code         string
-	Name         string
-	Id           uint
-	AccountId    uint   `json:"account_id"`
-	BusinessName string `json:"business_name"`
-	FirstName    string `json:"first_name"`
-	IdNumber     string `json:"id_number"`
+	Code           string
+	Name           string
+	Id             uint
+	AccountId      uint   `json:"account_id"`
+	FloatAccountId uint   `json:"float_account_id"`
+	BusinessName   string `json:"business_name"`
+	FirstName      string `json:"first_name"`
+	IdNumber       string `json:"id_number"`
 }
 
 type County struct {

@@ -66,6 +66,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 	s.Vars["{name}"] = ""
 	s.Vars["{voucher_balance}"] = "0"
+	s.Vars["{float_balance}"] = "0"
 	s.Vars["{customer_support_email}"] = "customersupport@sidooh.co.ke"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
@@ -98,8 +99,12 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		if !account.Active {
 			s.ScreenPath.Screen = *screens[utils.INACTIVE_ACCOUNT]
 		} else {
-			if len(account.Balances) != 0 {
-				s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
+			if len(account.Vouchers) != 0 {
+				s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Vouchers[0].Balance)
+			}
+
+			if account.Float != nil {
+				s.Vars["{float_balance}"] = fmt.Sprintf("%.0f", account.Float.Balance)
 			}
 
 			if account.Subscription.Id != 0 {
