@@ -32,15 +32,19 @@ func (p *Product) Process(input string) {
 	logger.UssdLog.Println(" - PRODUCT: Process")
 
 	switch p.screen.Key {
+	case utils.MAIN_MENU:
+		p.vars["{pay_buy}"] = "Pay"
 	case utils.PAYMENT_METHOD:
 		p.setPaymentMethodText(input)
-		break
 	case utils.PAYMENT_OTHER_NUMBER_MPESA:
 		p.vars["{mpesa_number}"], _ = utils.FormatPhone(input)
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{mpesa_number}"]
-		break
 	}
 }
+
+// implement in child classes
+//func (p *Product) processScreen(input string) {
+//}
 
 func (p *Product) finalize() {
 	logger.UssdLog.Println(" - PRODUCT: finalize")
@@ -61,13 +65,21 @@ func (p *Product) setPaymentMethods(input string) {
 		delete(p.screen.Next.Options, 2)
 	}
 
-	if p.productRep == "merchant" {
+	if p.productRep == "float" {
 		delete(p.screen.Next.Options, 1)
 		delete(p.screen.Next.Options, 2)
 		p.screen.Next.Options[3] = &data.Option{
 			Label:   "FLOAT (KES{float_balance})",
 			Value:   3,
 			NextKey: utils.PAYMENT_PIN_CONFIRMATION,
+		}
+
+		floatBalance, _ := strconv.ParseFloat(p.vars["{float_balance}"], 32)
+
+		// Move user to top up flow if balance is not enough
+		if int(floatBalance) < amount {
+			//TODO: Move user to top up flow
+			p.screen.Next.Options[3].NextKey = utils.FLOAT_BALANCE_INSUFFICIENT
 		}
 	}
 
@@ -82,6 +94,9 @@ func (p *Product) setPaymentMethods(input string) {
 
 		if _, ok := p.screen.Next.Options[2]; ok {
 			p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+		}
+		if _, ok := p.screen.Next.Options[3]; ok {
+			p.screen.Next.Options[3].NextKey = utils.MERCHANT_PIN_NOT_SET
 		}
 		return
 	}

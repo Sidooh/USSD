@@ -49,6 +49,7 @@ var nextExceptionScreens = map[string]bool{
 	utils.PROFILE_UPDATE_END:         true,
 	utils.HAS_SECURITY_QUESTIONS:     true,
 	utils.SECURITY_QUESTIONS_NOT_SET: true,
+	utils.FLOAT_BALANCE_INSUFFICIENT: true,
 }
 
 var dynamicOptionScreens = map[string]bool{
@@ -238,6 +239,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		// TODO: Handle both -no pin set- and -invalid pin-
 		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
 		return screen.checkPin(input, vars)
+	case utils.EXISTING_MERCHANT:
+		return screen.checkMerchantIdNumber(input)
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	case utils.NAME:
@@ -392,6 +395,15 @@ func (screen *Screen) checkPin(input string, vars map[string]string) bool {
 	}
 
 	return false
+}
+
+func (screen *Screen) checkMerchantIdNumber(input string) bool {
+	exists := service.MerchantIdNumberExists(input)
+	if exists {
+		screen.Title = "Hi, we are unable to process your signup request as the national Id you have provided is already registered on Sidooh and belongs to another customer\n\nEnter National ID Number"
+	}
+
+	return !exists
 }
 
 func (screen *Screen) isNotCurrentPhone(input string, phone string) bool {

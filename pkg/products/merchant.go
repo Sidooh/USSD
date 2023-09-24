@@ -32,6 +32,14 @@ func (m *Merchant) processScreen(input string) {
 		m.vars["{name}"] = m.vars["{first_name}"] + " " + input
 	case utils.MERCHANT_ID_NUMBER:
 		m.vars["{id_number}"] = input
+		if m.checkHasPin() {
+			m.screen.Next.Options[1].NextKey = utils.MERCHANT_TERMS
+		}
+	case utils.MERCHANT_NEW_PIN:
+		m.vars["{pin}"] = input
+	case utils.MERCHANT_NEW_PIN_CONFIRM:
+		m.vars["{confirm_pin}"] = input
+
 	case utils.MERCHANT_KYB:
 		m.vars["{business_name}"] = input
 		//case utils.MERCHANT_LOCATION:
@@ -47,36 +55,37 @@ func (m *Merchant) processScreen(input string) {
 	case utils.MERCHANT_LANDMARK_OTHER:
 		m.vars["{landmark_id}"] = input
 		m.vars["{landmark}"] = input
-
-	case utils.MERCHANT_FLOAT_AGENT:
-		m.vars["{product}"] = "float purchase for"
-		m.vars["{agent}"] = input
-
-	case utils.MERCHANT_FLOAT_STORE:
-		m.vars["{store}"] = input
-		m.vars["{number}"] = m.vars["{agent}"] + " - " + input
-
-	case utils.MERCHANT_FLOAT_AMOUNT:
-		m.vars["{amount}"] = input
-		m.setPaymentMethods(input)
-		m.vars["{payment_charge_text}"] = ""
-
+		//
+		//case utils.MERCHANT_FLOAT_AGENT:
+		//	m.vars["{product}"] = "float for"
+		//	m.vars["{agent}"] = input
+		//
+		//case utils.MERCHANT_FLOAT_STORE:
+		//	m.vars["{store}"] = input
+		//	m.vars["{number}"] = m.vars["{agent}"] + " - " + input
+		//
+		//case utils.MERCHANT_FLOAT_AMOUNT:
+		//	m.vars["{pay_buy}"] = "Buy"
+		//	m.vars["{amount}"] = input
+		//	m.setPaymentMethods(input)
+		//	m.vars["{payment_charge_text}"] = ""
+		//
 	}
 }
 
 func (m *Merchant) finalize() {
 	logger.UssdLog.Println(" -- MERCHANT: finalize", m.screen.Next.Type)
 
-	if m.screen.Key == utils.PAYMENT_CONFIRMATION {
-		amount, _ := strconv.Atoi(m.vars["{amount}"])
-
-		request := client.FloatPurchaseRequest{
-			Amount: amount,
-			Agent:  m.vars["{agent}"],
-			Store:  m.vars["{store}"],
-		}
-		service.BuyFloat(m.vars["{merchant_id}"], request)
-	}
+	//if m.screen.Key == utils.PAYMENT_CONFIRMATION {
+	//	amount, _ := strconv.Atoi(m.vars["{amount}"])
+	//
+	//	request := client.FloatPurchaseRequest{
+	//		Amount: amount,
+	//		Agent:  m.vars["{agent}"],
+	//		Store:  m.vars["{store}"],
+	//	}
+	//	service.BuyFloat(m.vars["{merchant_id}"], request)
+	//}
 
 	if m.screen.Key == utils.MERCHANT_TERMS {
 		accountId, _ := strconv.Atoi(m.vars["{account_id}"])
@@ -92,6 +101,13 @@ func (m *Merchant) finalize() {
 			accountId = account.Id
 		}
 
+		//set pin asynchronously
+		go func() {
+			if !m.checkHasPin() && m.vars["{confirm_pin}"] != "" {
+				service.SetPin(m.vars["{account_id}"], m.vars["{confirm_pin}"])
+			}
+		}()
+
 		request := client.MerchantKYCDetails{
 			FirstName: m.vars["{first_name}"],
 			LastName:  m.vars["{last_name}"],
@@ -101,7 +117,7 @@ func (m *Merchant) finalize() {
 		service.CreateMerchant(request)
 	}
 
-	if m.screen.Key == utils.MERCHANT_KYB_CONFIRMATION {
+	if m.screen.Key == utils.MERCHANT_KYB_CONSENT {
 		request := client.MerchantKYBDetails{
 			BusinessName: m.vars["{business_name}"],
 			Landmark:     m.vars["{landmark_id}"],
@@ -293,15 +309,16 @@ func (m *Merchant) processLandmarkSelection(input string) {
 	}
 }
 
-func (m *Merchant) getCharge(input string) {
-	amount, _ := strconv.Atoi(input)
-	fee := 0
-
-	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
-		fee = service.GetPayBillCharge(amount)
-	} else {
-		fee = service.GetBuyGoodsCharge(amount)
-	}
-
-	m.vars["{merchant_fee}"] = strconv.Itoa(fee)
-}
+// TODO: Test Pay bill and goods works accordingly
+//func (m *Merchant) getCharge(input string) {
+//	amount, _ := strconv.Atoi(input)
+//	fee := 0
+//
+//	if m.vars["{merchant_type}"] == utils.MPESA_PAY_BILL {
+//		fee = service.GetPayBillCharge(amount)
+//	} else {
+//		fee = service.GetBuyGoodsCharge(amount)
+//	}
+//
+//	m.vars["{merchant_fee}"] = strconv.Itoa(fee)
+//}

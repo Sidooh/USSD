@@ -136,7 +136,7 @@ func (a *AccountsApiClient) CheckInvite(phone string) (*Invite, error) {
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckPin(id string, pin string) (bool, error) {
+func (a *AccountsApiClient) CheckPin(id, pin string) (bool, error) {
 	var res = new(CheckPinApiResponse)
 
 	values := map[string]string{"pin": pin}

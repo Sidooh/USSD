@@ -120,6 +120,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{merchant_id}"] = strconv.Itoa(int(account.Merchant.Id))
 			if account.Merchant.BusinessName != "" {
 				s.Vars["{merchant_business_name}"] = account.Merchant.BusinessName
+				s.Vars["{merchant_code}"] = account.Merchant.Code
 			}
 		}
 	}
@@ -160,9 +161,15 @@ func (s *State) setProduct(option int) {
 	case products.MERCHANT:
 		s.product = &products.Merchant{}
 		s.ProductKey = products.MERCHANT
-		//default:
-		//s.product = &products.Product{}
-		//s.ProductKey = products.DEFAULT
+	case products.MERCHANT_FLOAT:
+		s.product = &products.MerchantFloat{}
+		s.ProductKey = products.MERCHANT_FLOAT
+	case products.MERCHANT_ACCOUNT:
+		s.product = &products.MerchantAccount{}
+		s.ProductKey = products.MERCHANT_ACCOUNT
+	default:
+		s.product = &products.Product{}
+		s.ProductKey = products.DEFAULT
 	}
 }
 
@@ -236,6 +243,9 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
+		if option.Value == 0 {
+			s.setProduct(products.MERCHANT)
+		}
 
 		// Unauthorized screens for first time users
 		keys := []int{5, 6, 7}
@@ -266,7 +276,11 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 		s.setProduct(products.PAY*10 + option.Value)
 	}
 
-	if s.ScreenPath.Key == utils.PIN_NOT_SET && option.Value == 1 {
+	if s.ScreenPath.Key == utils.MERCHANT {
+		s.setProduct(products.MERCHANT*10 + option.Value)
+	}
+
+	if (s.ScreenPath.Key == utils.PIN_NOT_SET || s.ScreenPath.Key == utils.MERCHANT_PIN_NOT_SET) && option.Value == 1 {
 		s.setProduct(products.ACCOUNT)
 	}
 

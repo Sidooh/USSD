@@ -38,16 +38,21 @@ type MerchantApiResponse struct {
 	Data *Merchant `json:"data"`
 }
 
+type MpesaStoreAccountApiResponse struct {
+	ApiResponse
+	Data *[]MpesaStoreAccount `json:"data"`
+}
+
 func InitMerchantClient() *MerchantsApiClient {
 	client := MerchantsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_MERCHANTS_API_URL"))
 	return &client
 }
 
-func (a *MerchantsApiClient) GetMerchantByAccount(accountId string) (*Merchant, error) {
+func (m *MerchantsApiClient) GetMerchantByAccount(accountId string) (*Merchant, error) {
 	var res = new(MerchantApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/merchants/account/"+accountId, nil).send(res)
+	err := m.newRequest(http.MethodGet, "/merchants/account/"+accountId, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +60,7 @@ func (a *MerchantsApiClient) GetMerchantByAccount(accountId string) (*Merchant, 
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) GetCounties() (*[]County, error) {
+func (m *MerchantsApiClient) GetCounties() (*[]County, error) {
 	var res = new(CountyApiResponse)
 
 	counties, err := cache.Get[[]County]("counties")
@@ -63,7 +68,7 @@ func (a *MerchantsApiClient) GetCounties() (*[]County, error) {
 		return counties, nil
 	}
 
-	err = a.newRequest(http.MethodGet, "/counties", nil).send(res)
+	err = m.newRequest(http.MethodGet, "/counties", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +78,7 @@ func (a *MerchantsApiClient) GetCounties() (*[]County, error) {
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) GetSubCounties(county string) (*[]SubCounty, error) {
+func (m *MerchantsApiClient) GetSubCounties(county string) (*[]SubCounty, error) {
 	var res = new(SubCountyApiResponse)
 
 	subCounties, err := cache.Get[[]SubCounty]("sub_counties-" + county)
@@ -81,7 +86,7 @@ func (a *MerchantsApiClient) GetSubCounties(county string) (*[]SubCounty, error)
 		return subCounties, nil
 	}
 
-	err = a.newRequest(http.MethodGet, "/counties/"+county, nil).send(res)
+	err = m.newRequest(http.MethodGet, "/counties/"+county, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +96,7 @@ func (a *MerchantsApiClient) GetSubCounties(county string) (*[]SubCounty, error)
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) GetWards(county string, subCounty string) (*[]Ward, error) {
+func (m *MerchantsApiClient) GetWards(county string, subCounty string) (*[]Ward, error) {
 	var res = new(WardApiResponse)
 
 	wards, err := cache.Get[[]Ward]("wards-" + subCounty)
@@ -99,7 +104,7 @@ func (a *MerchantsApiClient) GetWards(county string, subCounty string) (*[]Ward,
 		return wards, nil
 	}
 
-	err = a.newRequest(http.MethodGet, "/counties/"+county+"/sub-counties/"+subCounty, nil).send(res)
+	err = m.newRequest(http.MethodGet, "/counties/"+county+"/sub-counties/"+subCounty, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +114,7 @@ func (a *MerchantsApiClient) GetWards(county string, subCounty string) (*[]Ward,
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) GetLandmarks(county string, subCounty string, ward string) (*[]Landmark, error) {
+func (m *MerchantsApiClient) GetLandmarks(county string, subCounty string, ward string) (*[]Landmark, error) {
 	var res = new(LandmarkApiResponse)
 
 	landmarks, err := cache.Get[[]Landmark]("landmarks-" + ward)
@@ -117,7 +122,7 @@ func (a *MerchantsApiClient) GetLandmarks(county string, subCounty string, ward 
 		return landmarks, nil
 	}
 
-	err = a.newRequest(http.MethodGet, "/counties/"+county+"/sub-counties/"+subCounty+"/wards/"+ward, nil).send(res)
+	err = m.newRequest(http.MethodGet, "/counties/"+county+"/sub-counties/"+subCounty+"/wards/"+ward, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -127,13 +132,13 @@ func (a *MerchantsApiClient) GetLandmarks(county string, subCounty string, ward 
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) CreateMerchant(request MerchantKYCDetails) (*Merchant, error) {
+func (m *MerchantsApiClient) CreateMerchant(request MerchantKYCDetails) (*Merchant, error) {
 	var res = new(MerchantApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/merchants", dataBytes).send(res)
+	err = m.newRequest(http.MethodPost, "/merchants", dataBytes).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -141,13 +146,13 @@ func (a *MerchantsApiClient) CreateMerchant(request MerchantKYCDetails) (*Mercha
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) UpdateKYBData(id string, request MerchantKYBDetails) (*Merchant, error) {
+func (m *MerchantsApiClient) UpdateKYBData(id string, request MerchantKYBDetails) (*Merchant, error) {
 	var res = new(MerchantApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/merchants/"+id+"/kyb", dataBytes).send(res)
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/kyb", dataBytes).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -155,10 +160,32 @@ func (a *MerchantsApiClient) UpdateKYBData(id string, request MerchantKYBDetails
 	return res.Data, nil
 }
 
-func (a *MerchantsApiClient) BuyFloat(id string, request FloatPurchaseRequest) error {
+func (m *MerchantsApiClient) BuyFloat(id string, request FloatPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/merchants/"+id+"/buy-float", dataBytes).send(nil)
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/buy-float", dataBytes).send(nil)
 	return err
+}
+
+func (m *MerchantsApiClient) GetMerchantByIdNumber(id string) (*Merchant, error) {
+	var res = new(MerchantApiResponse)
+
+	err := m.newRequest(http.MethodGet, "/merchants/id-number/"+id, nil).send(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
+}
+
+func (p *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAccount, error) {
+	res := new(MpesaStoreAccountApiResponse)
+
+	err := p.newRequest(http.MethodGet, "/merchants/"+id+"/mpesa-store-accounts", nil).send(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
 }

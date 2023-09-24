@@ -92,3 +92,10 @@ type Landmark struct {
 	Id       int
 	Landmark string `json:"landmark"`
 }
+
+type MpesaStoreAccount struct {
+	Id    int
+	Agent string
+	Store string
+	Name  string
+}

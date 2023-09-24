@@ -46,3 +46,18 @@ func BuyFloat(id string, request client.FloatPurchaseRequest) {
 		logger.ServiceLog.Error("Failed to buy float: ", err)
 	}
 }
+
+func MerchantIdNumberExists(id string) bool {
+	merchant, _ := merchantsClient.GetMerchantByIdNumber(id)
+	return merchant != nil
+}
+
+func FetchMpesaStoreAccounts(merchantId string) ([]client.MpesaStoreAccount, error) {
+	accounts, err := merchantsClient.GetMpesaStoreAccounts(merchantId)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch mpesa store accounts: ", err)
+		return nil, err
+	}
+
+	return *accounts, nil
+}

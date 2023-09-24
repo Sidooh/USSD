@@ -65,7 +65,7 @@
     "title": "Register Business Details:\nEnter Business Name",
     "type": "OPEN",
     "next": "merchant_county",
-    "validations": "NAME"
+    "validations": "ALPHANUM"
   },
   "merchant_location": {
     "key": "merchant_location",
@@ -146,13 +146,29 @@
       "1": {
         "label": "Confirm & Continue",
         "value": "1",
-        "next": "merchant_kyc_end"
+        "next": "merchant_kyb_consent"
       },
       "2": {
         "label": "Edit",
         "value": "2",
         "next": "merchant_kyb",
         "acyclic": true
+      }
+    }
+  },
+  "merchant_kyb_consent": {
+    "key": "merchant_kyb_consent",
+    "title": "Consent and Agreement",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_kyc_end"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
       }
     }
   },
@@ -193,7 +209,7 @@
     "title": "Enter National ID Number",
     "type": "OPEN",
     "next": "merchant_kyc_confirmation",
-    "validations": "INT,LENGTH:8"
+    "validations": "INT,LENGTH:8,EXISTING_MERCHANT"
   },
   "merchant_kyc_confirmation": {
     "key": "merchant_kyc_confirmation",
@@ -202,7 +218,7 @@
       "1": {
         "label": "Confirm & Continue",
         "value": "1",
-        "next": "merchant_terms"
+        "next": "merchant_new_pin"
       },
       "2": {
         "label": "Edit",
@@ -211,6 +227,20 @@
         "acyclic": true
       }
     }
+  },
+  "merchant_new_pin": {
+    "key": "merchant_new_pin",
+    "title": "Create Sidooh PIN. Enter 4 digits of your choice\nPIN YAKO. SIRI YAKO",
+    "type": "OPEN",
+    "next": "merchant_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "merchant_new_pin_confirm": {
+    "key": "merchant_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN\nPIN YAKO. SIRI YAKO",
+    "type": "OPEN",
+    "next": "merchant_terms",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
   },
   "merchant_terms": {
     "key": "merchant_terms",
@@ -242,7 +272,7 @@
       "1": {
         "label": "Buy Float",
         "value": "1",
-        "next": "merchant_float_agent"
+        "next": "merchant_float"
       },
       "2": {
         "label": "Sell Airtime",
@@ -253,9 +283,100 @@
         "label": "Pay",
         "value": "3",
         "next": "coming_soon"
+      },
+      "4": {
+        "label": "Save & Invest",
+        "value": "4",
+        "next": "coming_soon"
+      },
+      "5": {
+        "label": "Insurance",
+        "value": "5",
+        "next": "coming_soon"
+      },
+      "6": {
+        "label": "Business Loan",
+        "value": "6",
+        "next": "coming_soon"
+      },
+      "7": {
+        "label": "Refer",
+        "value": "7",
+        "next": "coming_soon"
+      },
+      "8": {
+        "label": "My Account",
+        "value": "8",
+        "next": "merchant_account"
       }
     }
   },
+
+  "merchant_account": {
+    "key": "merchant_account",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Profile",
+        "value": "1",
+        "next": "merchant_account_profile_pin"
+      },
+      "2": {
+        "label": "Merchants Invited",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Balances",
+        "value": "3",
+        "next": "coming_soon"
+      },
+      "4": {
+        "label": "Withdraw",
+        "value": "4",
+        "next": "coming_soon"
+      },
+      "5": {
+        "label": "Change Pin",
+        "value": "5",
+        "next": "coming_soon"
+      }
+    }
+  },
+
+  "merchant_account_profile_pin": {
+    "key": "merchant_account_profile_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_account_profile",
+    "validations": "PIN"
+  },
+  "merchant_account_profile": {
+    "key": "merchant_account_profile",
+    "title": "Store name: {merchant_business_name}\n\nStore number: {merchant_code}\n\nInvite Code: {account_id}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Update Profile",
+        "value": "1",
+        "next": "coming_soon"
+      }
+    }
+  },
+
+  "merchant_float": {
+    "key": "merchant_float",
+    "title": "Select or Enter Other Store Number",
+    "options": {
+      "9": {
+        "label": "Other Store No.",
+        "type": "int",
+        "value": "9",
+        "next": "merchant_float_agent"
+      }
+    }
+  },
+
   "merchant_float_agent": {
     "key": "merchant_float_agent",
     "title": "Agent Number",
@@ -995,7 +1116,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} {number} using:",
+    "title": "{pay_buy} KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -1082,6 +1203,18 @@
       }
     }
   },
+  "merchant_pin_not_set": {
+    "key": "merchant_pin_not_set",
+    "title": "Please set a PIN first in order to proceed.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to set pin",
+        "value": "1",
+        "next": "profile_new_pin"
+      }
+    }
+  },
   "voucher_balance_insufficient": {
     "key": "voucher_balance_insufficient",
     "title": "Voucher balance is insufficient.\nAvailable: KES{voucher_balance}",
@@ -1093,6 +1226,11 @@
         "next": "voucher_amount"
       }
     }
+  },
+  "float_balance_insufficient": {
+    "key": "float_balance_insufficient",
+    "title": "Float balance is insufficient.\nAvailable: KES{float_balance}",
+    "type": "OPEN"
   },
   "security_questions_not_set": {
     "key": "security_questions_not_set",
