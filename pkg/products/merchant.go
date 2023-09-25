@@ -104,7 +104,7 @@ func (m *Merchant) finalize() {
 		//set pin asynchronously
 		go func() {
 			if !m.checkHasPin() && m.vars["{confirm_pin}"] != "" {
-				service.SetPin(m.vars["{account_id}"], m.vars["{confirm_pin}"])
+				service.SetPin(strconv.Itoa(accountId), m.vars["{confirm_pin}"])
 			}
 		}()
 

@@ -64,8 +64,7 @@
     "key": "merchant_kyb",
     "title": "Register Business Details:\nEnter Business Name",
     "type": "OPEN",
-    "next": "merchant_county",
-    "validations": "ALPHANUM"
+    "next": "merchant_county"
   },
   "merchant_location": {
     "key": "merchant_location",
