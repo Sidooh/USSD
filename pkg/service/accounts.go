@@ -246,7 +246,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 	var valid = false
 
 	for i, answer := range answers {
-		var res map[string]bool
+		var res bool
 		res, err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
@@ -254,7 +254,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 		if err != nil {
 			return false
 		} else {
-			valid = res["message"]
+			valid = res
 		}
 	}
 

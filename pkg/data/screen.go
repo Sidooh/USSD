@@ -58,11 +58,12 @@ var dynamicOptionScreens = map[string]bool{
 }
 
 var optionsExceptionScreens = map[string]bool{
-	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS: true,
-	utils.MERCHANT_COUNTY:                    true,
-	utils.MERCHANT_SUB_COUNTY:                true,
-	utils.MERCHANT_WARD:                      true,
-	utils.MERCHANT_LANDMARK:                  true,
+	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS:  true,
+	utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS: true,
+	utils.MERCHANT_COUNTY:                     true,
+	utils.MERCHANT_SUB_COUNTY:                 true,
+	utils.MERCHANT_WARD:                       true,
+	utils.MERCHANT_LANDMARK:                   true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -179,6 +180,10 @@ func (screen *Screen) Validate(withOptions bool, recursive bool) error {
 func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
 	// TODO: Sanitize input to be logged? e.g. pins, sec qns, etc. just replace with **** and use same length as input
 	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
+
+	if screen.Validations == "" {
+		return true
+	}
 
 	validations := strings.Split(screen.Validations, ",")
 

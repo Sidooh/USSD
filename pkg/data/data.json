@@ -238,8 +238,21 @@
     "key": "merchant_new_pin_confirm",
     "title": "Please confirm your new Sidooh PIN\nPIN YAKO. SIRI YAKO",
     "type": "OPEN",
-    "next": "merchant_terms",
+    "next": "merchant_security_questions_options",
     "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "merchant_security_questions_options": {
+    "key": "merchant_security_questions_options",
+    "title": "Select security question",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_security_questions_answer": {
+    "key": "merchant_security_questions_answer",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "merchant_security_questions_options",
+    "validations": "SECURITY_QUESTION"
   },
   "merchant_terms": {
     "key": "merchant_terms",
@@ -328,7 +341,7 @@
       "3": {
         "label": "Balances",
         "value": "3",
-        "next": "coming_soon"
+        "next": "merchant_balances_profile_pin"
       },
       "4": {
         "label": "Withdraw",
@@ -338,9 +351,77 @@
       "5": {
         "label": "Change Pin",
         "value": "5",
+        "next": "merchant_profile_change_pin_question"
+      }
+    }
+  },
+  "merchant_profile_change_pin_question": {
+    "key": "merchant_profile_change_pin_question",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "merchant_profile_change_pin_question",
+    "validations": "SECURITY_QUESTION",
+    "acyclic": true
+  },
+  "merchant_profile_new_pin": {
+    "key": "merchant_profile_new_pin",
+    "title": "Enter new four-digit Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_profile_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "merchant_profile_new_pin_confirm": {
+    "key": "merchant_profile_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_profile_pin_end",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "merchant_profile_pin_end": {
+    "key": "merchant_profile_pin_end",
+    "title": "Your new Sidooh PIN is {confirm_pin}. Please keep your PIN number safe. Do not share it with anyone.",
+    "type": "END"
+  },
+
+  "merchant_balances_profile_pin": {
+    "key": "merchant_balances_profile_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_balances",
+    "validations": "PIN"
+  },
+  "merchant_balances": {
+    "key": "merchant_balances",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Float",
+        "value": "1",
+        "next": "merchant_float_balance"
+      },
+      "2": {
+        "label": "Cashback",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "Commission",
+        "value": "3",
+        "next": "coming_soon"
+      },
+      "4": {
+        "label": "Savings & Interest Earned",
+        "value": "4",
         "next": "coming_soon"
       }
     }
+  },
+  "merchant_float_balance": {
+    "key": "merchant_float_balance",
+    "title": "Your float balance is:\nKES {float_balance}",
+    "type": "OPEN",
+    "next": "cancel"
   },
 
   "merchant_account_profile_pin": {

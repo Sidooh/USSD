@@ -38,7 +38,7 @@ type ProfileDetails struct {
 
 type SecurityQuestionRequest struct {
 	QuestionId string `json:"question_id"`
-	Answer     string
+	Answer     string `json:"answer"`
 }
 
 type EarningsWithdrawalRequest struct {

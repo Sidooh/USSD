@@ -225,7 +225,13 @@ func (s *State) ProcessOpenInput(input string) {
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
 
-	s.MoveNext("")
+	//s.MoveNext("")
+	// TODO: Confirm this works across board
+	if s.ScreenPath.NextKey != s.ScreenPath.Next.Key {
+		s.MoveNext(s.ScreenPath.NextKey)
+	} else {
+		s.MoveNext("")
+	}
 }
 
 func (s *State) ProcessOptionInput(option *data.Option) {

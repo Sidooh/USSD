@@ -61,14 +61,16 @@ const (
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
 
 	// MERCHANT
-	MERCHANT                 = "merchant"
-	MERCHANT_CONSENT         = "merchant_consent"
-	MERCHANT_FIRST_NAME      = "merchant_first_name"
-	MERCHANT_LAST_NAME       = "merchant_last_name"
-	MERCHANT_ID_NUMBER       = "merchant_id_number"
-	MERCHANT_NEW_PIN         = "merchant_new_pin"
-	MERCHANT_NEW_PIN_CONFIRM = "merchant_new_pin_confirm"
-	MERCHANT_TERMS           = "merchant_terms"
+	MERCHANT                            = "merchant"
+	MERCHANT_CONSENT                    = "merchant_consent"
+	MERCHANT_FIRST_NAME                 = "merchant_first_name"
+	MERCHANT_LAST_NAME                  = "merchant_last_name"
+	MERCHANT_ID_NUMBER                  = "merchant_id_number"
+	MERCHANT_NEW_PIN                    = "merchant_new_pin"
+	MERCHANT_NEW_PIN_CONFIRM            = "merchant_new_pin_confirm"
+	MERCHANT_SECURITY_QUESTIONS_OPTIONS = "merchant_security_questions_options"
+	MERCHANT_SECURITY_QUESTIONS_ANSWER  = "merchant_security_questions_answer"
+	MERCHANT_TERMS                      = "merchant_terms"
 
 	MERCHANT_KYB              = "merchant_kyb"
 	MERCHANT_LOCATION         = "merchant_location"
@@ -85,6 +87,13 @@ const (
 	MERCHANT_FLOAT_STORE  = "merchant_float_store"
 	MERCHANT_FLOAT_AMOUNT = "merchant_float_amount"
 
+	MERCHANT_ACCOUNT                     = "merchant_account"
+	MERCHANT_PROFILE_CHANGE_PIN_QUESTION = "merchant_profile_change_pin_question"
+	MERCHANT_PROFILE_NEW_PIN             = "merchant_profile_new_pin"
+	MERCHANT_PROFILE_NEW_PIN_CONFIRM     = "merchant_profile_new_pin_confirm"
+	MERCHANT_PROFILE_PIN_END             = "merchant_profile_pin_end"
+
+	// PAY
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
 	MERCHANT_PAY_BILL_ACCOUNT = "merchant_pay_bill_account"
 	MERCHANT_BUY_GOODS        = "merchant_buy_goods"

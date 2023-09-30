@@ -33,16 +33,23 @@ func (m *Merchant) processScreen(input string) {
 	case utils.MERCHANT_ID_NUMBER:
 		m.vars["{id_number}"] = input
 		if m.checkHasPin() {
-			m.screen.Next.Options[1].NextKey = utils.MERCHANT_TERMS
+			m.screen.Next.Options[1].NextKey = utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS
+			m.fetchSecurityQuestionOptions()
 		}
 	case utils.MERCHANT_NEW_PIN:
 		m.vars["{pin}"] = input
 	case utils.MERCHANT_NEW_PIN_CONFIRM:
 		m.vars["{confirm_pin}"] = input
+		m.fetchSecurityQuestionOptions()
+
+	case utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS:
+		m.processQuestionSelection(input)
+
+	case utils.MERCHANT_SECURITY_QUESTIONS_ANSWER:
+		m.processAnswer(input)
 
 	case utils.MERCHANT_KYB:
 		m.vars["{business_name}"] = input
-		//case utils.MERCHANT_LOCATION:
 		m.fetchCountyOptions()
 	case utils.MERCHANT_COUNTY:
 		m.processCountySelection(input)
@@ -55,37 +62,11 @@ func (m *Merchant) processScreen(input string) {
 	case utils.MERCHANT_LANDMARK_OTHER:
 		m.vars["{landmark_id}"] = input
 		m.vars["{landmark}"] = input
-		//
-		//case utils.MERCHANT_FLOAT_AGENT:
-		//	m.vars["{product}"] = "float for"
-		//	m.vars["{agent}"] = input
-		//
-		//case utils.MERCHANT_FLOAT_STORE:
-		//	m.vars["{store}"] = input
-		//	m.vars["{number}"] = m.vars["{agent}"] + " - " + input
-		//
-		//case utils.MERCHANT_FLOAT_AMOUNT:
-		//	m.vars["{pay_buy}"] = "Buy"
-		//	m.vars["{amount}"] = input
-		//	m.setPaymentMethods(input)
-		//	m.vars["{payment_charge_text}"] = ""
-		//
 	}
 }
 
 func (m *Merchant) finalize() {
 	logger.UssdLog.Println(" -- MERCHANT: finalize", m.screen.Next.Type)
-
-	//if m.screen.Key == utils.PAYMENT_CONFIRMATION {
-	//	amount, _ := strconv.Atoi(m.vars["{amount}"])
-	//
-	//	request := client.FloatPurchaseRequest{
-	//		Amount: amount,
-	//		Agent:  m.vars["{agent}"],
-	//		Store:  m.vars["{store}"],
-	//	}
-	//	service.BuyFloat(m.vars["{merchant_id}"], request)
-	//}
 
 	if m.screen.Key == utils.MERCHANT_TERMS {
 		accountId, _ := strconv.Atoi(m.vars["{account_id}"])
@@ -105,6 +86,19 @@ func (m *Merchant) finalize() {
 		go func() {
 			if !m.checkHasPin() && m.vars["{confirm_pin}"] != "" {
 				service.SetPin(strconv.Itoa(accountId), m.vars["{confirm_pin}"])
+			}
+		}()
+
+		//set sec qns asynchronously
+		go func() {
+			if _, ok := m.vars["{question_answers}"]; ok {
+				questionAnswerVars := map[string]string{}
+
+				_ = json.Unmarshal([]byte(m.vars["{question_answers}"]), &questionAnswerVars)
+
+				// TODO: Make into goroutine if applicable
+				// TODO: Should we check returned value? Or should we make it a void function?
+				_ = service.SetSecurityQuestions(strconv.Itoa(accountId), questionAnswerVars)
 			}
 		}()
 
@@ -322,3 +316,140 @@ func (m *Merchant) processLandmarkSelection(input string) {
 //
 //	m.vars["{merchant_fee}"] = strconv.Itoa(fee)
 //}
+
+func (m *Merchant) fetchSecurityQuestionOptions() {
+	logger.UssdLog.Println("   ++ MERCHANT: fetch security question options")
+
+	questions, _ := service.FetchSecurityQuestions()
+
+	questionAnswerVars := map[uint]string{}
+	_ = json.Unmarshal([]byte(m.vars["{question_answers}"]), &questionAnswerVars)
+
+	var unansweredQuestions []client.SecurityQuestion
+	for _, question := range questions {
+		if _, ok := questionAnswerVars[question.Id]; !ok {
+			unansweredQuestions = append(unansweredQuestions, question)
+		}
+	}
+
+	if unansweredQuestions != nil {
+		questionOptionVars := map[int]client.SecurityQuestion{}
+
+		maxQuestions := unansweredQuestions
+		if len(questions) > 5 {
+			maxQuestions = unansweredQuestions[:5]
+		}
+
+		m.screen.Next.Options = map[int]*data.Option{}
+
+		for i, question := range maxQuestions {
+			m.screen.Next.Options[i+1] = &data.Option{
+				Label:   question.Question,
+				Value:   i + 1,
+				NextKey: utils.MERCHANT_SECURITY_QUESTIONS_ANSWER,
+			}
+
+			questionOptionVars[i+1] = question
+		}
+		stringVars, _ := json.Marshal(questionOptionVars)
+		m.vars["{question_options}"] = string(stringVars)
+	} else {
+		//if _, exists := m.screen.Options[3]; exists {
+		//	m.screen.Options[3].NextKey = utils.COMING_SOON
+		//}
+	}
+}
+
+func (m *Merchant) processQuestionSelection(input string) {
+	logger.UssdLog.Println("   ++ MERCHANT: process question selection", input)
+
+	selectedQuestion, _ := strconv.Atoi(input)
+	questionOptionVars := map[int]client.SecurityQuestion{}
+
+	_ = json.Unmarshal([]byte(m.vars["{question_options}"]), &questionOptionVars)
+
+	m.vars["{security_question}"] = questionOptionVars[selectedQuestion].Question
+	m.vars["{security_question_id}"] = strconv.Itoa(int(questionOptionVars[selectedQuestion].Id))
+
+}
+
+func (m *Merchant) processAnswer(input string) {
+	logger.UssdLog.Println("   ++ MERCHANT: process answer", input)
+
+	questionAnswerVars := map[string]string{}
+
+	_ = json.Unmarshal([]byte(m.vars["{question_answers}"]), &questionAnswerVars)
+
+	questionAnswerVars[m.vars["{security_question_id}"]] = input
+
+	stringVars, _ := json.Marshal(questionAnswerVars)
+
+	m.vars["{question_answers}"] = string(stringVars)
+
+	//fmt.Println(questionAnswerVars, m.screen)
+	if len(questionAnswerVars) == 3 {
+		m.screen.NextKey = utils.MERCHANT_TERMS
+	} else {
+		m.fetchSecurityQuestionOptions()
+	}
+	//fmt.Println(questionAnswerVars, m.screen)
+
+}
+
+func (m *Merchant) fetchUserSecurityQuestionOptions() {
+	logger.UssdLog.Println("   ++ MERCHANT: fetch user security question options")
+
+	// Check if user already has questions in state
+	var userQuestions []client.UserSecurityQuestion
+	_ = json.Unmarshal([]byte(m.vars["{user_questions}"]), &userQuestions)
+
+	// Fetch from API otherwise
+	if len(userQuestions) == 0 {
+		accountId := m.vars["{account_id}"]
+		userQuestions, _ = service.FetchUserSecurityQuestions(accountId)
+
+		stringVars, _ := json.Marshal(userQuestions)
+		m.vars["{user_questions}"] = string(stringVars)
+	}
+
+	// Get the answered questions
+	questionAnswerVars := map[uint]string{}
+	_ = json.Unmarshal([]byte(m.vars["{question_answers}"]), &questionAnswerVars)
+
+	// Filter only unanswered questions so we pick from them
+	var unansweredQuestions []client.UserSecurityQuestion
+	for _, question := range userQuestions {
+		if _, ok := questionAnswerVars[question.Question.Id]; !ok {
+			unansweredQuestions = append(unansweredQuestions, question)
+		}
+	}
+
+	// Ensure there are still unanswered questions, otherwise proceed to verify them
+	if len(unansweredQuestions) != 0 {
+		m.vars["{security_question}"] = unansweredQuestions[0].Question.Question
+		m.vars["{security_question_id}"] = strconv.Itoa(int(unansweredQuestions[0].Question.Id))
+	} else {
+		//m.screen.Options[3].NextKey = utils.COMING_SOON
+	}
+
+}
+
+func (m *Merchant) processUserAnswer(input string) {
+	logger.UssdLog.Println("   ++ MERCHANT: process user answer", input)
+
+	questionAnswerVars := map[string]string{}
+
+	_ = json.Unmarshal([]byte(m.vars["{question_answers}"]), &questionAnswerVars)
+
+	questionAnswerVars[m.vars["{security_question_id}"]] = input
+
+	stringVars, _ := json.Marshal(questionAnswerVars)
+
+	m.vars["{question_answers}"] = string(stringVars)
+
+	if len(questionAnswerVars) == 3 {
+		m.screen.NextKey = utils.MERCHANT_PROFILE_NEW_PIN
+	} else {
+		m.fetchUserSecurityQuestionOptions()
+	}
+}

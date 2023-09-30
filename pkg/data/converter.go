@@ -13,10 +13,13 @@ var loadScreenKeys = []string{
 	// The below screens are hanging screens, i.e. have no parent
 	utils.SUBSCRIPTION_RENEW,
 	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
+	utils.MERCHANT_SECURITY_QUESTIONS_ANSWER,
 	utils.PIN_NOT_SET,
 	utils.MERCHANT_PIN_NOT_SET,
 	utils.VOUCHER_BALANCE_INSUFFICIENT,
 	utils.FLOAT_BALANCE_INSUFFICIENT,
+	utils.MERCHANT_TERMS,
+	utils.MERCHANT_PROFILE_NEW_PIN,
 	utils.MERCHANT_SUB_COUNTY,
 	utils.MERCHANT_WARD,
 	utils.MERCHANT_LANDMARK,
