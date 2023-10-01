@@ -43,6 +43,11 @@ type MpesaStoreAccountApiResponse struct {
 	Data *[]MpesaStoreAccount `json:"data"`
 }
 
+type MerchantEarningAccountApiResponse struct {
+	ApiResponse
+	Data *[]MerchantEarningAccount `json:"data"`
+}
+
 func InitMerchantClient() *MerchantsApiClient {
 	client := MerchantsApiClient{}
 	client.ApiClient.init(viper.GetString("SIDOOH_MERCHANTS_API_URL"))
@@ -183,6 +188,17 @@ func (p *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAcco
 	res := new(MpesaStoreAccountApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/merchants/"+id+"/mpesa-store-accounts", nil).send(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
+}
+
+func (p *MerchantsApiClient) GetEarningAccounts(id string) (*[]MerchantEarningAccount, error) {
+	res := new(MerchantEarningAccountApiResponse)
+
+	err := p.newRequest(http.MethodGet, "/earning-accounts/merchant/"+id, nil).send(res)
 	if err != nil {
 		return nil, err
 	}

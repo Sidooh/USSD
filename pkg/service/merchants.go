@@ -61,3 +61,13 @@ func FetchMpesaStoreAccounts(merchantId string) ([]client.MpesaStoreAccount, err
 
 	return *accounts, nil
 }
+
+func FetchEarningAccounts(merchantId string) ([]client.MerchantEarningAccount, error) {
+	accounts, err := merchantsClient.GetEarningAccounts(merchantId)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch earning accounts: ", err)
+		return nil, err
+	}
+
+	return *accounts, nil
+}

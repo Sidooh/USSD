@@ -99,3 +99,9 @@ type MpesaStoreAccount struct {
 	Store string
 	Name  string
 }
+
+type MerchantEarningAccount struct {
+	Id     uint
+	Type   string
+	Amount float64
+}

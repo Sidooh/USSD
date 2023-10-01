@@ -91,7 +91,11 @@ const (
 	MERCHANT_PROFILE_CHANGE_PIN_QUESTION = "merchant_profile_change_pin_question"
 	MERCHANT_PROFILE_NEW_PIN             = "merchant_profile_new_pin"
 	MERCHANT_PROFILE_NEW_PIN_CONFIRM     = "merchant_profile_new_pin_confirm"
-	MERCHANT_PROFILE_PIN_END             = "merchant_profile_pin_end"
+
+	MERCHANT_BALANCES = "merchant_balances"
+
+	MERCHANT_CASHBACK   = "merchant_cashback"
+	MERCHANT_COMMISSION = "merchant_commission"
 
 	// PAY
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"

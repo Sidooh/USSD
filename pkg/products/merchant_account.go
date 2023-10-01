@@ -3,6 +3,7 @@ package products
 import (
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
 )
@@ -32,6 +33,9 @@ func (a *MerchantAccount) processScreen(input string) {
 		a.vars["{pin}"] = input
 	case utils.MERCHANT_PROFILE_NEW_PIN_CONFIRM:
 		a.vars["{confirm_pin}"] = input
+
+	case utils.MERCHANT_BALANCES:
+		a.setbalances()
 	}
 }
 
@@ -72,4 +76,33 @@ func (a *MerchantAccount) finalize() {
 		}
 
 	}
+}
+
+func (a *MerchantAccount) setbalances() {
+	earnings, err := service.FetchEarningAccounts(a.vars["{merchant_id}"])
+	if err != nil {
+		a.vars["{cashback_balance}"] = "0"
+		a.vars["{withdrawable_cashback}"] = "0"
+
+		a.vars["{commission_balance}"] = "0"
+		a.vars["{withdrawable_commission}"] = "0"
+	}
+
+	var cashback client.MerchantEarningAccount
+	var commission client.MerchantEarningAccount
+	for _, earning := range earnings {
+		if earning.Type == "CASHBACK" {
+			cashback = earning
+		}
+		if earning.Type == "COMMISSION" {
+			commission = earning
+		}
+	}
+
+	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount, "%.0f")
+	a.vars["{withdrawable_cashback}"] = formatAmount(cashback.Amount*.8, "%.0f")
+
+	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
+	a.vars["{withdrawable_commission}"] = formatAmount(commission.Amount*.8, "%.0f")
+
 }

@@ -403,12 +403,12 @@
       "2": {
         "label": "Cashback",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchant_cashback"
       },
       "3": {
         "label": "Commission",
         "value": "3",
-        "next": "coming_soon"
+        "next": "merchant_commission"
       },
       "4": {
         "label": "Savings & Interest Earned",
@@ -417,6 +417,20 @@
       }
     }
   },
+  "merchant_cashback": {
+    "key": "merchant_cashback",
+    "title": "Total balance: KES {cashback_balance}\nWithdrawable: KES {withdrawable_cashback}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+
+  "merchant_commission": {
+    "key": "merchant_commission",
+    "title": "Total balance: KES {commission_balance}\nWithdrawable:KES {withdrawable_commission}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+
   "merchant_float_balance": {
     "key": "merchant_float_balance",
     "title": "Your float balance is:\nKES {float_balance}",
