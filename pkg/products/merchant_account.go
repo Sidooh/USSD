@@ -101,8 +101,10 @@ func (a *MerchantAccount) setbalances() {
 
 	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount, "%.0f")
 	a.vars["{withdrawable_cashback}"] = formatAmount(cashback.Amount*.8, "%.0f")
+	a.vars["{saved_cashback}"] = formatAmount(cashback.Amount*.2, "%.0f")
 
 	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
 	a.vars["{withdrawable_commission}"] = formatAmount(commission.Amount*.8, "%.0f")
+	a.vars["{saved_commission}"] = formatAmount(commission.Amount*.2, "%.0f")
 
 }

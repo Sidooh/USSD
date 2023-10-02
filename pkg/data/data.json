@@ -396,7 +396,7 @@
     "type": "CLOSED",
     "options": {
       "1": {
-        "label": "Float",
+        "label": "Voucher",
         "value": "1",
         "next": "merchant_float_balance"
       },
@@ -419,21 +419,21 @@
   },
   "merchant_cashback": {
     "key": "merchant_cashback",
-    "title": "Total balance: KES {cashback_balance}\nWithdrawable: KES {withdrawable_cashback}",
+    "title": "Total balance: KES {cashback_balance}\nSaved Cashback:KES {saved_cashback}\nWithdrawable: KES {withdrawable_cashback}",
     "type": "OPEN",
     "next": "cancel"
   },
 
   "merchant_commission": {
     "key": "merchant_commission",
-    "title": "Total balance: KES {commission_balance}\nWithdrawable:KES {withdrawable_commission}",
+    "title": "Total balance: KES {commission_balance}\nSaved Commission:KES {saved_commission}\nWithdrawable:KES {withdrawable_commission}",
     "type": "OPEN",
     "next": "cancel"
   },
 
   "merchant_float_balance": {
     "key": "merchant_float_balance",
-    "title": "Your float balance is:\nKES {float_balance}",
+    "title": "Your balance is:\nKES {float_balance}",
     "type": "OPEN",
     "next": "cancel"
   },
@@ -1323,7 +1323,7 @@
   },
   "float_balance_insufficient": {
     "key": "float_balance_insufficient",
-    "title": "Float balance is insufficient.\nAvailable: KES{float_balance}",
+    "title": "Balance is insufficient.\nAvailable: KES{float_balance}",
     "type": "OPEN"
   },
   "security_questions_not_set": {
