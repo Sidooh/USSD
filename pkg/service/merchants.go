@@ -69,5 +69,24 @@ func FetchEarningAccounts(merchantId string) ([]client.MerchantEarningAccount, e
 		return nil, err
 	}
 
-	return *accounts, nil
+	return accounts, nil
+}
+
+func FetchTransactions(accountIds, days string) ([]client.Transaction, error) {
+	transactions, err := merchantsClient.FetchTransactions(accountIds, days)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to fetch transactions: ", err)
+		return nil, err
+	}
+
+	return *transactions, nil
+}
+
+func WithdrawEarnings(id string, request client.MerchantWithdrawalRequest) error {
+	err := merchantsClient.WithdrawEarnings(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to withdraw earnings: ", err)
+	}
+
+	return err
 }

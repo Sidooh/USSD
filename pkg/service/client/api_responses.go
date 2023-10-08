@@ -30,6 +30,12 @@ type Invite struct {
 	Inviter *Account `json:"inviter"`
 }
 
+type Descendant struct {
+	Id    int    `json:"id"`
+	Phone string `json:"phone"`
+	Level int    `json:"level"`
+}
+
 type UtilityAccount struct {
 	Id            int
 	Provider      string
@@ -104,4 +110,9 @@ type MerchantEarningAccount struct {
 	Id     uint
 	Type   string
 	Amount float64
+}
+
+type Transaction struct {
+	Id     uint
+	Status string
 }

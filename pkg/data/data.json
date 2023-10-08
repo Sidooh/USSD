@@ -334,19 +334,19 @@
         "next": "merchant_account_profile_pin"
       },
       "2": {
-        "label": "Merchants Invited",
+        "label": "Merchants Referred",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchants_invited"
       },
       "3": {
         "label": "Balances",
         "value": "3",
-        "next": "merchant_balances_profile_pin"
+        "next": "merchant_balances_pin"
       },
       "4": {
         "label": "Withdraw",
         "value": "4",
-        "next": "coming_soon"
+        "next": "merchant_withdraw_pin"
       },
       "5": {
         "label": "Change Pin",
@@ -355,6 +355,126 @@
       }
     }
   },
+
+  "merchant_withdraw_pin": {
+    "key": "merchant_withdraw_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_withdraw",
+    "validations": "PIN"
+  },
+
+  "merchant_withdraw": {
+    "key": "merchant_withdraw",
+    "title": "Select source",
+    "options": {
+      "1": {
+        "label": "Cashback ({cashback_balance})",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      },
+      "2": {
+        "label": "Commission ({commission_balance})",
+        "value": "2",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+  "merchant_withdraw_amount": {
+    "key": "merchant_withdraw_amount",
+    "title": "Enter amount you wish to withdraw (MIN. KES30)",
+    "type": "OPEN",
+    "next": "merchant_withdraw_destination",
+    "validations": "MERCHANT_WITHDRAW_LIMITS"
+  },
+
+  "merchant_withdraw_destination": {
+    "key": "merchant_withdraw_destination",
+    "title": "Select destination",
+    "options": {
+      "1": {
+        "label": "To mpesa",
+        "value": "1",
+        "next": "merchant_withdraw_mpesa"
+      },
+      "2": {
+        "label": "To bank",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "To Voucher",
+        "value": "3",
+        "next": "merchant_withdraw_confirm"
+      }
+    }
+  },
+
+  "merchant_withdraw_mpesa": {
+    "key": "merchant_withdraw_mpesa",
+    "title": "Select the account to send the funds to:",
+    "options": {
+      "1": {
+        "label": "Self {phone}",
+        "value": "1",
+        "next": "merchant_withdraw_confirm"
+      },
+      "2": {
+        "label": "Other MPESA number",
+        "value": "2",
+        "next": "merchant_withdraw_mpesa_other"
+      }
+    }
+  },
+  "merchant_withdraw_mpesa_other": {
+    "key": "merchant_withdraw_mpesa_other",
+    "title": "Enter MPESA number",
+    "type": "OPEN",
+    "next": "merchant_withdraw_confirm",
+    "validations": "SAFARICOM"
+  },
+  "merchant_withdraw_confirm": {
+    "key": "merchant_withdraw_confirm",
+    "title": "Please confirm details.\n\nWithdraw: KES {amount} {source}\nTo {destination_text}\n\nFee: KES {withdrawal_charge}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_withdraw_confirm_pin"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      },
+      "3": {
+        "label": "Change Details",
+        "value": "3",
+        "next": "merchant_withdraw",
+        "acyclic": true
+      }
+    }
+  },
+  "merchant_withdraw_confirm_pin": {
+    "key": "merchant_withdraw_confirm_pin",
+    "title": "Please enter your Sidooh PIN again to confirm this transaction.",
+    "type": "OPEN",
+    "next": "merchant_withdraw_end",
+    "validations": "PIN"
+  },
+  "merchant_withdraw_end": {
+    "key": "merchant_withdraw_end",
+    "title": "Your request has been received and is being processed. You will receive a confirmation SMS shortly. Thank you.",
+    "type": "END"
+  },
+
+  "merchants_invited": {
+    "key": "merchants_invited",
+    "title": "a. SubAgents - {subagents}\nb. Active SubAgents - {subagents_active}\nc. SubAgent Referrals - {subagent_referrals}\nd. Active SubAgent Referrals - {subagent_referrals_active}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+
   "merchant_profile_change_pin_question": {
     "key": "merchant_profile_change_pin_question",
     "title": "{security_question}",
@@ -383,8 +503,8 @@
     "type": "END"
   },
 
-  "merchant_balances_profile_pin": {
-    "key": "merchant_balances_profile_pin",
+  "merchant_balances_pin": {
+    "key": "merchant_balances_pin",
     "title": "Please enter your Sidooh PIN",
     "type": "OPEN",
     "next": "merchant_balances",

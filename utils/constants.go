@@ -92,10 +92,19 @@ const (
 	MERCHANT_PROFILE_NEW_PIN             = "merchant_profile_new_pin"
 	MERCHANT_PROFILE_NEW_PIN_CONFIRM     = "merchant_profile_new_pin_confirm"
 
-	MERCHANT_BALANCES = "merchant_balances"
+	MERCHANT_WITHDRAW             = "merchant_withdraw"
+	MERCHANT_WITHDRAW_DESTINATION = "merchant_withdraw_destination"
+	MERCHANT_WITHDRAW_AMOUNT      = "merchant_withdraw_amount"
+	MERCHANT_WITHDRAW_MPESA       = "merchant_withdraw_mpesa"
+	MERCHANT_WITHDRAW_MPESA_OTHER = "merchant_withdraw_mpesa_other"
+	MERCHANT_WITHDRAW_CONFIRM_PIN = "merchant_withdraw_confirm_pin"
 
-	MERCHANT_CASHBACK   = "merchant_cashback"
-	MERCHANT_COMMISSION = "merchant_commission"
+	//MERCHANT_INVITES = "merchant_invites"
+
+	//MERCHANT_BALANCES = "merchant_balances"
+
+	//MERCHANT_CASHBACK   = "merchant_cashback"
+	//MERCHANT_COMMISSION = "merchant_commission"
 
 	// PAY
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
@@ -167,9 +176,10 @@ const (
 
 	NAME = "NAME"
 
-	SECURITY_QUESTION      = "SECURITY_QUESTION"
-	WITHDRAW_LIMITS        = "WITHDRAW_LIMITS"
-	INVITE_CODE_VALIDATION = "INVITE_CODE_VALIDATION"
+	SECURITY_QUESTION        = "SECURITY_QUESTION"
+	WITHDRAW_LIMITS          = "WITHDRAW_LIMITS"
+	MERCHANT_WITHDRAW_LIMITS = "MERCHANT_WITHDRAW_LIMITS"
+	INVITE_CODE_VALIDATION   = "INVITE_CODE_VALIDATION"
 )
 
 // initiator types

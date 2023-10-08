@@ -50,6 +50,11 @@ type InviteApiResponse struct {
 	Data *Invite `json:"data"`
 }
 
+type DescendantsApiResponse struct {
+	ApiResponse
+	Data []Descendant `json:"data"`
+}
+
 type SecurityQuestionsApiResponse struct {
 	ApiResponse
 	Data []SecurityQuestion `json:"data"`
@@ -277,6 +282,17 @@ func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request Secu
 	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-question-answers/check", dataBytes).send(res)
 	if err != nil {
 		return false, err
+	}
+
+	return res.Data, nil
+}
+
+func (a *AccountsApiClient) FetchDescendants(id, levelLimit string) ([]Descendant, error) {
+	var res = new(DescendantsApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/descendants?level_limit="+levelLimit, nil).send(res)
+	if err != nil {
+		return nil, err
 	}
 
 	return res.Data, nil

@@ -288,3 +288,7 @@ func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error 
 
 	return nil
 }
+
+func FetchDescendants(id, levelLimit string) (invites []client.Descendant, err error) {
+	return accountsClient.FetchDescendants(id, levelLimit)
+}

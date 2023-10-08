@@ -255,6 +255,9 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 	case utils.WITHDRAW_LIMITS:
 		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
 
+	case utils.MERCHANT_WITHDRAW_LIMITS:
+		return isValidMerchantWithdrawalAmount(input, vars["{withdrawable_earnings}"])
+
 	case utils.INVITE_CODE_VALIDATION:
 		return screen.isSocialInvite(input, vars) || screen.isSidoohAccountIdOrPhone(input, vars)
 	}
@@ -265,6 +268,16 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 func isValidWithdrawalAmount(input string, points string) bool {
 	min := 25
 	max := 1000
+
+	val := getIntVal(input)
+	pointsVal := getIntVal(points)
+
+	return val <= max && val >= min && val <= pointsVal
+}
+
+func isValidMerchantWithdrawalAmount(input string, points string) bool {
+	min := 30
+	max := 10000
 
 	val := getIntVal(input)
 	pointsVal := getIntVal(points)

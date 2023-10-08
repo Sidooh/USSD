@@ -69,3 +69,9 @@ type FloatPurchaseRequest struct {
 	Store  string `json:"store"`
 	Amount int    `json:"amount"`
 }
+
+type MerchantWithdrawalRequest struct {
+	Amount      int    `json:"amount,omitempty"`
+	Destination string `json:"destination,omitempty"`
+	Account     string `json:"account,omitempty"`
+}

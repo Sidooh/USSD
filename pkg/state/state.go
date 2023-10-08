@@ -121,6 +121,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			if account.Merchant.BusinessName != "" {
 				s.Vars["{merchant_business_name}"] = account.Merchant.BusinessName
 				s.Vars["{merchant_code}"] = account.Merchant.Code
+				s.Vars["{merchant_float}"] = strconv.Itoa(int(account.Merchant.FloatAccountId))
 			}
 		}
 	}

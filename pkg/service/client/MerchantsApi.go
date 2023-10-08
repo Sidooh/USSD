@@ -45,7 +45,12 @@ type MpesaStoreAccountApiResponse struct {
 
 type MerchantEarningAccountApiResponse struct {
 	ApiResponse
-	Data *[]MerchantEarningAccount `json:"data"`
+	Data []MerchantEarningAccount `json:"data"`
+}
+
+type TransactionApiResponse struct {
+	ApiResponse
+	Data *[]Transaction `json:"data"`
 }
 
 func InitMerchantClient() *MerchantsApiClient {
@@ -195,7 +200,7 @@ func (p *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAcco
 	return res.Data, nil
 }
 
-func (p *MerchantsApiClient) GetEarningAccounts(id string) (*[]MerchantEarningAccount, error) {
+func (p *MerchantsApiClient) GetEarningAccounts(id string) ([]MerchantEarningAccount, error) {
 	res := new(MerchantEarningAccountApiResponse)
 
 	err := p.newRequest(http.MethodGet, "/earning-accounts/merchant/"+id, nil).send(res)
@@ -204,4 +209,23 @@ func (p *MerchantsApiClient) GetEarningAccounts(id string) (*[]MerchantEarningAc
 	}
 
 	return res.Data, nil
+}
+
+func (p *MerchantsApiClient) FetchTransactions(accounts, days string) (*[]Transaction, error) {
+	res := new(TransactionApiResponse)
+
+	err := p.newRequest(http.MethodGet, "/transactions?accounts="+accounts+"&days="+days, nil).send(res)
+	if err != nil {
+		return nil, err
+	}
+
+	return res.Data, nil
+}
+
+func (m *MerchantsApiClient) WithdrawEarnings(id string, request MerchantWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/earnings/withdraw", dataBytes).send(nil)
+	return err
 }
