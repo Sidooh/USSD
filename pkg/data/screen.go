@@ -276,7 +276,7 @@ func isValidWithdrawalAmount(input string, points string) bool {
 }
 
 func isValidMerchantWithdrawalAmount(input string, points string) bool {
-	min := 30
+	min := 10
 	max := 10000
 
 	val := getIntVal(input)

@@ -382,7 +382,7 @@
   },
   "merchant_withdraw_amount": {
     "key": "merchant_withdraw_amount",
-    "title": "Enter amount you wish to withdraw (MIN. KES30)",
+    "title": "Enter amount you wish to withdraw (MIN. KES10)",
     "type": "OPEN",
     "next": "merchant_withdraw_destination",
     "validations": "MERCHANT_WITHDRAW_LIMITS"
