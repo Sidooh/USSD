@@ -61,7 +61,6 @@ func (a *MerchantAccount) processScreen(input string) {
 		}
 
 		// TODO: get actual charges
-		a.vars["{withdrawal_charge}"] = "15"
 	case utils.MERCHANT_WITHDRAW_AMOUNT:
 		a.vars["{amount}"] = input
 
@@ -71,10 +70,12 @@ func (a *MerchantAccount) processScreen(input string) {
 			a.vars["{destination}"] = utils.FLOAT
 			a.vars["{destination_text}"] = utils.VOUCHER
 			a.vars["{account}"] = a.vars["{merchant_float}"]
+			a.vars["{withdrawal_charge}"] = "0"
 
 		default:
 			a.vars["{destination}"] = utils.MPESA
 			a.vars["{destination_text}"] = utils.MPESA
+			a.vars["{withdrawal_charge}"] = "15"
 
 		}
 
@@ -84,7 +85,7 @@ func (a *MerchantAccount) processScreen(input string) {
 
 	case utils.MERCHANT_WITHDRAW_MPESA_OTHER:
 		a.vars["{account}"], _ = utils.FormatPhone(input)
-		a.vars["{destination_text}"] += utils.MPESA + ": " + a.vars["{account}"]
+		a.vars["{destination_text}"] = utils.MPESA + ": " + a.vars["{account}"]
 
 	}
 
