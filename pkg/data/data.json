@@ -539,14 +539,14 @@
   },
   "merchant_cashback": {
     "key": "merchant_cashback",
-    "title": "Total balance: KES {cashback_balance}\nSaved Cashback:KES {saved_cashback}\nWithdrawable: KES {withdrawable_cashback}",
+    "title": "Total balance: KES {cashback_balance}\nSaved Cashback: KES {saved_cashback}\nWithdrawable: KES {withdrawable_cashback}",
     "type": "OPEN",
     "next": "cancel"
   },
 
   "merchant_commission": {
     "key": "merchant_commission",
-    "title": "Total balance: KES {commission_balance}\nSaved Commission:KES {saved_commission}\nWithdrawable:KES {withdrawable_commission}",
+    "title": "Total balance: KES {commission_balance}\nSaved Commission: KES {saved_commission}\nWithdrawable: KES {withdrawable_commission}",
     "type": "OPEN",
     "next": "cancel"
   },
