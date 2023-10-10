@@ -30,7 +30,7 @@ func (f *MerchantFloat) processScreen(input string) {
 	case utils.MERCHANT:
 		f.setStoreOptions(input)
 		f.vars["{pay_buy}"] = "Buy"
-		f.vars["{product}"] = "float for"
+		f.vars["{product}"] = "float purchase for"
 
 	case utils.MERCHANT_FLOAT:
 		f.processStoreSelection(input)
