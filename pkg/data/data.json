@@ -286,36 +286,6 @@
         "value": "1",
         "next": "merchant_float"
       },
-      "2": {
-        "label": "Sell Airtime",
-        "value": "2",
-        "next": "coming_soon"
-      },
-      "3": {
-        "label": "Pay",
-        "value": "3",
-        "next": "coming_soon"
-      },
-      "4": {
-        "label": "Save & Invest",
-        "value": "4",
-        "next": "coming_soon"
-      },
-      "5": {
-        "label": "Insurance",
-        "value": "5",
-        "next": "coming_soon"
-      },
-      "6": {
-        "label": "Business Loan",
-        "value": "6",
-        "next": "coming_soon"
-      },
-      "7": {
-        "label": "Refer",
-        "value": "7",
-        "next": "coming_soon"
-      },
       "8": {
         "label": "My Account",
         "value": "8",
