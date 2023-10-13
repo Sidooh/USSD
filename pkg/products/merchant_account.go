@@ -7,8 +7,10 @@ import (
 	"USSD.sidooh/utils"
 	"encoding/json"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type MerchantAccount struct {
@@ -32,7 +34,7 @@ func (a *MerchantAccount) processScreen(input string) {
 		case "2":
 			a.setInvites()
 		case "3", "4":
-			a.setbalances()
+			a.setEarnings()
 		}
 
 	case utils.MERCHANT_PROFILE_CHANGE_PIN_QUESTION:
@@ -43,19 +45,21 @@ func (a *MerchantAccount) processScreen(input string) {
 	case utils.MERCHANT_PROFILE_NEW_PIN_CONFIRM:
 		a.vars["{confirm_pin}"] = input
 
-		//case utils.MERCHANT_INVITES:
-		//	a.setInvites()
-		//
-		//case utils.MERCHANT_BALANCES:
-		//	a.setbalances()
+	case utils.MERCHANT_CASHBACK:
+		a.vars["{source}"] = "CASHBACK"
+		a.vars["{withdrawable_earnings}"] = a.vars["{cashback_balance}"]
+
+	case utils.MERCHANT_COMMISSION:
+		a.vars["{source}"] = "COMMISSION"
+		a.vars["{withdrawable_earnings}"] = a.vars["{commission_balance}"]
 
 	case utils.MERCHANT_WITHDRAW:
 		switch input {
 		case "1":
-			a.vars["{source}"] = "Cashback"
+			a.vars["{source}"] = "CASHBACK"
 			a.vars["{withdrawable_earnings}"] = a.vars["{cashback_balance}"]
 		case "2":
-			a.vars["{source}"] = "Commission"
+			a.vars["{source}"] = "COMMISSION"
 			a.vars["{withdrawable_earnings}"] = a.vars["{commission_balance}"]
 
 		}
@@ -63,6 +67,7 @@ func (a *MerchantAccount) processScreen(input string) {
 		// TODO: get actual charges
 	case utils.MERCHANT_WITHDRAW_AMOUNT:
 		a.vars["{amount}"] = input
+		a.setWithdrawalCharge(input)
 
 	case utils.MERCHANT_WITHDRAW_DESTINATION:
 		switch input {
@@ -75,7 +80,6 @@ func (a *MerchantAccount) processScreen(input string) {
 		default:
 			a.vars["{destination}"] = utils.MPESA
 			a.vars["{destination_text}"] = utils.MPESA
-			a.vars["{withdrawal_charge}"] = "15"
 
 		}
 
@@ -134,6 +138,7 @@ func (a *MerchantAccount) finalize() {
 		amount, _ := strconv.Atoi(a.vars["{amount}"])
 
 		request := client.MerchantWithdrawalRequest{
+			Source:      a.vars["{source}"],
 			Destination: a.vars["{destination}"],
 			Account:     a.vars["{account}"],
 			Amount:      amount,
@@ -194,7 +199,7 @@ func (a *MerchantAccount) setInvites() {
 
 }
 
-func (a *MerchantAccount) setbalances() {
+func (a *MerchantAccount) setEarnings() {
 	earnings, err := service.FetchEarningAccounts(a.vars["{merchant_id}"])
 	if err != nil {
 		a.vars["{cashback_balance}"] = "0"
@@ -222,5 +227,63 @@ func (a *MerchantAccount) setbalances() {
 	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
 	a.vars["{withdrawable_commission}"] = formatAmount(commission.Amount*.8, "%.2f")
 	a.vars["{saved_commission}"] = formatAmount(commission.Amount*.2, "%.2f")
+
+	a.fetchSavings()
+}
+
+func (a *MerchantAccount) fetchSavings() {
+	a.vars["{cashback_savings}"] = "0"
+	a.vars["{cashback_interest}"] = "0"
+	a.vars["{commission_savings}"] = "0"
+	a.vars["{commission_interest}"] = "0"
+	a.vars["{total_savings}"] = "0"
+
+	a.vars["{withdrawable_savings}"] = "0"
+
+	nextWithdrawal := "July 1st"
+	if time.Now().Month() >= time.July {
+		nextWithdrawal = "January 1st"
+	}
+
+	a.vars["{merchant_withdrawal_text}"] = "Locked for 6 months. Withdraw on " + nextWithdrawal
+
+	accountId := a.vars["{account_id}"]
+
+	savings, err := service.FetchSavingBalances(accountId)
+	if err != nil {
+		return
+	}
+
+	var cashbackAccount client.SavingAccount
+	var commissionAccount client.SavingAccount
+	for _, earning := range savings {
+		if earning.Type == "MERCHANT_CASHBACK" {
+			cashbackAccount = earning
+		}
+		if earning.Type == "MERCHANT_COMMISSION" {
+			commissionAccount = earning
+		}
+	}
+
+	cashS := cashbackAccount.Balance
+	commS := commissionAccount.Balance
+
+	total := cashS + commS
+
+	//interest := cashbackAccount.Interest + commissionAccount.Interest
+
+	wS := 0.0
+	likelyCharge := float64(service.GetWithdrawalCharge(int(cashS)))
+	if cashS > 30 {
+		wS = math.Floor(cashS - likelyCharge)
+	}
+
+	a.vars["{cashback_savings}"] = formatAmount(cashS, "%.2f")
+	a.vars["{cashback_interest}"] = formatAmount(cashbackAccount.Interest, "%.2f")
+	a.vars["{commission_savings}"] = formatAmount(commS, "%.2f")
+	a.vars["{commission_interest}"] = formatAmount(cashbackAccount.Interest, "%.2f")
+	a.vars["{total_savings}"] = formatAmount(total, "%.2f")
+
+	a.vars["{withdrawable_savings}"] = formatAmount(wS, "%.0f")
 
 }

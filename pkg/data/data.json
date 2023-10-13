@@ -503,22 +503,48 @@
       "4": {
         "label": "Savings & Interest Earned",
         "value": "4",
-        "next": "coming_soon"
+        "next": "merchant_savings"
       }
     }
   },
+
+  "merchant_savings": {
+    "key": "merchant_savings",
+    "title": "Your savings and interest earned is below. {merchant_withdrawal_text}\n\nTotal balance: KES {total_savings}\nSaved Cashback - KES {cashback_savings}\nCashback Interest - KES {cashback_interest}\nSaved Commission - KES {commission_savings}\nCommission Interest - KES {commission_interest}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+
   "merchant_cashback": {
     "key": "merchant_cashback",
     "title": "Total balance: KES {cashback_balance}\nSaved Cashback(20%): KES {saved_cashback}\nWithdrawable(80%): KES {withdrawable_cashback}",
-    "type": "OPEN",
-    "next": "cancel"
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
   },
 
   "merchant_commission": {
     "key": "merchant_commission",
     "title": "Total balance: KES {commission_balance}\nSaved Commission(20%): KES {saved_commission}\nWithdrawable(80%): KES {withdrawable_commission}",
-    "type": "OPEN",
-    "next": "cancel"
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
   },
 
   "merchant_float_balance": {

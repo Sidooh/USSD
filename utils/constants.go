@@ -103,8 +103,8 @@ const (
 
 	//MERCHANT_BALANCES = "merchant_balances"
 
-	//MERCHANT_CASHBACK   = "merchant_cashback"
-	//MERCHANT_COMMISSION = "merchant_commission"
+	MERCHANT_CASHBACK   = "merchant_cashback"
+	MERCHANT_COMMISSION = "merchant_commission"
 
 	// PAY
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
