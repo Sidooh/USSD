@@ -256,7 +256,7 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
 
 	case utils.MERCHANT_WITHDRAW_LIMITS:
-		return isValidMerchantWithdrawalAmount(input, vars["{withdrawable_earnings}"])
+		return screen.isValidMerchantWithdrawalAmount(input, vars["{withdrawable_earnings}"])
 
 	case utils.INVITE_CODE_VALIDATION:
 		return screen.isSocialInvite(input, vars) || screen.isSidoohAccountIdOrPhone(input, vars)
@@ -275,14 +275,26 @@ func isValidWithdrawalAmount(input string, points string) bool {
 	return val <= max && val >= min && val <= pointsVal
 }
 
-func isValidMerchantWithdrawalAmount(input string, points string) bool {
+func (screen *Screen) isValidMerchantWithdrawalAmount(input string, points string) bool {
 	min := 10
 	max := 10000
 
 	val := getIntVal(input)
 	pointsVal := getIntVal(points)
 
-	return val <= max && val >= min && val <= pointsVal
+	valid := val <= max && val >= min && val <= pointsVal
+
+	if val > max {
+		screen.Title = "Amount is greater than threshold"
+	}
+	if val < min {
+		screen.Title = "Amount is below the minimum required. Please enter amount above KES" + strconv.Itoa(min) + " required:"
+	}
+	if val > pointsVal {
+		screen.Title = "Amount is more than available balance. Your balance is KES" + points + "."
+	}
+
+	return valid
 }
 
 func isValidSecurityQuestionAnswer(input string) bool {
