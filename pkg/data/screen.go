@@ -288,10 +288,10 @@ func (screen *Screen) isValidMerchantWithdrawalAmount(input string, points strin
 		screen.Title = "Amount is greater than threshold"
 	}
 	if val < min {
-		screen.Title = "Amount is below the minimum required. Please enter amount above KES" + strconv.Itoa(min) + " required:"
+		screen.Title = "Amount is below the minimum required. Please enter amount above KES" + strconv.Itoa(min)
 	}
 	if val > pointsVal {
-		screen.Title = "Amount is more than available balance. Your balance is KES" + points + "."
+		screen.Title = "Amount is more than available balance. Your balance is KES" + points + ".\nEnter amount you wish to withdraw (MIN. KES10)"
 	}
 
 	return valid
