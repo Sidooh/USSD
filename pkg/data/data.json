@@ -363,12 +363,12 @@
     "title": "Select destination",
     "options": {
       "1": {
-        "label": "To mpesa",
+        "label": "To Mpesa",
         "value": "1",
         "next": "merchant_withdraw_mpesa"
       },
       "2": {
-        "label": "To bank",
+        "label": "To Bank",
         "value": "2",
         "next": "coming_soon"
       },
