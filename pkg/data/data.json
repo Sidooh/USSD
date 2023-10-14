@@ -405,7 +405,7 @@
   },
   "merchant_withdraw_confirm": {
     "key": "merchant_withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: KES {amount} {source}\nTo {destination_text}\n\nFee: KES {withdrawal_charge}",
+    "title": "Please confirm details.\n\nWithdraw: KES {amount} {source}\nTo {destination_text}\n\nCost: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",
@@ -1292,7 +1292,7 @@
   },
   "withdraw_confirm": {
     "key": "withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nFee: KES {withdrawal_charge}",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nCost: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",
