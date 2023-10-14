@@ -46,7 +46,7 @@ func (f *MerchantFloat) processScreen(input string) {
 
 		f.vars["{amount}"] = input
 		f.setPaymentMethods(input)
-		f.vars["{payment_charge_text}"] = "\n\nFee: KES 30"
+		f.vars["{payment_charge_text}"] = "\n\nCost: KES 30"
 
 	case utils.PAYMENT_PIN_CONFIRMATION:
 		delete(f.screen.Next.Options, 3)
