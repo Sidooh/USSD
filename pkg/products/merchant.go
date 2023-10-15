@@ -32,10 +32,10 @@ func (m *Merchant) processScreen(input string) {
 		m.vars["{name}"] = m.vars["{first_name}"] + " " + input
 	case utils.MERCHANT_ID_NUMBER:
 		m.vars["{id_number}"] = input
-		if m.checkHasPin() {
-			m.screen.Next.Options[1].NextKey = utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS
-			m.fetchSecurityQuestionOptions()
-		}
+		//if m.checkHasPin() {
+		//	m.screen.Next.Options[1].NextKey = utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS
+		m.fetchSecurityQuestionOptions()
+		//}
 	case utils.MERCHANT_NEW_PIN:
 		m.vars["{pin}"] = input
 	case utils.MERCHANT_NEW_PIN_CONFIRM:
