@@ -66,6 +66,7 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 	s.Vars["{name}"] = ""
 	s.Vars["{voucher_balance}"] = "0"
+	s.Vars["{float_balance}"] = "0"
 	s.Vars["{customer_support_email}"] = "customersupport@sidooh.co.ke"
 
 	// Can we use go defer/concurrency to fetch other details like voucher balances?
@@ -90,6 +91,12 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{phone}"] = account.Phone
 		}
 
+		merchantBetaAccounts := strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
+
+		if !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]) {
+			delete(s.ScreenPath.Options, 0)
+		}
+
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 			s.Vars["{full_name}"] = account.User.Name
@@ -98,8 +105,12 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		if !account.Active {
 			s.ScreenPath.Screen = *screens[utils.INACTIVE_ACCOUNT]
 		} else {
-			if len(account.Balances) != 0 {
-				s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Balances[0].Balance)
+			if len(account.Vouchers) != 0 {
+				s.Vars["{voucher_balance}"] = fmt.Sprintf("%.0f", account.Vouchers[0].Balance)
+			}
+
+			if account.Float != nil {
+				s.Vars["{float_balance}"] = fmt.Sprintf("%.0f", account.Float.Balance)
 			}
 
 			if account.Subscription.Id != 0 {
@@ -108,6 +119,15 @@ func (s *State) Init(sc map[string]*data.Screen) {
 
 			if account.HasPin {
 				s.Vars["{has_pin}"] = "true"
+			}
+		}
+
+		if account.Merchant != nil {
+			s.Vars["{merchant_id}"] = strconv.Itoa(int(account.Merchant.Id))
+			if account.Merchant.BusinessName != "" {
+				s.Vars["{merchant_business_name}"] = account.Merchant.BusinessName
+				s.Vars["{merchant_code}"] = account.Merchant.Code
+				s.Vars["{merchant_float}"] = strconv.Itoa(int(account.Merchant.FloatAccountId))
 			}
 		}
 	}
@@ -145,6 +165,15 @@ func (s *State) setProduct(option int) {
 	case products.ACCOUNT:
 		s.product = &products.Account{}
 		s.ProductKey = products.ACCOUNT
+	case products.MERCHANT:
+		s.product = &products.Merchant{}
+		s.ProductKey = products.MERCHANT
+	case products.MERCHANT_FLOAT:
+		s.product = &products.MerchantFloat{}
+		s.ProductKey = products.MERCHANT_FLOAT
+	case products.MERCHANT_ACCOUNT:
+		s.product = &products.MerchantAccount{}
+		s.ProductKey = products.MERCHANT_ACCOUNT
 	default:
 		s.product = &products.Product{}
 		s.ProductKey = products.DEFAULT
@@ -203,7 +232,13 @@ func (s *State) ProcessOpenInput(input string) {
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
 
-	s.MoveNext("")
+	//s.MoveNext("")
+	// TODO: Confirm this works across board
+	if s.ScreenPath.NextKey != s.ScreenPath.Next.Key {
+		s.MoveNext(s.ScreenPath.NextKey)
+	} else {
+		s.MoveNext("")
+	}
 }
 
 func (s *State) ProcessOptionInput(option *data.Option) {
@@ -221,6 +256,9 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 
 	if s.ScreenPath.Type == utils.GENESIS {
 		s.setProduct(option.Value)
+		if option.Value == 0 {
+			s.setProduct(products.MERCHANT)
+		}
 
 		// Unauthorized screens for first time users
 		keys := []int{5, 6, 7}
@@ -229,9 +267,20 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 			for _, k := range keys {
 				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
 			}
+			s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
 		} else {
 			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
 				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
+			}
+		}
+
+		_, ok = s.Vars["{merchant_id}"]
+		if !ok {
+			s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
+		} else {
+			_, ok = s.Vars["{merchant_business_name}"]
+			if !ok {
+				s.ScreenPath.Options[0].NextKey = utils.MERCHANT_KYB
 			}
 		}
 	}
@@ -240,7 +289,11 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 		s.setProduct(products.PAY*10 + option.Value)
 	}
 
-	if s.ScreenPath.Key == utils.PIN_NOT_SET && option.Value == 1 {
+	if s.ScreenPath.Key == utils.MERCHANT {
+		s.setProduct(products.MERCHANT*10 + option.Value)
+	}
+
+	if (s.ScreenPath.Key == utils.PIN_NOT_SET || s.ScreenPath.Key == utils.MERCHANT_PIN_NOT_SET) && option.Value == 1 {
 		s.setProduct(products.ACCOUNT)
 	}
 

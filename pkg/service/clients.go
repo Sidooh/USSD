@@ -10,10 +10,13 @@ var savingsClient *client.SavingsApiClient
 var productsClient *client.ProductsApiClient
 var notifyClient *client.NotifyApiClient
 
+var merchantsClient *client.MerchantsApiClient
+
 func Init() {
 	accountsClient = client.InitAccountClient()
 	productsClient = client.InitProductClient()
 	paymentsClient = client.InitPaymentClient()
 	savingsClient = client.InitSavingsClient()
 	notifyClient = client.InitNotifyClient()
+	merchantsClient = client.InitMerchantClient()
 }

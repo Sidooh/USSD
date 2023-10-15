@@ -50,6 +50,11 @@ type InviteApiResponse struct {
 	Data *Invite `json:"data"`
 }
 
+type DescendantsApiResponse struct {
+	ApiResponse
+	Data []Descendant `json:"data"`
+}
+
 type SecurityQuestionsApiResponse struct {
 	ApiResponse
 	Data []SecurityQuestion `json:"data"`
@@ -62,7 +67,7 @@ type UserSecurityQuestionsApiResponse struct {
 
 type CheckSecurityQuestionAnswersApiResponse struct {
 	ApiResponse
-	Data map[string]bool `json:"data"`
+	Data bool `json:"data"`
 }
 
 type SetPinApiResponse struct {
@@ -136,7 +141,7 @@ func (a *AccountsApiClient) CheckInvite(phone string) (*Invite, error) {
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckPin(id string, pin string) (bool, error) {
+func (a *AccountsApiClient) CheckPin(id, pin string) (bool, error) {
 	var res = new(CheckPinApiResponse)
 
 	values := map[string]string{"pin": pin}
@@ -249,7 +254,7 @@ func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuest
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/answers", dataBytes).send(res)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-question-answers", dataBytes).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -260,7 +265,7 @@ func (a *AccountsApiClient) SetSecurityQuestion(id string, request SecurityQuest
 func (a *AccountsApiClient) FetchUserSecurityQuestions(id string) ([]UserSecurityQuestion, error) {
 	var res = new(UserSecurityQuestionsApiResponse)
 
-	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-questions", nil).send(res)
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/security-question-answers", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -268,13 +273,24 @@ func (a *AccountsApiClient) FetchUserSecurityQuestions(id string) ([]UserSecurit
 	return res.Data, nil
 }
 
-func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest) (map[string]bool, error) {
+func (a *AccountsApiClient) CheckSecurityQuestionAnswers(id string, request SecurityQuestionRequest) (bool, error) {
 	var res = new(CheckSecurityQuestionAnswersApiResponse)
 
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-questions/check", dataBytes).send(res)
+	err = a.newRequest(http.MethodPost, "/accounts/"+id+"/security-question-answers/check", dataBytes).send(res)
+	if err != nil {
+		return false, err
+	}
+
+	return res.Data, nil
+}
+
+func (a *AccountsApiClient) FetchDescendants(id, levelLimit string) ([]Descendant, error) {
+	var res = new(DescendantsApiResponse)
+
+	err := a.newRequest(http.MethodGet, "/accounts/"+id+"/descendants?level_limit="+levelLimit, nil).send(res)
 	if err != nil {
 		return nil, err
 	}

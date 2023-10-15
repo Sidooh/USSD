@@ -24,14 +24,18 @@ const (
 	COMING_SOON                  = "coming_soon"
 	CANCEL                       = "cancel"
 	PIN_NOT_SET                  = "pin_not_set"
+	MERCHANT_PIN_NOT_SET         = "merchant_pin_not_set"
 	SECURITY_QUESTIONS_NOT_SET   = "security_questions_not_set"
 	VOUCHER_BALANCE_INSUFFICIENT = "voucher_balance_insufficient"
+	FLOAT_BALANCE_INSUFFICIENT   = "float_balance_insufficient"
 
 	NOT_TRANSACTED = "not_transacted"
 
 	// global
 	PAYMENT_METHOD             = "payment_method"
 	PAYMENT_OTHER_NUMBER_MPESA = "payment_other_number_mpesa"
+	PAYMENT_PIN_CONFIRMATION   = "payment_pin_confirmation"
+	PAYMENT_CONFIRMATION       = "payment_confirmation"
 
 	PIN_BLOCKED = "pin_blocked"
 
@@ -57,7 +61,52 @@ const (
 	VOUCHER_OTHER_ACCOUNT = "voucher_other_account"
 
 	// MERCHANT
-	MERCHANT                  = "merchant"
+	MERCHANT                            = "merchant"
+	MERCHANT_CONSENT                    = "merchant_consent"
+	MERCHANT_FIRST_NAME                 = "merchant_first_name"
+	MERCHANT_LAST_NAME                  = "merchant_last_name"
+	MERCHANT_ID_NUMBER                  = "merchant_id_number"
+	MERCHANT_NEW_PIN                    = "merchant_new_pin"
+	MERCHANT_NEW_PIN_CONFIRM            = "merchant_new_pin_confirm"
+	MERCHANT_SECURITY_QUESTIONS_OPTIONS = "merchant_security_questions_options"
+	MERCHANT_SECURITY_QUESTIONS_ANSWER  = "merchant_security_questions_answer"
+	MERCHANT_TERMS                      = "merchant_terms"
+
+	MERCHANT_KYB              = "merchant_kyb"
+	MERCHANT_LOCATION         = "merchant_location"
+	MERCHANT_COUNTY           = "merchant_county"
+	MERCHANT_SUB_COUNTY       = "merchant_sub_county"
+	MERCHANT_WARD             = "merchant_ward"
+	MERCHANT_LANDMARK         = "merchant_landmark"
+	MERCHANT_LANDMARK_OTHER   = "merchant_landmark_other"
+	MERCHANT_KYB_CONFIRMATION = "merchant_kyb_confirmation"
+	MERCHANT_KYB_CONSENT      = "merchant_kyb_consent"
+
+	MERCHANT_FLOAT        = "merchant_float"
+	MERCHANT_FLOAT_AGENT  = "merchant_float_agent"
+	MERCHANT_FLOAT_STORE  = "merchant_float_store"
+	MERCHANT_FLOAT_AMOUNT = "merchant_float_amount"
+
+	MERCHANT_ACCOUNT                     = "merchant_account"
+	MERCHANT_PROFILE_CHANGE_PIN_QUESTION = "merchant_profile_change_pin_question"
+	MERCHANT_PROFILE_NEW_PIN             = "merchant_profile_new_pin"
+	MERCHANT_PROFILE_NEW_PIN_CONFIRM     = "merchant_profile_new_pin_confirm"
+
+	MERCHANT_WITHDRAW             = "merchant_withdraw"
+	MERCHANT_WITHDRAW_DESTINATION = "merchant_withdraw_destination"
+	MERCHANT_WITHDRAW_AMOUNT      = "merchant_withdraw_amount"
+	MERCHANT_WITHDRAW_MPESA       = "merchant_withdraw_mpesa"
+	MERCHANT_WITHDRAW_MPESA_OTHER = "merchant_withdraw_mpesa_other"
+	MERCHANT_WITHDRAW_CONFIRM_PIN = "merchant_withdraw_confirm_pin"
+
+	//MERCHANT_INVITES = "merchant_invites"
+
+	//MERCHANT_BALANCES = "merchant_balances"
+
+	MERCHANT_CASHBACK   = "merchant_cashback"
+	MERCHANT_COMMISSION = "merchant_commission"
+
+	// PAY
 	MERCHANT_PAY_BILL         = "merchant_pay_bill"
 	MERCHANT_PAY_BILL_ACCOUNT = "merchant_pay_bill_account"
 	MERCHANT_BUY_GOODS        = "merchant_buy_goods"
@@ -108,26 +157,29 @@ const (
 
 // validation keys
 const (
-	INT              = "INT"
-	MIN              = "MIN"
-	MAX              = "MAX"
-	ALPHANUM         = "ALPHANUM"
-	MAX_CHARS        = "MAX_CHARS"
-	PHONE            = "PHONE"
-	DISALLOW_CURRENT = "DISALLOW_CURRENT"
-	PIN              = "PIN"
-	PIN_LENGTH       = "PIN_LENGTH"
-	PIN_CONFIRMED    = "PIN_CONFIRMED"
-	UTILITY_AMOUNTS  = "UTILITY_AMOUNTS"
-	EXISTING_ACCOUNT = "EXISTING_ACCOUNT"
+	INT               = "INT"
+	MIN               = "MIN"
+	MAX               = "MAX"
+	ALPHANUM          = "ALPHANUM"
+	MAX_CHARS         = "MAX_CHARS"
+	LENGTH            = "LENGTH"
+	PHONE             = "PHONE"
+	DISALLOW_CURRENT  = "DISALLOW_CURRENT"
+	PIN               = "PIN"
+	PIN_LENGTH        = "PIN_LENGTH"
+	PIN_CONFIRMED     = "PIN_CONFIRMED"
+	UTILITY_AMOUNTS   = "UTILITY_AMOUNTS"
+	EXISTING_ACCOUNT  = "EXISTING_ACCOUNT"
+	EXISTING_MERCHANT = "EXISTING_MERCHANT"
 
 	NOT_INVITED_OR_EXISTING_ACCOUNT = "NOT_INVITED_OR_EXISTING_ACCOUNT"
 
 	NAME = "NAME"
 
-	SECURITY_QUESTION      = "SECURITY_QUESTION"
-	WITHDRAW_LIMITS        = "WITHDRAW_LIMITS"
-	INVITE_CODE_VALIDATION = "INVITE_CODE_VALIDATION"
+	SECURITY_QUESTION        = "SECURITY_QUESTION"
+	WITHDRAW_LIMITS          = "WITHDRAW_LIMITS"
+	MERCHANT_WITHDRAW_LIMITS = "MERCHANT_WITHDRAW_LIMITS"
+	INVITE_CODE_VALIDATION   = "INVITE_CODE_VALIDATION"
 )
 
 // initiator types
@@ -139,6 +191,7 @@ const (
 const (
 	MPESA   = "MPESA"
 	VOUCHER = "VOUCHER"
+	FLOAT   = "FLOAT"
 	BANK    = "BANK"
 )
 

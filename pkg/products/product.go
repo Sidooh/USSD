@@ -32,15 +32,19 @@ func (p *Product) Process(input string) {
 	logger.UssdLog.Println(" - PRODUCT: Process")
 
 	switch p.screen.Key {
+	case utils.MAIN_MENU:
+		p.vars["{pay_buy}"] = "Pay"
 	case utils.PAYMENT_METHOD:
 		p.setPaymentMethodText(input)
-		break
 	case utils.PAYMENT_OTHER_NUMBER_MPESA:
 		p.vars["{mpesa_number}"], _ = utils.FormatPhone(input)
 		p.vars["{payment_method_text}"] = utils.MPESA + " " + p.vars["{mpesa_number}"]
-		break
 	}
 }
+
+// implement in child classes
+//func (p *Product) processScreen(input string) {
+//}
 
 func (p *Product) finalize() {
 	logger.UssdLog.Println(" - PRODUCT: finalize")
@@ -61,6 +65,24 @@ func (p *Product) setPaymentMethods(input string) {
 		delete(p.screen.Next.Options, 2)
 	}
 
+	if p.productRep == "float" {
+		delete(p.screen.Next.Options, 1)
+		delete(p.screen.Next.Options, 2)
+		p.screen.Next.Options[3] = &data.Option{
+			Label:   "VOUCHER (KES{float_balance})",
+			Value:   3,
+			NextKey: utils.PAYMENT_PIN_CONFIRMATION,
+		}
+
+		floatBalance, _ := strconv.ParseFloat(p.vars["{float_balance}"], 32)
+
+		// Move user to top up flow if balance is not enough
+		if int(floatBalance) < amount {
+			//TODO: Move user to top up flow
+			p.screen.Next.Options[3].NextKey = utils.FLOAT_BALANCE_INSUFFICIENT
+		}
+	}
+
 	hasPin := p.checkHasPin()
 	if !hasPin {
 		if p.productRep == "subscription" && p.screen.Key == utils.PAYMENT_METHOD {
@@ -72,6 +94,9 @@ func (p *Product) setPaymentMethods(input string) {
 
 		if _, ok := p.screen.Next.Options[2]; ok {
 			p.screen.Next.Options[2].NextKey = utils.PIN_NOT_SET
+		}
+		if _, ok := p.screen.Next.Options[3]; ok {
+			p.screen.Next.Options[3].NextKey = utils.MERCHANT_PIN_NOT_SET
 		}
 		return
 	}
@@ -87,6 +112,11 @@ func (p *Product) setPaymentMethodText(input string) {
 	case "2":
 		p.vars["{payment_method}"] = utils.VOUCHER
 		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{voucher_balance}"] + ")"
+		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be deducted automatically", p.vars["{payment_method_text}"])
+
+	case "3":
+		p.vars["{payment_method}"] = utils.FLOAT
+		p.vars["{payment_method_text}"] = utils.VOUCHER + "(KES" + p.vars["{float_balance}"] + ")"
 		p.vars["{payment_method_instruction}"] = fmt.Sprintf("Your %s will be deducted automatically", p.vars["{payment_method_text}"])
 
 		//next := p.screen.Next
@@ -116,4 +146,12 @@ func (p *Product) checkHasPin() bool {
 	}
 
 	return hasPin
+}
+
+func (p *Product) setWithdrawalCharge(input string) {
+	amount, _ := strconv.Atoi(input)
+
+	charge := service.GetWithdrawalCharge(amount)
+
+	p.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 }

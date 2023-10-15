@@ -16,6 +16,11 @@
     "title": "Hi{name}, Welcome to Sidooh. What would you like to do?",
     "type": "GENESIS",
     "options": {
+      "0": {
+        "label": "Merchant Account",
+        "value": "0",
+        "next": "merchant"
+      },
       "1": {
         "label": "Know About Sidooh",
         "value": "1",
@@ -53,6 +58,555 @@
         "next": "account"
       }
     }
+  },
+
+  "merchant_kyb": {
+    "key": "merchant_kyb",
+    "title": "Register Business Details:\nEnter Business Name",
+    "type": "OPEN",
+    "next": "merchant_county"
+  },
+  "merchant_location": {
+    "key": "merchant_location",
+    "title": "Business Location: County\nSelect option with the first letter of the county where your business is located.",
+    "options": {
+      "1": {
+        "label": "B",
+        "value": "1",
+        "next": "merchant_county"
+      },
+      "2": {
+        "label": "E-I",
+        "value": "2",
+        "next": "merchant_county"
+      },
+      "3": {
+        "label": "K",
+        "value": "3",
+        "next": "merchant_county"
+      },
+      "4": {
+        "label": "L-M",
+        "value": "4",
+        "next": "merchant_county"
+      },
+      "5": {
+        "label": "N",
+        "value": "5",
+        "next": "merchant_county"
+      },
+      "6": {
+        "label": "S-U",
+        "value": "6",
+        "next": "merchant_county"
+      },
+      "7": {
+        "label": "V-Z",
+        "value": "7",
+        "next": "merchant_county"
+      }
+    }
+  },
+  "merchant_county": {
+    "key": "merchant_county",
+    "title": "Select County",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_sub_county": {
+    "key": "merchant_sub_county",
+    "title": "Select Sub County/Constituency",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_ward": {
+    "key": "merchant_ward",
+    "title": "Select Ward",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_landmark": {
+    "key": "merchant_landmark",
+    "title": "Select Nearest Landmark",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_landmark_other": {
+    "key": "merchant_landmark_other",
+    "title": "Enter closest landmark",
+    "type": "OPEN",
+    "next": "merchant_kyb_confirmation",
+    "validations": "NAME"
+  },
+  "merchant_kyb_confirmation": {
+    "key": "merchant_kyb_confirmation",
+    "title": "Business Name: {business_name}\nCounty: {county}\nSub County: {sub_county}\nWard: {ward}\nNearest Landmark: {landmark}",
+    "options": {
+      "1": {
+        "label": "Confirm & Continue",
+        "value": "1",
+        "next": "merchant_kyb_consent"
+      },
+      "2": {
+        "label": "Edit",
+        "value": "2",
+        "next": "merchant_kyb",
+        "acyclic": true
+      }
+    }
+  },
+  "merchant_kyb_consent": {
+    "key": "merchant_kyb_consent",
+    "title": "Consent and Agreement",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_kyc_end"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      }
+    }
+  },
+
+
+  "merchant_consent": {
+    "key": "merchant_consent",
+    "title": "Sign Up Now?",
+    "options": {
+      "1": {
+        "label": "Yes",
+        "value": "1",
+        "next": "merchant_first_name"
+      },
+      "2": {
+        "label": "Not Now",
+        "value": "2",
+        "next": "main_menu"
+      }
+    }
+  },
+  "merchant_first_name": {
+    "key": "merchant_first_name",
+    "title": "Enter First Name exactly as appears on National ID",
+    "type": "OPEN",
+    "next": "merchant_last_name",
+    "validations": "NAME"
+  },
+  "merchant_last_name": {
+    "key": "merchant_last_name",
+    "title": "Enter Last Name",
+    "type": "OPEN",
+    "next": "merchant_id_number",
+    "validations": "NAME"
+  },
+  "merchant_id_number": {
+    "key": "merchant_id_number",
+    "title": "Enter National ID Number",
+    "type": "OPEN",
+    "next": "merchant_kyc_confirmation",
+    "validations": "INT,LENGTH:8,EXISTING_MERCHANT"
+  },
+  "merchant_kyc_confirmation": {
+    "key": "merchant_kyc_confirmation",
+    "title": "Name: {name}\nID No: {id_number}",
+    "options": {
+      "1": {
+        "label": "Confirm & Continue",
+        "value": "1",
+        "next": "merchant_new_pin"
+      },
+      "2": {
+        "label": "Edit",
+        "value": "2",
+        "next": "merchant_first_name",
+        "acyclic": true
+      }
+    }
+  },
+  "merchant_new_pin": {
+    "key": "merchant_new_pin",
+    "title": "Create Sidooh PIN. Enter 4 digits of your choice\nPIN YAKO. SIRI YAKO",
+    "type": "OPEN",
+    "next": "merchant_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "merchant_new_pin_confirm": {
+    "key": "merchant_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN\nPIN YAKO. SIRI YAKO",
+    "type": "OPEN",
+    "next": "merchant_security_questions_options",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "merchant_security_questions_options": {
+    "key": "merchant_security_questions_options",
+    "title": "Select security question",
+    "type": "CLOSED",
+    "options": {}
+  },
+  "merchant_security_questions_answer": {
+    "key": "merchant_security_questions_answer",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "merchant_security_questions_options",
+    "validations": "SECURITY_QUESTION"
+  },
+  "merchant_terms": {
+    "key": "merchant_terms",
+    "title": "Review & Accept T&Cs of service available at www.sidooh.co.ke/terms",
+    "options": {
+      "1": {
+        "label": "Accept & Sign Up",
+        "value": "1",
+        "next": "merchant_kyc_end"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      }
+    }
+  },
+  "merchant_kyc_end": {
+    "key": "merchant_kyc_end",
+    "title": "Thank you. Your details have been received and will be reviewed.",
+    "type": "END"
+  },
+
+
+  "merchant": {
+    "key": "merchant",
+    "title": "Select Option",
+    "options": {
+      "1": {
+        "label": "Buy Float",
+        "value": "1",
+        "next": "merchant_float"
+      },
+      "8": {
+        "label": "My Account",
+        "value": "8",
+        "next": "merchant_account"
+      }
+    }
+  },
+
+  "merchant_account": {
+    "key": "merchant_account",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Profile",
+        "value": "1",
+        "next": "merchant_account_profile_pin"
+      },
+      "2": {
+        "label": "Merchants Referred",
+        "value": "2",
+        "next": "merchants_invited"
+      },
+      "3": {
+        "label": "Balances",
+        "value": "3",
+        "next": "merchant_balances_pin"
+      },
+      "4": {
+        "label": "Withdraw",
+        "value": "4",
+        "next": "merchant_withdraw_pin"
+      },
+      "5": {
+        "label": "Change Pin",
+        "value": "5",
+        "next": "merchant_profile_change_pin_question"
+      }
+    }
+  },
+
+  "merchant_withdraw_pin": {
+    "key": "merchant_withdraw_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_withdraw",
+    "validations": "PIN"
+  },
+
+  "merchant_withdraw": {
+    "key": "merchant_withdraw",
+    "title": "Select source",
+    "options": {
+      "1": {
+        "label": "Cashback ({cashback_balance})",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      },
+      "2": {
+        "label": "Commission ({commission_balance})",
+        "value": "2",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+  "merchant_withdraw_amount": {
+    "key": "merchant_withdraw_amount",
+    "title": "Enter amount you wish to withdraw (MIN. KES10)",
+    "type": "OPEN",
+    "next": "merchant_withdraw_destination",
+    "validations": "MERCHANT_WITHDRAW_LIMITS"
+  },
+
+  "merchant_withdraw_destination": {
+    "key": "merchant_withdraw_destination",
+    "title": "Select destination",
+    "options": {
+      "1": {
+        "label": "To Mpesa",
+        "value": "1",
+        "next": "merchant_withdraw_mpesa"
+      },
+      "2": {
+        "label": "To Bank",
+        "value": "2",
+        "next": "coming_soon"
+      },
+      "3": {
+        "label": "To Voucher",
+        "value": "3",
+        "next": "merchant_withdraw_confirm"
+      }
+    }
+  },
+
+  "merchant_withdraw_mpesa": {
+    "key": "merchant_withdraw_mpesa",
+    "title": "Select the account to send the funds to:",
+    "options": {
+      "1": {
+        "label": "Self {phone}",
+        "value": "1",
+        "next": "merchant_withdraw_confirm"
+      },
+      "2": {
+        "label": "Other MPESA number",
+        "value": "2",
+        "next": "merchant_withdraw_mpesa_other"
+      }
+    }
+  },
+  "merchant_withdraw_mpesa_other": {
+    "key": "merchant_withdraw_mpesa_other",
+    "title": "Enter MPESA number",
+    "type": "OPEN",
+    "next": "merchant_withdraw_confirm",
+    "validations": "SAFARICOM"
+  },
+  "merchant_withdraw_confirm": {
+    "key": "merchant_withdraw_confirm",
+    "title": "Please confirm details.\n\nWithdraw: KES {amount} {source}\nTo {destination_text}\n\nCost: KES {withdrawal_charge}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_withdraw_confirm_pin"
+      },
+      "2": {
+        "label": "Decline",
+        "value": "2",
+        "next": "cancel"
+      },
+      "3": {
+        "label": "Change Details",
+        "value": "3",
+        "next": "merchant_withdraw",
+        "acyclic": true
+      }
+    }
+  },
+  "merchant_withdraw_confirm_pin": {
+    "key": "merchant_withdraw_confirm_pin",
+    "title": "Please enter your Sidooh PIN again to confirm this transaction.",
+    "type": "OPEN",
+    "next": "merchant_withdraw_end",
+    "validations": "PIN"
+  },
+  "merchant_withdraw_end": {
+    "key": "merchant_withdraw_end",
+    "title": "Your request has been received and is being processed. You will receive a confirmation SMS shortly. Thank you.",
+    "type": "END"
+  },
+
+  "merchants_invited": {
+    "key": "merchants_invited",
+    "title": "a. SubAgents - {subagents}\nb. Active SubAgents - {subagents_active}\nc. SubAgent Referrals - {subagent_referrals}\nd. Active SubAgent Referrals - {subagent_referrals_active}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+
+  "merchant_profile_change_pin_question": {
+    "key": "merchant_profile_change_pin_question",
+    "title": "{security_question}",
+    "type": "OPEN",
+    "next": "merchant_profile_change_pin_question",
+    "validations": "SECURITY_QUESTION",
+    "acyclic": true
+  },
+  "merchant_profile_new_pin": {
+    "key": "merchant_profile_new_pin",
+    "title": "Enter new four-digit Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_profile_new_pin_confirm",
+    "validations": "INT,PIN_LENGTH"
+  },
+  "merchant_profile_new_pin_confirm": {
+    "key": "merchant_profile_new_pin_confirm",
+    "title": "Please confirm your new Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_profile_pin_end",
+    "validations": "INT,PIN_LENGTH,PIN_CONFIRMED"
+  },
+  "merchant_profile_pin_end": {
+    "key": "merchant_profile_pin_end",
+    "title": "Your new Sidooh PIN is {confirm_pin}. Please keep your PIN number safe. Do not share it with anyone.",
+    "type": "END"
+  },
+
+  "merchant_balances_pin": {
+    "key": "merchant_balances_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_balances",
+    "validations": "PIN"
+  },
+  "merchant_balances": {
+    "key": "merchant_balances",
+    "title": "Select option",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Voucher",
+        "value": "1",
+        "next": "merchant_float_balance"
+      },
+      "2": {
+        "label": "Cashback",
+        "value": "2",
+        "next": "merchant_cashback"
+      },
+      "3": {
+        "label": "Commission",
+        "value": "3",
+        "next": "merchant_commission"
+      },
+      "4": {
+        "label": "Savings & Interest Earned",
+        "value": "4",
+        "next": "merchant_savings"
+      }
+    }
+  },
+
+  "merchant_savings": {
+    "key": "merchant_savings",
+    "title": "Your savings and interest earned is below. {merchant_withdrawal_text}\n\nTotal balance: KES {total_savings}\nSaved Cashback - KES {cashback_savings}\nCashback Interest - KES {cashback_interest}\nSaved Commission - KES {commission_savings}\nCommission Interest - KES {commission_interest}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+
+  "merchant_cashback": {
+    "key": "merchant_cashback",
+    "title": "Total balance: KES {cashback_balance}\nSaved Cashback(20%): KES {cashback_savings}\nWithdrawable(80%): KES {cashback_earnings}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+
+  "merchant_commission": {
+    "key": "merchant_commission",
+    "title": "Total balance: KES {commission_balance}\nSaved Commission(20%): KES {commission_savings}\nWithdrawable(80%): KES {commission_earnings}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Withdraw",
+        "value": "1",
+        "next": "merchant_withdraw_amount"
+      }
+    }
+  },
+
+  "merchant_float_balance": {
+    "key": "merchant_float_balance",
+    "title": "Your balance is:\nKES {float_balance}",
+    "type": "OPEN",
+    "next": "cancel"
+  },
+
+  "merchant_account_profile_pin": {
+    "key": "merchant_account_profile_pin",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_account_profile",
+    "validations": "PIN"
+  },
+  "merchant_account_profile": {
+    "key": "merchant_account_profile",
+    "title": "Store name: {merchant_business_name}\n\nStore number: {merchant_code}\n\nInvite Code: {account_id}",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Update Profile",
+        "value": "1",
+        "next": "coming_soon"
+      }
+    }
+  },
+
+  "merchant_float": {
+    "key": "merchant_float",
+    "title": "Select or Enter Other Store Number",
+    "options": {
+      "9": {
+        "label": "Other Store No.",
+        "type": "int",
+        "value": "9",
+        "next": "merchant_float_agent"
+      }
+    }
+  },
+
+  "merchant_float_agent": {
+    "key": "merchant_float_agent",
+    "title": "Agent Number",
+    "type": "OPEN",
+    "next": "merchant_float_store",
+    "validations": "INT"
+  },
+  "merchant_float_store": {
+    "key": "merchant_float_store",
+    "title": "Store Number",
+    "type": "OPEN",
+    "next": "merchant_float_amount",
+    "validations": "INT"
+  },
+  "merchant_float_amount": {
+    "key": "merchant_float_amount",
+    "title": "Enter amount",
+    "type": "OPEN",
+    "next": "payment_method",
+    "validations": "INT,MIN:10,MAX:50000"
   },
 
   "about": {
@@ -738,7 +1292,7 @@
   },
   "withdraw_confirm": {
     "key": "withdraw_confirm",
-    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nFee: KES {withdrawal_charge}",
+    "title": "Please confirm details.\n\nWithdraw: {points} Sidooh Points\nFor: KES {amount}\nTo {account_type}: {account_number}\n\nCost: KES {withdrawal_charge}",
     "options": {
       "1": {
         "label": "Accept",
@@ -772,7 +1326,7 @@
   },
   "payment_method": {
     "key": "payment_method",
-    "title": "Pay KES{amount} {product} {number} using:",
+    "title": "{pay_buy} KES{amount} {product} {number} using:",
     "options": {
       "1": {
         "label": "MPESA",
@@ -859,6 +1413,18 @@
       }
     }
   },
+  "merchant_pin_not_set": {
+    "key": "merchant_pin_not_set",
+    "title": "Please set a PIN first in order to proceed.",
+    "type": "CLOSED",
+    "options": {
+      "1": {
+        "label": "Proceed to set pin",
+        "value": "1",
+        "next": "profile_new_pin"
+      }
+    }
+  },
   "voucher_balance_insufficient": {
     "key": "voucher_balance_insufficient",
     "title": "Voucher balance is insufficient.\nAvailable: KES{voucher_balance}",
@@ -870,6 +1436,11 @@
         "next": "voucher_amount"
       }
     }
+  },
+  "float_balance_insufficient": {
+    "key": "float_balance_insufficient",
+    "title": "Balance is insufficient.\nAvailable: KES{float_balance}",
+    "type": "OPEN"
   },
   "security_questions_not_set": {
     "key": "security_questions_not_set",

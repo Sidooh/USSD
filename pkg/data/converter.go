@@ -13,8 +13,21 @@ var loadScreenKeys = []string{
 	// The below screens are hanging screens, i.e. have no parent
 	utils.SUBSCRIPTION_RENEW,
 	utils.PROFILE_SECURITY_QUESTIONS_ANSWER,
+	utils.MERCHANT_SECURITY_QUESTIONS_ANSWER,
 	utils.PIN_NOT_SET,
+	utils.MERCHANT_PIN_NOT_SET,
 	utils.VOUCHER_BALANCE_INSUFFICIENT,
+	utils.FLOAT_BALANCE_INSUFFICIENT,
+	utils.MERCHANT_TERMS,
+	utils.MERCHANT_PROFILE_NEW_PIN,
+	utils.MERCHANT_SUB_COUNTY,
+	utils.MERCHANT_WARD,
+	utils.MERCHANT_LANDMARK,
+	utils.MERCHANT_KYB_CONFIRMATION,
+
+	//TODO: Remove once county screen is decided
+	utils.MERCHANT_LOCATION,
+	utils.MERCHANT_LANDMARK_OTHER,
 
 	//TODO: Remove once save is added
 	utils.SAVE,
@@ -23,6 +36,7 @@ var loadScreenKeys = []string{
 	//TODO: Remove once merchant is added
 	utils.MERCHANT_PAY_BILL,
 	utils.MERCHANT_BUY_GOODS,
+	utils.MERCHANT_CONSENT,
 }
 
 func LoadData() (map[string]*Screen, error) {
