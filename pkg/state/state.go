@@ -91,6 +91,12 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{phone}"] = account.Phone
 		}
 
+		merchantBetaAccounts := strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
+
+		if !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]) {
+			delete(s.ScreenPath.Options, 0)
+		}
+
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
 			s.Vars["{full_name}"] = account.User.Name
