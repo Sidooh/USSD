@@ -220,18 +220,18 @@ func (a *MerchantAccount) setEarnings() {
 		}
 	}
 
-	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount, "%.0f")
-	a.vars["{withdrawable_cashback}"] = formatAmount(cashback.Amount*.8, "%.2f")
-	a.vars["{saved_cashback}"] = formatAmount(cashback.Amount*.2, "%.2f")
+	a.vars["{cashback_earnings}"] = formatAmount(cashback.Amount, "%.2f")
 
-	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
-	a.vars["{withdrawable_commission}"] = formatAmount(commission.Amount*.8, "%.2f")
-	a.vars["{saved_commission}"] = formatAmount(commission.Amount*.2, "%.2f")
+	a.vars["{commission_earnings}"] = formatAmount(commission.Amount, "%.2f")
 
-	a.fetchSavings()
+	balances := a.fetchSavings()
+
+	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount+balances[1], "%.0f")
+	a.vars["{commission_balance}"] = formatAmount(commission.Amount+balances[2], "%.0f")
+
 }
 
-func (a *MerchantAccount) fetchSavings() {
+func (a *MerchantAccount) fetchSavings() map[int]float64 {
 	a.vars["{cashback_savings}"] = "0"
 	a.vars["{cashback_interest}"] = "0"
 	a.vars["{commission_savings}"] = "0"
@@ -251,7 +251,7 @@ func (a *MerchantAccount) fetchSavings() {
 
 	savings, err := service.FetchSavingBalances(accountId)
 	if err != nil {
-		return
+		return nil
 	}
 
 	var cashbackAccount client.SavingAccount
@@ -270,8 +270,6 @@ func (a *MerchantAccount) fetchSavings() {
 
 	total := cashS + commS
 
-	//interest := cashbackAccount.Interest + commissionAccount.Interest
-
 	wS := 0.0
 	likelyCharge := float64(service.GetWithdrawalCharge(int(cashS)))
 	if cashS > 30 {
@@ -286,4 +284,5 @@ func (a *MerchantAccount) fetchSavings() {
 
 	a.vars["{withdrawable_savings}"] = formatAmount(wS, "%.0f")
 
+	return map[int]float64{1: cashS, 2: commS}
 }
