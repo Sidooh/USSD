@@ -510,7 +510,7 @@
 
   "merchant_savings": {
     "key": "merchant_savings",
-    "title": "Your savings and interest earned is below. {merchant_withdrawal_text}\n\nTotal balance: KES {total_savings}\nSaved Cashback - KES {cashback_savings}\nCashback Interest - KES {cashback_interest}\nSaved Commission - KES {commission_savings}\nCommission Interest - KES {commission_interest}",
+    "title": "Your savings and interest earned is {merchant_withdrawal_text}\n\nTotal balance: KES {total_savings}\nSaved Cashback - KES {cashback_savings}\nCashback Interest - KES {cashback_interest}\nSaved Commission - KES {commission_savings}\nCommission Interest - KES {commission_interest}",
     "type": "CLOSED",
     "options": {
       "1": {

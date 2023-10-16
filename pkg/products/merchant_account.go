@@ -245,7 +245,7 @@ func (a *MerchantAccount) fetchSavings() map[int]float64 {
 		nextWithdrawal = "January 1st"
 	}
 
-	a.vars["{merchant_withdrawal_text}"] = "Locked for 6 months. Withdraw on " + nextWithdrawal
+	a.vars["{merchant_withdrawal_text}"] = "locked for 6 months. Withdraw next on " + nextWithdrawal
 
 	accountId := a.vars["{account_id}"]
 
