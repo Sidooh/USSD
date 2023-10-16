@@ -128,10 +128,14 @@ func (m *Merchant) fetchCountyOptions() {
 	m.screen.Next.Options = map[int]*data.Option{}
 
 	for i, county := range *counties {
+		if county.Id == 24 {
+			continue
+		}
 		m.screen.Next.Options[i+1] = &data.Option{
-			Label:   county.County,
-			Value:   i + 1,
-			NextKey: utils.MERCHANT_SUB_COUNTY,
+			Label:      county.County,
+			Value:      i + 1,
+			NextKey:    utils.MERCHANT_SUB_COUNTY,
+			NoFullStop: true,
 		}
 	}
 }
