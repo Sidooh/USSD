@@ -41,7 +41,9 @@ func FetchAccount(phone string) (*client.Account, error) {
 
 			// Check Merchant
 			merchant, err := GetMerchantByAccount(strconv.Itoa(account.Id))
-			if err == nil {
+			if err != nil {
+				logger.ServiceLog.Error("Failed to fetch merchant: ", err)
+			} else {
 				account.Merchant = merchant
 
 				float, err := paymentsClient.GetFloatBalance(strconv.Itoa(int(merchant.FloatAccountId)))
