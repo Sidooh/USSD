@@ -523,7 +523,7 @@
 
   "merchant_cashback": {
     "key": "merchant_cashback",
-    "title": "Total balance: KES {cashback_balance}\nSaved Cashback(20%): KES {cashback_savings}\nWithdrawable(80%): KES {cashback_earnings}",
+    "title": "Total balance: KES {cashback_balance}\nSaved Cashback(20): KES {cashback_savings}\nWithdrawable(80): KES {cashback_earnings}",
     "type": "CLOSED",
     "options": {
       "1": {
@@ -536,7 +536,7 @@
 
   "merchant_commission": {
     "key": "merchant_commission",
-    "title": "Total balance: KES {commission_balance}\nSaved Commission(20%): KES {commission_savings}\nWithdrawable(80%): KES {commission_earnings}",
+    "title": "Total balance: KES {commission_balance}\nSaved Commission(20): KES {commission_savings}\nWithdrawable(80): KES {commission_earnings}",
     "type": "CLOSED",
     "options": {
       "1": {
