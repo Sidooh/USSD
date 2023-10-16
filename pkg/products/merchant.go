@@ -128,7 +128,7 @@ func (m *Merchant) fetchCountyOptions() {
 	m.screen.Next.Options = map[int]*data.Option{}
 
 	for i, county := range *counties {
-		if county.Id == 24 {
+		if county.Id == 24 || county.Id == 25 {
 			continue
 		}
 		m.screen.Next.Options[i+1] = &data.Option{
