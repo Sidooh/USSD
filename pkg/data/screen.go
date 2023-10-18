@@ -49,6 +49,7 @@ var nextExceptionScreens = map[string]bool{
 	utils.PROFILE_UPDATE_END:         true,
 	utils.HAS_SECURITY_QUESTIONS:     true,
 	utils.SECURITY_QUESTIONS_NOT_SET: true,
+	utils.FLOAT_BALANCE_INSUFFICIENT: true,
 }
 
 var dynamicOptionScreens = map[string]bool{
@@ -57,7 +58,12 @@ var dynamicOptionScreens = map[string]bool{
 }
 
 var optionsExceptionScreens = map[string]bool{
-	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS: true,
+	utils.PROFILE_SECURITY_QUESTIONS_OPTIONS:  true,
+	utils.MERCHANT_SECURITY_QUESTIONS_OPTIONS: true,
+	utils.MERCHANT_COUNTY:                     true,
+	utils.MERCHANT_SUB_COUNTY:                 true,
+	utils.MERCHANT_WARD:                       true,
+	utils.MERCHANT_LANDMARK:                   true,
 }
 
 func (screen *Screen) setNext(s *Screen) {
@@ -175,6 +181,10 @@ func (screen *Screen) ValidateInput(input string, vars map[string]string) bool {
 	// TODO: Sanitize input to be logged? e.g. pins, sec qns, etc. just replace with **** and use same length as input
 	logger.UssdLog.Println("    Validating ", input, " against ", screen.Validations)
 
+	if screen.Validations == "" {
+		return true
+	}
+
 	validations := strings.Split(screen.Validations, ",")
 
 	var currentValidationCheck = false
@@ -212,6 +222,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return getIntVal(input) <= validateAgainst
 	case utils.ALPHANUM:
 		return isAlphaNumeric(input, validateAgainst)
+	case utils.LENGTH:
+		return len(input) == validateAgainst
 	case utils.MAX_CHARS:
 		return len(input) <= validateAgainst
 	case utils.PHONE:
@@ -232,6 +244,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		// TODO: Handle both -no pin set- and -invalid pin-
 		// 	Also note, one may not have an account. maybe it is best if voucher isn't shown for first time user
 		return screen.checkPin(input, vars)
+	case utils.EXISTING_MERCHANT:
+		return screen.checkMerchantIdNumber(input)
 	case utils.UTILITY_AMOUNTS:
 		return isValidUtilityAmount(input, vars["{selected_utility}"])
 	case utils.NAME:
@@ -240,6 +254,9 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return isValidSecurityQuestionAnswer(input)
 	case utils.WITHDRAW_LIMITS:
 		return isValidWithdrawalAmount(input, vars["{withdrawable_savings}"])
+
+	case utils.MERCHANT_WITHDRAW_LIMITS:
+		return screen.isValidMerchantWithdrawalAmount(input, vars["{withdrawable_earnings}"])
 
 	case utils.INVITE_CODE_VALIDATION:
 		return screen.isSocialInvite(input, vars) || screen.isSidoohAccountIdOrPhone(input, vars)
@@ -256,6 +273,28 @@ func isValidWithdrawalAmount(input string, points string) bool {
 	pointsVal := getIntVal(points)
 
 	return val <= max && val >= min && val <= pointsVal
+}
+
+func (screen *Screen) isValidMerchantWithdrawalAmount(input string, points string) bool {
+	min := 10
+	max := 10000
+
+	val := getIntVal(input)
+	pointsVal := getIntVal(points)
+
+	valid := val <= max && val >= min && val <= pointsVal
+
+	if val > max {
+		screen.Title = "Amount is greater than threshold"
+	}
+	if val < min {
+		screen.Title = "Amount is below the minimum required. Please enter amount above KES" + strconv.Itoa(min)
+	}
+	if val > pointsVal {
+		screen.Title = "Amount is more than available balance. Your balance is KES" + points + ".\nEnter amount you wish to withdraw (MIN. KES10)"
+	}
+
+	return valid
 }
 
 func isValidSecurityQuestionAnswer(input string) bool {
@@ -386,6 +425,15 @@ func (screen *Screen) checkPin(input string, vars map[string]string) bool {
 	}
 
 	return false
+}
+
+func (screen *Screen) checkMerchantIdNumber(input string) bool {
+	exists := service.MerchantIdNumberExists(input)
+	if exists {
+		screen.Title = "Hi, we are unable to process your signup request as the national Id you have provided is already registered on Sidooh and belongs to another customer\n\nEnter National ID Number"
+	}
+
+	return !exists
 }
 
 func (screen *Screen) isNotCurrentPhone(input string, phone string) bool {

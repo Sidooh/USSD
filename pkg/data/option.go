@@ -6,12 +6,13 @@ import (
 )
 
 type Option struct {
-	Label   string  `json:"label"`
-	Value   int     `json:"value,string"`
-	NextKey string  `json:"next"`
-	Next    *Screen `json:"-"`
-	Acyclic bool    `json:"acyclic,omitempty"`
-	Rules   string  `json:"rules"`
+	Label      string  `json:"label"`
+	Value      int     `json:"value,string"`
+	NextKey    string  `json:"next"`
+	Next       *Screen `json:"-"`
+	Acyclic    bool    `json:"acyclic,omitempty"`
+	Rules      string  `json:"rules"`
+	NoFullStop bool    `json:"no_full_stop"`
 }
 
 func (option *Option) setNext(s *Screen) {
@@ -19,7 +20,12 @@ func (option *Option) setNext(s *Screen) {
 }
 
 func (option *Option) GetStringRep() string {
-	return fmt.Sprintf("%v. %v", option.Value, option.Label)
+	format := "%v. %v"
+	if option.NoFullStop {
+		format = "%v %v"
+	}
+
+	return fmt.Sprintf(format, option.Value, option.Label)
 }
 
 func (option *Option) Validate() error {

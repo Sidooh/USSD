@@ -16,6 +16,11 @@ type VoucherBalancesApiResponse struct {
 	Data *[]Balance `json:"data"`
 }
 
+type FLoatBalanceApiResponse struct {
+	ApiResponse
+	Data *Balance `json:"data"`
+}
+
 type ChargesApiResponse struct {
 	ApiResponse
 	Data *[]AmountCharge `json:"data"`
@@ -41,6 +46,17 @@ func (p *PaymentsApiClient) GetVoucherBalances(id string) ([]Balance, error) {
 	}
 
 	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) GetFloatBalance(id string) (*Balance, error) {
+	endpoint := "/float-accounts/" + id
+	apiResponse := new(FLoatBalanceApiResponse)
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	return apiResponse.Data, nil
 }
 
 func (p *PaymentsApiClient) GetWithdrawalCharges() ([]AmountCharge, error) {

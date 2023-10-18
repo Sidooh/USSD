@@ -12,4 +12,13 @@ const (
 	INVITE              = 5
 	SUBSCRIPTION        = 6
 	ACCOUNT             = 7
+	MERCHANT            = 8
+	MERCHANT_FLOAT      = 81
+	MERCHANT_AIRTIME    = 82
+	MERCHANT_PAY        = 83
+	MERCHANT_SAVE       = 84
+	MERCHANT_INSURE     = 85
+	MERCHANT_LOAN       = 86
+	MERCHANT_INVITE     = 87
+	MERCHANT_ACCOUNT    = 88
 )

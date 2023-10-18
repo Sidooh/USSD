@@ -34,10 +34,24 @@ func FetchAccount(phone string) (*client.Account, error) {
 				logger.ServiceLog.Error("Failed to fetch voucher balances: ", err)
 			}
 
-			account.Balances = balances
+			account.Vouchers = balances
 
 			// Check Pin
 			account.HasPin = CheckHasPin(strconv.Itoa(account.Id))
+
+			// Check Merchant
+			merchant, err := GetMerchantByAccount(strconv.Itoa(account.Id))
+			if err != nil {
+				logger.ServiceLog.Error("Failed to fetch merchant: ", err)
+			} else {
+				account.Merchant = merchant
+
+				float, err := paymentsClient.GetFloatBalance(strconv.Itoa(int(merchant.FloatAccountId)))
+				if err != nil {
+					logger.ServiceLog.Error("Failed to fetch float balance: ", err)
+				}
+				account.Float = float
+			}
 		}
 	}()
 
@@ -234,7 +248,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 	var valid = false
 
 	for i, answer := range answers {
-		var res map[string]bool
+		var res bool
 		res, err := accountsClient.CheckSecurityQuestionAnswers(id, client.SecurityQuestionRequest{
 			QuestionId: i,
 			Answer:     answer,
@@ -242,7 +256,7 @@ func CheckSecurityQuestionAnswers(id string, answers map[string]string) bool {
 		if err != nil {
 			return false
 		} else {
-			valid = res["message"]
+			valid = res
 		}
 	}
 
@@ -275,4 +289,8 @@ func RequestEarningsWithdrawal(request *client.EarningsWithdrawalRequest) error 
 	}
 
 	return nil
+}
+
+func FetchDescendants(id, levelLimit string) (invites []client.Descendant, err error) {
+	return accountsClient.FetchDescendants(id, levelLimit)
 }

@@ -6,9 +6,11 @@ type Account struct {
 	Active       bool   `json:"active"`
 	InviterId    int    `json:"inviter_id"`
 	User         `json:"user"`
-	Balances     []Balance
+	Vouchers     []Balance
+	Float        *Balance
 	Subscription Subscription
 	HasPin       bool
+	Merchant     *Merchant
 }
 
 type User struct {
@@ -26,6 +28,12 @@ type Invite struct {
 	Phone   string   `json:"phone"`
 	Status  string   `json:"status"`
 	Inviter *Account `json:"inviter"`
+}
+
+type Descendant struct {
+	Id    int    `json:"id"`
+	Phone string `json:"phone"`
+	Level int    `json:"level"`
 }
 
 type UtilityAccount struct {
@@ -61,6 +69,50 @@ type AmountCharge struct {
 }
 
 type Merchant struct {
-	Code string
-	Name string
+	Code           string
+	Name           string
+	Id             uint
+	AccountId      uint   `json:"account_id"`
+	FloatAccountId uint   `json:"float_account_id"`
+	BusinessName   string `json:"business_name"`
+	FirstName      string `json:"first_name"`
+	IdNumber       string `json:"id_number"`
+}
+
+type County struct {
+	Id     int
+	County string `json:"county"`
+}
+
+type SubCounty struct {
+	Id        int
+	SubCounty string `json:"sub_county"`
+}
+
+type Ward struct {
+	Id   int
+	Ward string `json:"ward"`
+}
+
+type Landmark struct {
+	Id       int
+	Landmark string `json:"landmark"`
+}
+
+type MpesaStoreAccount struct {
+	Id    int
+	Agent string
+	Store string
+	Name  string
+}
+
+type MerchantEarningAccount struct {
+	Id     uint
+	Type   string
+	Amount float64
+}
+
+type Transaction struct {
+	Id     uint
+	Status string
 }
