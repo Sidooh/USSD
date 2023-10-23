@@ -62,7 +62,17 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	//}
 
 	screens = sc
-	s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
+	//s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
+
+	//make copy of main screen to prevent modifications on master screens
+	var mainScreen = data.Screen{}
+
+	byteScreen, err := json.Marshal(screens[utils.MAIN_MENU])
+	err = json.Unmarshal(byteScreen, &mainScreen)
+	if err != nil {
+		mainScreen = *screens[utils.MAIN_MENU]
+	}
+	s.ScreenPath.Screen = mainScreen
 
 	s.Vars["{name}"] = ""
 	s.Vars["{voucher_balance}"] = "0"
