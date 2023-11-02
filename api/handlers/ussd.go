@@ -98,6 +98,7 @@ func process(code, phone, session, input string) *state.State {
 	}
 
 	if stateData.ScreenPath.Type == utils.OPEN {
+		input = strings.TrimSpace(input)
 		if stateData.ScreenPath.ValidateInput(input, stateData.Vars) {
 			stateData.ProcessOpenInput(input)
 
