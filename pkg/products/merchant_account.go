@@ -203,10 +203,8 @@ func (a *MerchantAccount) setEarnings() {
 	earnings, err := service.FetchEarningAccounts(a.vars["{merchant_id}"])
 	if err != nil {
 		a.vars["{cashback_balance}"] = "0"
-		a.vars["{withdrawable_cashback}"] = "0"
 
 		a.vars["{commission_balance}"] = "0"
-		a.vars["{withdrawable_commission}"] = "0"
 	}
 
 	var cashback client.MerchantEarningAccount
@@ -224,10 +222,10 @@ func (a *MerchantAccount) setEarnings() {
 
 	a.vars["{commission_earnings}"] = formatAmount(commission.Amount, "%.2f")
 
-	balances := a.fetchSavings()
+	_ = a.fetchSavings()
 
-	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount+balances[1], "%.0f")
-	a.vars["{commission_balance}"] = formatAmount(commission.Amount+balances[2], "%.0f")
+	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount, "%.0f")
+	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
 
 }
 
