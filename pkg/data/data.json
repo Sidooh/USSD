@@ -379,12 +379,12 @@
     "title": "Select source",
     "options": {
       "1": {
-        "label": "Cashback ({cashback_balance})",
+        "label": "Cashback ({cashback_earnings})",
         "value": "1",
         "next": "merchant_withdraw_amount"
       },
       "2": {
-        "label": "Commission ({commission_balance})",
+        "label": "Commission ({commission_earnings})",
         "value": "2",
         "next": "merchant_withdraw_amount"
       }

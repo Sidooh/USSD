@@ -222,10 +222,10 @@ func (a *MerchantAccount) setEarnings() {
 
 	a.vars["{commission_earnings}"] = formatAmount(commission.Amount, "%.2f")
 
-	_ = a.fetchSavings()
+	balances := a.fetchSavings()
 
-	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount, "%.0f")
-	a.vars["{commission_balance}"] = formatAmount(commission.Amount, "%.0f")
+	a.vars["{cashback_balance}"] = formatAmount(cashback.Amount+balances[1], "%.0f")
+	a.vars["{commission_balance}"] = formatAmount(commission.Amount+balances[2], "%.0f")
 
 }
 
