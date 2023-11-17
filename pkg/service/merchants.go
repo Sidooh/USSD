@@ -90,3 +90,12 @@ func WithdrawEarnings(id string, request client.MerchantWithdrawalRequest) error
 
 	return err
 }
+
+func MpesaWithdrawal(id string, request client.MerchantMpesaWithdrawalRequest) error {
+	err := merchantsClient.MpesaWithdrawal(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to withdraw mpesa: ", err)
+	}
+
+	return err
+}

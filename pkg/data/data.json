@@ -286,12 +286,52 @@
         "value": "1",
         "next": "merchant_float"
       },
+      "2": {
+        "label": "Mpesa Withdraw",
+        "value": "2",
+        "next": "merchant_mpesa_withdraw"
+      },
       "8": {
         "label": "My Account",
         "value": "8",
         "next": "merchant_account"
       }
     }
+  },
+  "merchant_mpesa_withdraw": {
+    "key": "merchant_mpesa_withdraw",
+    "title": "Enter phone number",
+    "type": "OPEN",
+    "next": "merchant_mpesa_withdraw_amount",
+    "validations": "PHONE"
+  },
+  "merchant_mpesa_withdraw_amount": {
+    "key": "merchant_mpesa_withdraw_amount",
+    "title": "Enter amount (MIN: KES50)",
+    "type": "OPEN",
+    "next": "merchant_mpesa_withdraw_confirmation",
+    "validations": "INT,MIN:50,MAX:70000"
+  },
+  "merchant_mpesa_withdraw_confirmation": {
+    "key": "merchant_mpesa_withdraw_confirmation",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_mpesa_withdraw_end"
+      },
+      "2": {
+        "label": "Cancel",
+        "value": "2",
+        "next": "cancel"
+      }
+    }
+  },
+  "merchant_mpesa_withdraw_end": {
+    "key": "merchant_mpesa_withdraw_end",
+    "title": "{payment_method_instruction}",
+    "type": "END"
   },
 
   "merchant_account": {

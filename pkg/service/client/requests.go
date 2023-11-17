@@ -76,3 +76,8 @@ type MerchantWithdrawalRequest struct {
 	Destination string `json:"destination,omitempty"`
 	Account     string `json:"account,omitempty"`
 }
+
+type MerchantMpesaWithdrawalRequest struct {
+	Amount int    `json:"amount,omitempty"`
+	Phone  string `json:"phone"`
+}

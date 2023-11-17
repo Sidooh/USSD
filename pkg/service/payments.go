@@ -47,6 +47,21 @@ func GetBuyGoodsCharge(amount int) int {
 	return 0
 }
 
+func GetMpesaWithdrawalCharge(amount int) int {
+	charges, err := paymentsClient.GetMpesaWithdrawalCharges()
+	if err != nil {
+		return 0
+	}
+
+	for _, charge := range charges {
+		if charge.Min <= amount && amount <= charge.Max {
+			return charge.Charge
+		}
+	}
+
+	return 0
+}
+
 func SearchMerchant(code string) (*client.Merchant, error) {
 	return paymentsClient.SearchMerchant(code)
 }

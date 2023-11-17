@@ -229,3 +229,11 @@ func (m *MerchantsApiClient) WithdrawEarnings(id string, request MerchantWithdra
 	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/earnings/withdraw", dataBytes).send(nil)
 	return err
 }
+
+func (m *MerchantsApiClient) MpesaWithdrawal(id string, request MerchantMpesaWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/mpesa-withdraw", dataBytes).send(nil)
+	return err
+}
