@@ -27,7 +27,7 @@ func (w *MerchantMpesaWithdraw) processScreen(input string) {
 
 	case utils.MERCHANT:
 		//f.vars["{pay_buy}"] = "Buy"
-		w.vars["{product}"] = "Mpesa withdrawal for"
+		w.vars["{product}"] = "Withdraw Cash for"
 
 		w.vars["{payment_method}"] = utils.MPESA
 		w.vars["{payment_method_instruction}"] = "Ask customer to enter MPESA PIN in the screen that asks \"Do you want to pay to Sidooh International?\" to complete the transaction."
