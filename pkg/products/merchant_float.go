@@ -63,19 +63,14 @@ func (f *MerchantFloat) setStoreOptions(input string) {
 	if accounts != nil && len(accounts) != 0 {
 		storeAccountOptionVars := map[int]string{}
 
-		maxAccounts := accounts
-		if len(accounts) > 7 {
-			maxAccounts = accounts[:7]
-		}
-
-		for i, account := range maxAccounts {
-			f.screen.Next.Options[i+1] = &data.Option{
+		for i, account := range accounts {
+			f.screen.Next.Options[i+2] = &data.Option{
 				Label:   account.Name,
-				Value:   i + 1,
+				Value:   i + 2,
 				NextKey: utils.MERCHANT_FLOAT_AMOUNT,
 			}
 
-			storeAccountOptionVars[i+1] = account.Agent + " __ " + account.Name
+			storeAccountOptionVars[i+2] = account.Agent + " __ " + account.Name
 		}
 		stringVars, _ := json.Marshal(storeAccountOptionVars)
 		f.vars["{mpesa_store_account_options}"] = string(stringVars)

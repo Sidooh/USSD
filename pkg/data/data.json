@@ -618,10 +618,10 @@
     "key": "merchant_float",
     "title": "Select or Enter Other Store Number",
     "options": {
-      "9": {
+      "1": {
         "label": "Other Store No.",
         "type": "int",
-        "value": "9",
+        "value": "1",
         "next": "merchant_float_agent"
       }
     }
