@@ -291,6 +291,16 @@
         "value": "2",
         "next": "merchant_mpesa_withdraw"
       },
+      "3": {
+        "label": "Sell Airtime",
+        "value": "3",
+        "next": "coming_soon"
+      },
+      "4": {
+        "label": "Voucher",
+        "value": "4",
+        "next": "merchant_voucher"
+      },
       "8": {
         "label": "My Account",
         "value": "8",
@@ -298,6 +308,51 @@
       }
     }
   },
+  "merchant_voucher": {
+    "key": "merchant_voucher",
+    "title": "Select option",
+    "options": {
+      "1": {
+        "label": "Buy Voucher",
+        "value": "1",
+        "next": "merchant_voucher_amount"
+      },
+      "2": {
+        "label": "Send Voucher",
+        "value": "2",
+        "next": "coming_soon"
+      }
+    }
+  },
+  "merchant_voucher_amount": {
+    "key": "merchant_voucher_amount",
+    "title": "Enter amount (MIN: KES50)",
+    "type": "OPEN",
+    "next": "merchant_voucher_confirmation",
+    "validations": "INT,MIN:50,MAX:150000"
+  },
+  "merchant_voucher_confirmation": {
+    "key": "merchant_voucher_confirmation",
+    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
+    "options": {
+      "1": {
+        "label": "Accept",
+        "value": "1",
+        "next": "merchant_mpesa_withdraw_end"
+      },
+      "2": {
+        "label": "Cancel",
+        "value": "2",
+        "next": "cancel"
+      }
+    }
+  },
+  "merchant_voucher_amount_end": {
+    "key": "merchant_voucher_amount_end",
+    "title": "{payment_method_instruction}",
+    "type": "END"
+  },
+
   "merchant_mpesa_withdraw": {
     "key": "merchant_mpesa_withdraw",
     "title": "Enter phone number",

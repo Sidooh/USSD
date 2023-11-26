@@ -15,8 +15,8 @@ const (
 	MERCHANT                = 8
 	MERCHANT_FLOAT          = 81
 	MERCHANT_MPESA_WITHDRAW = 82
-	MERCHANT_PAY            = 83
-	MERCHANT_SAVE           = 84
+	MERCHANT_AIRTIME        = 83
+	MERCHANT_VOUCHER        = 84
 	MERCHANT_INSURE         = 85
 	MERCHANT_LOAN           = 86
 	MERCHANT_INVITE         = 87

@@ -113,8 +113,8 @@ func (p *PaymentsApiClient) GetBuyGoodsCharges() ([]AmountCharge, error) {
 	return *apiResponse.Data, nil
 }
 
-func (p *PaymentsApiClient) GetMpesaWithdrawalCharges() ([]AmountCharge, error) {
-	endpoint := "/charges/mpesa-withdrawal"
+func (p *PaymentsApiClient) GetMpesaCollectionCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/mpesa-collection"
 	apiResponse := new(ChargesApiResponse)
 
 	charges, err := cache.Get[[]AmountCharge](endpoint)

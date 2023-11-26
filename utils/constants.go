@@ -91,6 +91,10 @@ const (
 	MERCHANT_MPESA_WITHDRAW_AMOUNT       = "merchant_mpesa_withdraw_amount"
 	MERCHANT_MPESA_WITHDRAW_CONFIRMATION = "merchant_mpesa_withdraw_confirmation"
 
+	MERCHANT_VOUCHER              = "merchant_voucher"
+	MERCHANT_VOUCHER_AMOUNT       = "merchant_voucher_amount"
+	MERCHANT_VOUCHER_CONFIRMATION = "merchant_voucher_confirmation"
+
 	MERCHANT_ACCOUNT                     = "merchant_account"
 	MERCHANT_PROFILE_CHANGE_PIN_QUESTION = "merchant_profile_change_pin_question"
 	MERCHANT_PROFILE_NEW_PIN             = "merchant_profile_new_pin"

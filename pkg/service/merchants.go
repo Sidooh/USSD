@@ -99,3 +99,12 @@ func MpesaWithdrawal(id string, request client.MerchantMpesaWithdrawalRequest) e
 
 	return err
 }
+
+func VoucherPurchase(id string, request client.MerchantMpesaWithdrawalRequest) error {
+	err := merchantsClient.VoucherPurchase(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to purchase voucher: ", err)
+	}
+
+	return err
+}

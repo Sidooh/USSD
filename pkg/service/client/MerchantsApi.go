@@ -174,7 +174,7 @@ func (m *MerchantsApiClient) BuyFloat(id string, request FloatPurchaseRequest) e
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 
-	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/buy-float", dataBytes).send(nil)
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/buy-mpesa-float", dataBytes).send(nil)
 	return err
 }
 
@@ -189,10 +189,10 @@ func (m *MerchantsApiClient) GetMerchantByIdNumber(id string) (*Merchant, error)
 	return res.Data, nil
 }
 
-func (p *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAccount, error) {
+func (m *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAccount, error) {
 	res := new(MpesaStoreAccountApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/merchants/"+id+"/mpesa-store-accounts", nil).send(res)
+	err := m.newRequest(http.MethodGet, "/merchants/"+id+"/mpesa-store-accounts", nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -200,10 +200,10 @@ func (p *MerchantsApiClient) GetMpesaStoreAccounts(id string) (*[]MpesaStoreAcco
 	return res.Data, nil
 }
 
-func (p *MerchantsApiClient) GetEarningAccounts(id string) ([]MerchantEarningAccount, error) {
+func (m *MerchantsApiClient) GetEarningAccounts(id string) ([]MerchantEarningAccount, error) {
 	res := new(MerchantEarningAccountApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/earning-accounts/merchant/"+id, nil).send(res)
+	err := m.newRequest(http.MethodGet, "/earning-accounts/merchant/"+id, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -211,10 +211,10 @@ func (p *MerchantsApiClient) GetEarningAccounts(id string) ([]MerchantEarningAcc
 	return res.Data, nil
 }
 
-func (p *MerchantsApiClient) FetchTransactions(accounts, days string) (*[]Transaction, error) {
+func (m *MerchantsApiClient) FetchTransactions(accounts, days string) (*[]Transaction, error) {
 	res := new(TransactionApiResponse)
 
-	err := p.newRequest(http.MethodGet, "/transactions?accounts="+accounts+"&days="+days, nil).send(res)
+	err := m.newRequest(http.MethodGet, "/transactions?accounts="+accounts+"&days="+days, nil).send(res)
 	if err != nil {
 		return nil, err
 	}
@@ -235,5 +235,13 @@ func (m *MerchantsApiClient) MpesaWithdrawal(id string, request MerchantMpesaWit
 	dataBytes := bytes.NewBuffer(jsonData)
 
 	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/mpesa-withdraw", dataBytes).send(nil)
+	return err
+}
+
+func (m *MerchantsApiClient) VoucherPurchase(id string, request MerchantMpesaWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/float-top-up", dataBytes).send(nil)
 	return err
 }

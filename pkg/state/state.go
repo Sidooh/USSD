@@ -181,6 +181,9 @@ func (s *State) setProduct(option int) {
 	case products.MERCHANT_FLOAT:
 		s.product = &products.MerchantFloat{}
 		s.ProductKey = products.MERCHANT_FLOAT
+	case products.MERCHANT_VOUCHER:
+		s.product = &products.MerchantVoucher{}
+		s.ProductKey = products.MERCHANT_VOUCHER
 	case products.MERCHANT_MPESA_WITHDRAW:
 		s.product = &products.MerchantMpesaWithdraw{}
 		s.ProductKey = products.MERCHANT_MPESA_WITHDRAW

@@ -80,6 +80,7 @@ func (m *Merchant) finalize() {
 			}
 
 			accountId = account.Id
+			m.vars["{account_id}"] = strconv.Itoa(accountId)
 		}
 
 		//set pin asynchronously
