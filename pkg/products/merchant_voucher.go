@@ -55,7 +55,7 @@ func (w *MerchantVoucher) finalize() {
 func (w *MerchantVoucher) getTopUpCharge(input string) {
 	amount, _ := strconv.Atoi(input)
 
-	charge := service.GetMpesaCollectionCharge(amount)
+	charge := service.GetPayBillCharge(amount)
 
 	//w.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 	w.vars["{payment_charge_text}"] = fmt.Sprintf("\n\nCost: KES %v", charge)

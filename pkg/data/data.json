@@ -329,7 +329,7 @@
     "title": "Enter amount (MIN: KES50)",
     "type": "OPEN",
     "next": "merchant_voucher_confirmation",
-    "validations": "INT,MIN:50,MAX:150000"
+    "validations": "INT,MIN:50,MAX:250000"
   },
   "merchant_voucher_confirmation": {
     "key": "merchant_voucher_confirmation",

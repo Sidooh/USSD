@@ -47,8 +47,8 @@ func GetBuyGoodsCharge(amount int) int {
 	return 0
 }
 
-func GetMpesaCollectionCharge(amount int) int {
-	charges, err := paymentsClient.GetMpesaCollectionCharges()
+func GetMpesaWithdrawalCharge(amount int) int {
+	charges, err := paymentsClient.GetMpesaWithdrawalCharges()
 	if err != nil {
 		return 0
 	}

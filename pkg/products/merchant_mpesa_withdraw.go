@@ -60,7 +60,7 @@ func (w *MerchantMpesaWithdraw) finalize() {
 func (w *MerchantMpesaWithdraw) getWithdrawalCharge(input string) {
 	amount, _ := strconv.Atoi(input)
 
-	charge := service.GetMpesaCollectionCharge(amount)
+	charge := service.GetMpesaWithdrawalCharge(amount)
 
 	//w.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 	w.vars["{payment_charge_text}"] = fmt.Sprintf("\n\nCost: KES %v", charge)
