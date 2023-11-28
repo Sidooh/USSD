@@ -62,6 +62,10 @@ func (w *MerchantVoucher) getTopUpCharge(input string) {
 
 	charge := service.GetPayBillCharge(amount)
 
+	if amount < 11000 {
+		charge = service.GetBuyGoodsCharge(amount)
+	}
+
 	//w.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 	w.vars["{payment_charge_text}"] = fmt.Sprintf("\n\nCost: KES %v", charge)
 
