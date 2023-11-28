@@ -313,12 +313,12 @@
     "title": "Select option",
     "options": {
       "1": {
-        "label": "Buy Voucher",
+        "label": "TopUp Voucher",
         "value": "1",
         "next": "merchant_voucher_amount"
       },
       "2": {
-        "label": "Send Voucher",
+        "label": "Share Voucher",
         "value": "2",
         "next": "coming_soon"
       }
@@ -328,29 +328,8 @@
     "key": "merchant_voucher_amount",
     "title": "Enter amount (MIN: KES50)",
     "type": "OPEN",
-    "next": "merchant_voucher_confirmation",
+    "next": "payment_confirmation",
     "validations": "INT,MIN:50,MAX:250000"
-  },
-  "merchant_voucher_confirmation": {
-    "key": "merchant_voucher_confirmation",
-    "title": "KES{amount} {product} {number} will be deducted from {payment_method_text}:{payment_charge_text}",
-    "options": {
-      "1": {
-        "label": "Accept",
-        "value": "1",
-        "next": "merchant_mpesa_withdraw_end"
-      },
-      "2": {
-        "label": "Cancel",
-        "value": "2",
-        "next": "cancel"
-      }
-    }
-  },
-  "merchant_voucher_amount_end": {
-    "key": "merchant_voucher_amount_end",
-    "title": "{payment_method_instruction}",
-    "type": "END"
   },
 
   "merchant_mpesa_withdraw": {

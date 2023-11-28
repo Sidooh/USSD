@@ -86,8 +86,8 @@ func (a *Airtime) finalize() {
 			request.TargetNumber = a.vars["{number}"]
 		}
 
-		if _, ok := a.vars["{mpesa_number}"]; ok {
-			request.DebitAccount = a.vars["{mpesa_number}"]
+		if acc, ok := a.vars["{mpesa_number}"]; ok {
+			request.DebitAccount = acc
 		}
 
 		logger.UssdLog.Println(" -- AIRTIME: purchase", request)

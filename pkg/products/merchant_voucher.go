@@ -41,13 +41,18 @@ func (w *MerchantVoucher) processScreen(input string) {
 func (w *MerchantVoucher) finalize() {
 	logger.UssdLog.Println(" -- MERCHANT_VOUCHER: finalize", w.screen.Next.Type)
 
-	if w.screen.Key == utils.MERCHANT_VOUCHER_CONFIRMATION {
+	if w.screen.Next.Type == utils.END {
 		amount, _ := strconv.Atoi(w.vars["{amount}"])
 
 		request := client.MerchantMpesaWithdrawalRequest{
 			Amount: amount,
 			Phone:  w.vars["{number}"],
 		}
+
+		if phone, ok := w.vars["{mpesa_number}"]; ok {
+			request.Phone = phone
+		}
+
 		service.VoucherPurchase(w.vars["{merchant_id}"], request)
 	}
 }
