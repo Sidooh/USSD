@@ -26,6 +26,11 @@ type ChargesApiResponse struct {
 	Data *[]AmountCharge `json:"data"`
 }
 
+type ChargeApiResponse struct {
+	ApiResponse
+	Data int `json:"data"`
+}
+
 type MerchantSearchApiResponse struct {
 	ApiResponse
 	Data *Merchant `json:"data"`
@@ -113,6 +118,24 @@ func (p *PaymentsApiClient) GetBuyGoodsCharges() ([]AmountCharge, error) {
 	return *apiResponse.Data, nil
 }
 
+func (p *PaymentsApiClient) GetMpesaFloatCharges() ([]AmountCharge, error) {
+	endpoint := "/charges/mpesa-float"
+	apiResponse := new(ChargesApiResponse)
+
+	charges, err := cache.Get[[]AmountCharge](endpoint)
+	if err == nil && len(*charges) > 0 {
+		return *charges, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return nil, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
+
+	return *apiResponse.Data, nil
+}
+
 func (p *PaymentsApiClient) GetMpesaWithdrawalCharges() ([]AmountCharge, error) {
 	endpoint := "/charges/mpesa-withdrawal"
 	apiResponse := new(ChargesApiResponse)
@@ -129,6 +152,24 @@ func (p *PaymentsApiClient) GetMpesaWithdrawalCharges() ([]AmountCharge, error) 
 	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
 
 	return *apiResponse.Data, nil
+}
+
+func (p *PaymentsApiClient) GetMpesaCollectionCharge(amount string) (int, error) {
+	endpoint := "/charges/mpesa-collection/" + amount
+	apiResponse := new(ChargeApiResponse)
+
+	charge, err := cache.Get[int](endpoint)
+	if err == nil {
+		return *charge, nil
+	}
+
+	if err := p.newRequest(http.MethodGet, endpoint, nil).send(&apiResponse); err != nil {
+		return 0, err
+	}
+
+	cache.Set(endpoint, apiResponse.Data, 28*24*time.Hour)
+
+	return apiResponse.Data, nil
 }
 
 func (p *PaymentsApiClient) SearchMerchant(code string) (*Merchant, error) {

@@ -1,6 +1,9 @@
 package service
 
-import "USSD.sidooh/pkg/service/client"
+import (
+	"USSD.sidooh/pkg/service/client"
+	"strconv"
+)
 
 func GetWithdrawalCharge(amount int) int {
 	charges, err := paymentsClient.GetWithdrawalCharges()
@@ -47,6 +50,21 @@ func GetBuyGoodsCharge(amount int) int {
 	return 0
 }
 
+func GetMpesaFloatCharge(amount int) int {
+	charges, err := paymentsClient.GetMpesaFloatCharges()
+	if err != nil {
+		return 0
+	}
+
+	for _, charge := range charges {
+		if charge.Min <= amount && amount <= charge.Max {
+			return charge.Charge
+		}
+	}
+
+	return 0
+}
+
 func GetMpesaWithdrawalCharge(amount int) int {
 	charges, err := paymentsClient.GetMpesaWithdrawalCharges()
 	if err != nil {
@@ -60,6 +78,15 @@ func GetMpesaWithdrawalCharge(amount int) int {
 	}
 
 	return 0
+}
+
+func GetMpesaCollectionCharge(amount int) int {
+	charge, err := paymentsClient.GetMpesaCollectionCharge(strconv.Itoa(amount))
+	if err != nil {
+		return 0
+	}
+
+	return charge
 }
 
 func SearchMerchant(code string) (*client.Merchant, error) {

@@ -7,6 +7,7 @@ import (
 	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -48,9 +49,38 @@ func (f *MerchantFloat) processScreen(input string) {
 		f.setPaymentMethods(input)
 		f.vars["{payment_charge_text}"] = "\n\nCost: KES 30"
 
-	case utils.PAYMENT_PIN_CONFIRMATION:
-		delete(f.screen.Next.Options, 3)
+	case utils.PAYMENT_METHOD:
+		f.getFloatCharge(f.vars["{amount}"])
 
+	}
+}
+func (f *MerchantFloat) finalize() {
+	logger.UssdLog.Println(" -- FLOAT: finalize", f.screen.Next.Type)
+
+	if f.screen.Key == utils.PAYMENT_CONFIRMATION {
+		account, _ := strconv.Atoi(f.vars["{account_id}"])
+		amount, _ := strconv.Atoi(f.vars["{amount}"])
+		method := f.vars["{payment_method}"]
+
+		request := client.MerchantMpesaFloatPurchaseRequest{
+			PurchaseRequest: client.PurchaseRequest{
+				AccountId: account,
+				Amount:    amount,
+				Method:    method,
+			},
+			Agent: f.vars["{agent}"],
+			Store: f.vars["{store}"],
+		}
+
+		if method == utils.MPESA {
+			request.DebitAccount = f.vars["{phone}"]
+		}
+
+		if acc, ok := f.vars["{mpesa_number}"]; ok {
+			request.DebitAccount = acc
+		}
+
+		service.BuyFloat(f.vars["{merchant_id}"], request)
 	}
 }
 
@@ -96,17 +126,15 @@ func (f *MerchantFloat) processStoreSelection(input string) {
 	}
 }
 
-func (f *MerchantFloat) finalize() {
-	logger.UssdLog.Println(" -- FLOAT: finalize", f.screen.Next.Type)
+func (f *MerchantFloat) getFloatCharge(input string) {
+	amount, _ := strconv.Atoi(input)
 
-	if f.screen.Key == utils.PAYMENT_CONFIRMATION {
-		amount, _ := strconv.Atoi(f.vars["{amount}"])
+	charge := service.GetMpesaFloatCharge(amount)
 
-		request := client.FloatPurchaseRequest{
-			Amount: amount,
-			Agent:  f.vars["{agent}"],
-			Store:  f.vars["{store}"],
-		}
-		service.BuyFloat(f.vars["{merchant_id}"], request)
+	if f.vars["{payment_method}"] == utils.MPESA {
+		charge += service.GetMpesaCollectionCharge(amount)
 	}
+
+	f.vars["{payment_charge_text}"] = fmt.Sprintf("\n\nCost: KES %v", charge)
+
 }

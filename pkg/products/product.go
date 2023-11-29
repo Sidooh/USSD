@@ -66,7 +66,6 @@ func (p *Product) setPaymentMethods(input string) {
 	}
 
 	if p.productRep == "float" {
-		delete(p.screen.Next.Options, 1)
 		delete(p.screen.Next.Options, 2)
 		p.screen.Next.Options[3] = &data.Option{
 			Label:   "VOUCHER (KES{float_balance})",

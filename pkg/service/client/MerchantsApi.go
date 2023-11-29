@@ -170,7 +170,7 @@ func (m *MerchantsApiClient) UpdateKYBData(id string, request MerchantKYBDetails
 	return res.Data, nil
 }
 
-func (m *MerchantsApiClient) BuyFloat(id string, request FloatPurchaseRequest) error {
+func (m *MerchantsApiClient) BuyFloat(id string, request MerchantMpesaFloatPurchaseRequest) error {
 	jsonData, err := json.Marshal(request)
 	dataBytes := bytes.NewBuffer(jsonData)
 

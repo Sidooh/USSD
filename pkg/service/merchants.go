@@ -40,7 +40,7 @@ func GetMerchantByAccount(accountId string) (merchant *client.Merchant, err erro
 	return
 }
 
-func BuyFloat(id string, request client.FloatPurchaseRequest) {
+func BuyFloat(id string, request client.MerchantMpesaFloatPurchaseRequest) {
 	err := merchantsClient.BuyFloat(id, request)
 	if err != nil {
 		logger.ServiceLog.Error("Failed to buy float: ", err)

@@ -64,10 +64,10 @@ type MerchantKYBDetails struct {
 	Landmark     string `json:"landmark"`
 }
 
-type FloatPurchaseRequest struct {
-	Agent  string `json:"agent"`
-	Store  string `json:"store"`
-	Amount int    `json:"amount"`
+type MerchantMpesaFloatPurchaseRequest struct {
+	PurchaseRequest
+	Agent string `json:"agent"`
+	Store string `json:"store"`
 }
 
 type MerchantWithdrawalRequest struct {
