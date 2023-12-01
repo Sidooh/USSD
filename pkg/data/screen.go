@@ -373,6 +373,7 @@ func (screen *Screen) isSidoohMerchantAccount(input string, vars map[string]stri
 
 		if merchant != nil {
 			vars["{merchant_account_validated}"] = strconv.Itoa(int(merchant.Id))
+			vars["{merchant_account_validated_name}"] = merchant.BusinessName
 			return true
 		}
 	}

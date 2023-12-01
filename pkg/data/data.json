@@ -340,7 +340,7 @@
   },
   "merchant_voucher_transfer_payment_method": {
     "key": "merchant_voucher_transfer_payment_method",
-    "title": "Share KES{amount} Voucher with {number} using:",
+    "title": "Share KES{amount} Voucher with {number} - {merchant_account_validated_name} using:",
     "options": {
       "3": {
         "label": "VOUCHER (KES{float_balance})",
