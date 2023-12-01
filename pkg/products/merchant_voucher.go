@@ -40,10 +40,10 @@ func (w *MerchantVoucher) processScreen(input string) {
 	case utils.MERCHANT_VOUCHER_TRANSFER_AMOUNT:
 		w.vars["{voucher_option}"] = "2"
 		w.vars["{amount}"] = input
-		delete(w.screen.Next.Options, 1)
-		delete(w.screen.Next.Options, 2)
-		amount, _ := strconv.Atoi(input)
-		w.addMerchantFloatPaymentMethod(amount)
+		//delete(w.screen.Next.Options, 1)
+		//delete(w.screen.Next.Options, 2)
+		//amount, _ := strconv.Atoi(input)
+		//w.addMerchantFloatPaymentMethod(amount)
 		w.vars["{payment_charge_text}"] = ""
 
 	}

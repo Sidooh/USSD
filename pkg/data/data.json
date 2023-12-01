@@ -335,8 +335,31 @@
     "key": "merchant_voucher_transfer_amount",
     "title": "Enter amount (MIN: KES50)",
     "type": "OPEN",
-    "next": "payment_method",
-    "validations": "INT,MIN:50,MAX:250000"
+    "next": "merchant_voucher_transfer_payment_method",
+    "validations": "INT,MIN:50,MAX:500000"
+  },
+  "merchant_voucher_transfer_payment_method": {
+    "key": "merchant_voucher_transfer_payment_method",
+    "title": "{pay_buy} KES{amount} {product} {number} using:",
+    "options": {
+      "3": {
+        "label": "VOUCHER (KES{float_balance})",
+        "value": "3",
+        "next": "merchant_voucher_transfer_payment_pin_confirmation"
+      }
+    }
+  },
+  "merchant_voucher_transfer_payment_pin_confirmation": {
+    "key": "merchant_voucher_transfer_payment_pin_confirmation",
+    "title": "Please enter your Sidooh PIN",
+    "type": "OPEN",
+    "next": "merchant_voucher_transfer_payment_end",
+    "validations": "PIN"
+  },
+  "merchant_voucher_transfer_payment_end": {
+    "key": "merchant_voucher_transfer_payment_end",
+    "title": "{payment_method_instruction}",
+    "type": "END"
   },
 
   "merchant_voucher_amount": {
