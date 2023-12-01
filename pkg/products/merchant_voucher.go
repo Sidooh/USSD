@@ -49,6 +49,9 @@ func (w *MerchantVoucher) processScreen(input string) {
 		//w.addMerchantFloatPaymentMethod(amount)
 		w.vars["{payment_charge_text}"] = ""
 
+	case utils.MERCHANT_VOUCHER_TRANSFER_PAYMENT_METHOD:
+		w.setPaymentMethodText(input)
+
 	}
 }
 
