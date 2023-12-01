@@ -37,6 +37,9 @@ func (w *MerchantVoucher) processScreen(input string) {
 		w.vars["{amount}"] = input
 		w.getTopUpCharge(input)
 
+	case utils.MERCHANT_VOUCHER_TRANSFER_OTHER_ACCOUNT:
+		w.vars["{number}"] = input
+
 	case utils.MERCHANT_VOUCHER_TRANSFER_AMOUNT:
 		w.vars["{voucher_option}"] = "2"
 		w.vars["{amount}"] = input
