@@ -80,7 +80,7 @@ func (f *MerchantFloat) finalize() {
 			request.DebitAccount = acc
 		}
 
-		service.BuyFloat(f.vars["{merchant_id}"], request)
+		go service.BuyFloat(f.vars["{merchant_id}"], request)
 	}
 }
 

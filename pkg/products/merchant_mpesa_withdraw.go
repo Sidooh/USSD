@@ -53,7 +53,7 @@ func (w *MerchantMpesaWithdraw) finalize() {
 			Amount: amount,
 			Phone:  w.vars["{number}"],
 		}
-		service.MpesaWithdrawal(w.vars["{merchant_id}"], request)
+		go service.MpesaWithdrawal(w.vars["{merchant_id}"], request)
 	}
 }
 

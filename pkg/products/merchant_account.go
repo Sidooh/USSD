@@ -6,7 +6,6 @@ import (
 	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"encoding/json"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -189,8 +188,7 @@ func (a *MerchantAccount) setInvites() {
 
 	acc := strings.Join(subAgents, ",")
 	acc += strings.Join(subAgentReferrals, ",")
-	transactions, err := service.FetchTransactions(acc, "7")
-	fmt.Println(transactions, err)
+	_, err = service.FetchTransactions(acc, "7")
 	if err != nil {
 		return
 	}
