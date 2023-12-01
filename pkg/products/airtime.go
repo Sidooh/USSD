@@ -93,7 +93,7 @@ func (a *Airtime) finalize() {
 		logger.UssdLog.Println(" -- AIRTIME: purchase", request)
 
 		// TODO: Make into goroutine if applicable
-		service.PurchaseAirtime(&request)
+		go service.PurchaseAirtime(&request)
 	}
 }
 

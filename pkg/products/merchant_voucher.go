@@ -68,7 +68,7 @@ func (w *MerchantVoucher) finalize() {
 				request.Phone = phone
 			}
 
-			service.VoucherPurchase(w.vars["{merchant_id}"], request)
+			go service.VoucherPurchase(w.vars["{merchant_id}"], request)
 		}
 
 		if w.vars["{voucher_option}"] == "2" {
@@ -83,7 +83,7 @@ func (w *MerchantVoucher) finalize() {
 			//	request.Phone = phone
 			//}
 
-			service.VoucherTransfer(w.vars["{merchant_id}"], request)
+			go service.VoucherTransfer(w.vars["{merchant_id}"], request)
 		}
 	}
 }
