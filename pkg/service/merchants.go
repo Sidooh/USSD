@@ -108,3 +108,12 @@ func VoucherPurchase(id string, request client.MerchantMpesaWithdrawalRequest) e
 
 	return err
 }
+
+func VoucherTransfer(id string, request client.MerchantFloatTransferRequest) error {
+	err := merchantsClient.VoucherTransfer(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to transfer voucher: ", err)
+	}
+
+	return err
+}

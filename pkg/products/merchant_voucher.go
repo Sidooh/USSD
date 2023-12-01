@@ -33,8 +33,19 @@ func (w *MerchantVoucher) processScreen(input string) {
 		w.setPaymentMethodText("1")
 
 	case utils.MERCHANT_VOUCHER_AMOUNT:
+		w.vars["{voucher_option}"] = "1"
 		w.vars["{amount}"] = input
 		w.getTopUpCharge(input)
+
+	case utils.MERCHANT_VOUCHER_TRANSFER_AMOUNT:
+		w.vars["{voucher_option}"] = "2"
+		w.vars["{amount}"] = input
+		delete(w.screen.Next.Options, 1)
+		delete(w.screen.Next.Options, 2)
+		amount, _ := strconv.Atoi(input)
+		w.addMerchantFloatPaymentMethod(amount)
+		w.vars["{payment_charge_text}"] = ""
+
 	}
 }
 
@@ -42,18 +53,35 @@ func (w *MerchantVoucher) finalize() {
 	logger.UssdLog.Println(" -- MERCHANT_VOUCHER: finalize", w.screen.Next.Type)
 
 	if w.screen.Next.Type == utils.END {
-		amount, _ := strconv.Atoi(w.vars["{amount}"])
+		if w.vars["{voucher_option}"] == "1" {
+			amount, _ := strconv.Atoi(w.vars["{amount}"])
 
-		request := client.MerchantMpesaWithdrawalRequest{
-			Amount: amount,
-			Phone:  w.vars["{number}"],
+			request := client.MerchantMpesaWithdrawalRequest{
+				Amount: amount,
+				Phone:  w.vars["{number}"],
+			}
+
+			if phone, ok := w.vars["{mpesa_number}"]; ok {
+				request.Phone = phone
+			}
+
+			service.VoucherPurchase(w.vars["{merchant_id}"], request)
 		}
 
-		if phone, ok := w.vars["{mpesa_number}"]; ok {
-			request.Phone = phone
-		}
+		if w.vars["{voucher_option}"] == "2" {
+			amount, _ := strconv.Atoi(w.vars["{amount}"])
 
-		service.VoucherPurchase(w.vars["{merchant_id}"], request)
+			request := client.MerchantFloatTransferRequest{
+				Amount:  amount,
+				Account: w.vars["{merchant_account_validated}"],
+			}
+			//
+			//if phone, ok := w.vars["{mpesa_number}"]; ok {
+			//	request.Phone = phone
+			//}
+
+			service.VoucherTransfer(w.vars["{merchant_id}"], request)
+		}
 	}
 }
 
@@ -66,7 +94,6 @@ func (w *MerchantVoucher) getTopUpCharge(input string) {
 		charge = service.GetBuyGoodsCharge(amount)
 	}
 
-	//w.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
 	w.vars["{payment_charge_text}"] = fmt.Sprintf("\n\nCost: KES %v", charge)
 
 }

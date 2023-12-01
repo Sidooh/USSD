@@ -320,10 +320,25 @@
       "2": {
         "label": "Share Voucher",
         "value": "2",
-        "next": "coming_soon"
+        "next": "merchant_voucher_transfer_other_account"
       }
     }
   },
+  "merchant_voucher_transfer_other_account": {
+    "key": "merchant_voucher_transfer_other_account",
+    "title": "Enter phone number",
+    "type": "OPEN",
+    "next": "merchant_voucher_transfer_amount",
+    "validations": "SAFARICOM,DISALLOW_CURRENT,EXISTING_MERCHANT_ACCOUNT"
+  },
+  "merchant_voucher_transfer_amount": {
+    "key": "merchant_voucher_transfer_amount",
+    "title": "Enter amount (MIN: KES50)",
+    "type": "OPEN",
+    "next": "payment_method",
+    "validations": "INT,MIN:50,MAX:250000"
+  },
+
   "merchant_voucher_amount": {
     "key": "merchant_voucher_amount",
     "title": "Enter amount (MIN: KES50)",

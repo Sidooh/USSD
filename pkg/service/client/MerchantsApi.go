@@ -245,3 +245,13 @@ func (m *MerchantsApiClient) VoucherPurchase(id string, request MerchantMpesaWit
 	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/float-top-up", dataBytes).send(nil)
 	return err
 }
+
+// TODO: Merge this to VoucherPurchase
+
+func (m *MerchantsApiClient) VoucherTransfer(id string, request MerchantFloatTransferRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/float-transfer", dataBytes).send(nil)
+	return err
+}

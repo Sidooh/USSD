@@ -70,6 +70,11 @@ type MerchantMpesaFloatPurchaseRequest struct {
 	Store string `json:"store"`
 }
 
+type MerchantFloatTransferRequest struct {
+	Amount  int    `json:"amount,omitempty"`
+	Account string `json:"account"`
+}
+
 type MerchantWithdrawalRequest struct {
 	Amount      int    `json:"amount,omitempty"`
 	Source      string `json:"source"`

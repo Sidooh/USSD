@@ -234,6 +234,8 @@ func (screen *Screen) checkValidation(v []string, input string, vars map[string]
 		return screen.isValidPhoneAndProvider(input, utils.SAFARICOM)
 	case utils.EXISTING_ACCOUNT:
 		return screen.isSidoohAccount(input)
+	case utils.EXISTING_MERCHANT_ACCOUNT:
+		return screen.isSidoohMerchantAccount(input, vars)
 	case utils.NOT_INVITED_OR_EXISTING_ACCOUNT:
 		return screen.isUninvitedAndNonExistent(input)
 	case utils.PIN_LENGTH:
@@ -350,6 +352,29 @@ func (screen *Screen) isSidoohAccount(input string) bool {
 
 	if account != nil {
 		return true
+	}
+
+	return false
+}
+
+func (screen *Screen) isSidoohMerchantAccount(input string, vars map[string]string) bool {
+	account, err := service.CheckAccount(input)
+	if err != nil {
+		screen.Title = "Account not found, please try again."
+		return false
+	}
+
+	if account != nil {
+		merchant, err := service.GetMerchantByAccount(strconv.Itoa(account.Id))
+		if err != nil {
+			screen.Title = "Account not found, please try again."
+			return false
+		}
+
+		if merchant != nil {
+			vars["{merchant_account_validated}"] = strconv.Itoa(int(merchant.Id))
+			return true
+		}
 	}
 
 	return false

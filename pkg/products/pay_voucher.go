@@ -2,7 +2,7 @@ package products
 
 import (
 	"USSD.sidooh/pkg/logger"
-	service2 "USSD.sidooh/pkg/service"
+	"USSD.sidooh/pkg/service"
 	"USSD.sidooh/pkg/service/client"
 	"USSD.sidooh/utils"
 	"strconv"
@@ -49,7 +49,7 @@ func (v *Voucher) finalize() {
 		if accountId == 0 {
 			logger.UssdLog.Println(" -- VOUCHER: creating acc")
 
-			account, err := service2.CreateAccount(v.vars["{phone}"], v.vars["{invite_code_string}"])
+			account, err := service.CreateAccount(v.vars["{phone}"], v.vars["{invite_code_string}"])
 			if err != nil {
 				// TODO: Send message to user
 				logger.UssdLog.Error("Failed to create account: ", err)
@@ -78,6 +78,6 @@ func (v *Voucher) finalize() {
 		logger.UssdLog.Println(" -- VOUCHER: purchase", request)
 
 		// TODO: Make into goroutine if applicable
-		service2.PurchaseVoucher(&request)
+		service.PurchaseVoucher(&request)
 	}
 }

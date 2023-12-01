@@ -50,6 +50,22 @@ func (p *Product) finalize() {
 	logger.UssdLog.Println(" - PRODUCT: finalize")
 }
 
+func (p *Product) addMerchantFloatPaymentMethod(amount int) {
+	p.screen.Next.Options[3] = &data.Option{
+		Label:   "VOUCHER (KES{float_balance})",
+		Value:   3,
+		NextKey: utils.PAYMENT_PIN_CONFIRMATION,
+	}
+
+	floatBalance, _ := strconv.ParseFloat(p.vars["{float_balance}"], 32)
+
+	// Move user to top up flow if balance is not enough
+	if int(floatBalance) < amount {
+		//TODO: Move user to top up flow
+		p.screen.Next.Options[3].NextKey = utils.FLOAT_BALANCE_INSUFFICIENT
+	}
+}
+
 func (p *Product) setPaymentMethods(input string) {
 	amount, _ := strconv.Atoi(input)
 	voucherBalance, _ := strconv.ParseFloat(p.vars["{voucher_balance}"], 32)
@@ -67,19 +83,7 @@ func (p *Product) setPaymentMethods(input string) {
 
 	if p.productRep == "float" {
 		delete(p.screen.Next.Options, 2)
-		p.screen.Next.Options[3] = &data.Option{
-			Label:   "VOUCHER (KES{float_balance})",
-			Value:   3,
-			NextKey: utils.PAYMENT_PIN_CONFIRMATION,
-		}
-
-		floatBalance, _ := strconv.ParseFloat(p.vars["{float_balance}"], 32)
-
-		// Move user to top up flow if balance is not enough
-		if int(floatBalance) < amount {
-			//TODO: Move user to top up flow
-			p.screen.Next.Options[3].NextKey = utils.FLOAT_BALANCE_INSUFFICIENT
-		}
+		p.addMerchantFloatPaymentMethod(amount)
 	}
 
 	hasPin := p.checkHasPin()
