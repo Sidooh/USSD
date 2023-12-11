@@ -255,3 +255,11 @@ func (m *MerchantsApiClient) VoucherTransfer(id string, request MerchantFloatTra
 	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/float-transfer", dataBytes).send(nil)
 	return err
 }
+
+func (m *MerchantsApiClient) VoucherWithdraw(id string, request MerchantWithdrawalRequest) error {
+	jsonData, err := json.Marshal(request)
+	dataBytes := bytes.NewBuffer(jsonData)
+
+	err = m.newRequest(http.MethodPost, "/merchants/"+id+"/float-withdraw", dataBytes).send(nil)
+	return err
+}

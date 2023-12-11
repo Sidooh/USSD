@@ -154,6 +154,13 @@ func (p *Product) checkHasPin() bool {
 func (p *Product) setWithdrawalCharge(input string) {
 	amount, _ := strconv.Atoi(input)
 
+	if p.vars["{source}"] == "VOUCHER" {
+		charge := service.GetMpesaWithdrawalCharge(amount)
+		p.vars["{withdrawal_charge}"] = strconv.Itoa(charge)
+
+		return
+	}
+
 	charge := service.GetWithdrawalCharge(amount)
 
 	p.vars["{withdrawal_charge}"] = strconv.Itoa(charge)

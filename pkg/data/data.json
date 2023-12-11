@@ -459,6 +459,11 @@
         "label": "Commission ({commission_earnings})",
         "value": "2",
         "next": "merchant_withdraw_amount"
+      },
+      "3": {
+        "label": "VOUCHER (KES{float_balance})",
+        "value": "3",
+        "next": "merchant_withdraw_amount"
       }
     }
   },

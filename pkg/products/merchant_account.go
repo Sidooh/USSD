@@ -60,7 +60,10 @@ func (a *MerchantAccount) processScreen(input string) {
 		case "2":
 			a.vars["{source}"] = "COMMISSION"
 			a.vars["{withdrawable_earnings}"] = a.vars["{commission_balance}"]
-
+		case "3":
+			a.vars["{source}"] = "VOUCHER"
+			a.vars["{withdrawable_earnings}"] = a.vars["{float_balance}"]
+			delete(a.screen.Next.Next.Options, 3)
 		}
 
 		// TODO: get actual charges
@@ -141,6 +144,11 @@ func (a *MerchantAccount) finalize() {
 			Destination: a.vars["{destination}"],
 			Account:     a.vars["{account}"],
 			Amount:      amount,
+		}
+
+		if request.Source == "VOUCHER" {
+			go service.VoucherWithdraw(a.vars["{merchant_id}"], request)
+			return
 		}
 
 		// TODO: Make into goroutine if applicable

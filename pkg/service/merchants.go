@@ -117,3 +117,12 @@ func VoucherTransfer(id string, request client.MerchantFloatTransferRequest) err
 
 	return err
 }
+
+func VoucherWithdraw(id string, request client.MerchantWithdrawalRequest) error {
+	err := merchantsClient.VoucherWithdraw(id, request)
+	if err != nil {
+		logger.ServiceLog.Error("Failed to withdraw voucher: ", err)
+	}
+
+	return err
+}
