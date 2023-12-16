@@ -95,7 +95,7 @@ func (f *MerchantFloat) setStoreOptions(input string) {
 
 		for i, account := range accounts {
 			f.screen.Next.Options[i+2] = &data.Option{
-				Label:   account.Name,
+				Label:   strings.Join(strings.Split(account.Name, " ")[0:3], " "),
 				Value:   i + 2,
 				NextKey: utils.MERCHANT_FLOAT_AMOUNT,
 			}
