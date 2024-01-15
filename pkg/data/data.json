@@ -723,7 +723,7 @@
     "title": "Enter amount",
     "type": "OPEN",
     "next": "payment_method",
-    "validations": "INT,MIN:10"
+    "validations": "INT,MIN:10,MAX:250000"
   },
 
   "about": {
