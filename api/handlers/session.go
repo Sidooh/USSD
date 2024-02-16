@@ -50,7 +50,7 @@ func GetSession() http.Handler {
 			return
 		}
 
-		marshal, err := json.Marshal(utils.SuccessResponse(session))
+		marshal, err := json.Marshal(session)
 		if err != nil {
 			jsonBody, _ := json.Marshal(map[string]string{
 				"error": "There was an internal server error",
