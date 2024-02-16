@@ -197,6 +197,38 @@ func FetchSessionLogs(limit int) ([]SessionLog, error) {
 	return sessions, nil
 }
 
+func FetchSessionLog(id int) (SessionLog, error) {
+	var session SessionLog
+
+	row := db.QueryRow(`SELECT * FROM sessions WHERE id = ?`, id)
+
+	var screenPath []byte
+	var vars []byte
+
+	// get RawBytes from data
+	err := row.Scan(&session.Id, &session.SessionId, &session.Phone, &session.Text, &session.Code, &session.Status,
+		&session.Product, &screenPath, &vars, &session.CreatedAt, &session.UpdatedAt)
+	if err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	err = json.Unmarshal(screenPath, &session.ScreenPath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(vars, &session.Vars)
+	if err != nil {
+		panic(err)
+	}
+
+	if err = row.Err(); err != nil {
+		panic(err.Error()) // proper error handling instead of panic in your app
+	}
+
+	return session, nil
+}
+
 func ReadTimeSeriesCount() (interface{}, error) {
 	type Dataset struct {
 		Date  int `json:"date"`

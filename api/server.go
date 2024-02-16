@@ -7,10 +7,10 @@ import (
 	"USSD.sidooh/pkg/logger"
 	"USSD.sidooh/pkg/service"
 	"fmt"
-	"net/http"
+	"github.com/gorilla/mux"
 )
 
-func Setup() {
+func Setup() *mux.Router {
 	fmt.Println("==== Starting Server ====")
 
 	logger.Init()
@@ -20,9 +20,17 @@ func Setup() {
 
 	handlers.LoadScreens()
 
-	http.Handle("/api/v1/ussd", handlers.Recovery())
-	http.Handle("/api/v1/sessions/logs", handlers.LogSession())
-	http.Handle("/api/v1/dashboard/chart", handlers.GetChartData())
-	http.Handle("/api/v1/dashboard/recent-sessions", handlers.GetRecentSessions())
-	http.Handle("/api/v1/dashboard/summaries", handlers.GetSummaries())
+	router := mux.NewRouter()
+
+	router.Handle("/api/v1/ussd", handlers.Recovery())
+	router.Handle("/api/v1/sessions", handlers.GetSessions())
+	router.Handle("/api/v1/sessions/{id:[0-9]+}", handlers.GetSession())
+
+	router.Handle("/api/v1/dashboard/chart", handlers.GetChartData())
+	router.Handle("/api/v1/dashboard/recent-sessions", handlers.GetRecentSessions())
+	//router.Handle("/api/v1/dashboard/sessions/{id}", handlers.GetSession())
+	router.Handle("/api/v1/dashboard/summaries", handlers.GetSummaries())
+
+	return router
+
 }

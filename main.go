@@ -30,9 +30,9 @@ func main() {
 		log.Fatalf("sentry.Init: %s", err)
 	}
 
-	api.Setup()
+	apiRouter := api.Setup()
 
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+	if err := http.ListenAndServe(":"+port, apiRouter); err != nil {
 		log.Fatal(err)
 	}
 }
