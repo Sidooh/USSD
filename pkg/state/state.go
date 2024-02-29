@@ -45,8 +45,6 @@ func (s *State) ToSession() *datastore.Session {
 
 var screens = map[string]*data.Screen{}
 
-var merchantBetaAccounts []string
-
 func (s *State) EnsureScreensAreSet(sc map[string]*data.Screen) {
 	if len(screens) == 0 {
 		screens = sc
@@ -56,7 +54,6 @@ func (s *State) EnsureScreensAreSet(sc map[string]*data.Screen) {
 func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
 
-	merchantBetaAccounts = strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
 	// TODO: Test efficiency/ time comp of this
 	//tempScreens, err := json.Marshal(sc)
 	//err = json.Unmarshal(tempScreens, &screens)
@@ -67,15 +64,15 @@ func (s *State) Init(sc map[string]*data.Screen) {
 	screens = sc
 	//s.ScreenPath.Screen = *screens[utils.MAIN_MENU]
 
-	////make copy of main screen to prevent modifications on master screens
-	//var mainScreen = data.Screen{}
-	//
-	//byteScreen, err := json.Marshal(screens[utils.MAIN_MENU])
-	//err = json.Unmarshal(byteScreen, &mainScreen)
-	//if err != nil {
-	//	mainScreen = *screens[utils.MAIN_MENU]
-	//}
-	//s.ScreenPath.Screen = *s.getScreen(utils.MAIN_MENU)
+	//make copy of main screen to prevent modifications on master screens
+	var mainScreen = data.Screen{}
+
+	byteScreen, err := json.Marshal(screens[utils.MAIN_MENU])
+	err = json.Unmarshal(byteScreen, &mainScreen)
+	if err != nil {
+		mainScreen = *screens[utils.MAIN_MENU]
+	}
+	s.ScreenPath.Screen = mainScreen
 
 	s.Vars["{name}"] = ""
 	s.Vars["{voucher_balance}"] = "0"
@@ -96,32 +93,19 @@ func (s *State) Init(sc map[string]*data.Screen) {
 		if err != nil {
 			logger.UssdLog.Error("FetchInvite: ", err)
 
-			//s.ScreenPath.Screen = *screens[utils.INVITE_CODE]
-			s.ScreenPath.Screen = *s.getScreen(utils.INVITE_CODE)
-			s.ScreenPath.NextKey = utils.MERCHANT_CONSENT
-		} else {
-			s.ScreenPath.Screen = *s.getScreen(utils.MERCHANT)
-			s.setProduct(products.MERCHANT)
+			s.ScreenPath.Screen = *screens[utils.INVITE_CODE]
 		}
 	} else {
 		if account.Id != 0 {
 			s.Vars["{account_id}"] = strconv.Itoa(account.Id)
 			s.Vars["{phone}"] = account.Phone
 		}
-		if account.Id == 3 {
-			s.Vars["{home_screen}"] = utils.MERCHANT
-			s.setProduct(products.MERCHANT)
-		} else {
-			s.Vars["{home_screen}"] = utils.MAIN_MENU
+
+		merchantBetaAccounts := strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
+
+		if !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]) {
+			delete(s.ScreenPath.Options, 0)
 		}
-
-		s.ScreenPath.Screen = *s.getScreen(s.Vars["{home_screen}"])
-
-		//merchantBetaAccounts := strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
-
-		//if !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]) {
-		//	delete(s.ScreenPath.Options, 0)
-		//}
 
 		if account.User.Name != "" {
 			s.Vars["{name}"] = " " + strings.Split(account.User.Name, " ")[0]
@@ -154,22 +138,6 @@ func (s *State) Init(sc map[string]*data.Screen) {
 				s.Vars["{merchant_business_name}"] = account.Merchant.BusinessName
 				s.Vars["{merchant_code}"] = account.Merchant.Code
 				s.Vars["{merchant_float}"] = strconv.Itoa(int(account.Merchant.FloatAccountId))
-			}
-		}
-
-	}
-
-	if s.ProductKey == products.MERCHANT {
-		_, ok := s.Vars["{merchant_id}"]
-		if !ok {
-			//s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
-			s.ScreenPath.Screen = *s.getScreen(utils.MERCHANT_CONSENT)
-
-		} else {
-			_, ok = s.Vars["{merchant_business_name}"]
-			if !ok {
-				//s.ScreenPath.Options[0].NextKey = utils.MERCHANT_KYB
-				s.ScreenPath.Screen = *s.getScreen(utils.MERCHANT_KYB)
 			}
 		}
 	}
@@ -275,11 +243,7 @@ func (s *State) unsetState() {
 func (s *State) ProcessOpenInput(input string) {
 	logger.UssdLog.Println("Processing open input: ", input)
 
-	if s.ScreenPath.Key == utils.INVITE_CODE && s.ScreenPath.NextKey == utils.MERCHANT_CONSENT {
-		s.setProduct(products.MERCHANT)
-	}
-
-	s.ScreenPath.Screen.Next = s.getScreen(s.ScreenPath.Screen.NextKey)
+	s.ScreenPath.Screen.Next = getScreen(s.ScreenPath.Screen.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
@@ -319,6 +283,7 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 			for _, k := range keys {
 				s.ScreenPath.Options[k].NextKey = utils.NOT_TRANSACTED
 			}
+			s.ScreenPath.Options[0].NextKey = utils.MERCHANT_CONSENT
 		} else {
 			if hasPin, ok := s.Vars["{has_pin}"]; !ok || hasPin != "true" {
 				s.ScreenPath.Options[5].NextKey = utils.PIN_NOT_SET
@@ -354,7 +319,7 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 		s.setProduct(products.PAY_VOUCHER)
 	}
 
-	s.ScreenPath.Screen.Next = s.getScreen(option.NextKey)
+	s.ScreenPath.Screen.Next = getScreen(option.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
@@ -392,7 +357,7 @@ func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
 
 	if screenKey != "" {
-		s.ScreenPath.Screen = *s.getScreen(screenKey)
+		s.ScreenPath.Screen = *getScreen(screenKey)
 	} else {
 		s.ScreenPath.Screen = *s.ScreenPath.Next
 	}
@@ -413,14 +378,9 @@ func (s *State) NavigateBackOrHome(input string) {
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = *s.getScreen(s.Vars["{home_screen}"])
+		s.ScreenPath.Screen = *getScreen(utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
-
-		if s.Vars["{home_screen}"] == utils.MERCHANT {
-			s.setProduct(products.MERCHANT)
-		} else {
-			s.setProduct(products.DEFAULT)
-		}
+		s.setProduct(0)
 	}
 }
 
@@ -450,17 +410,9 @@ func (s *State) GetStringResponse() string {
 	return response
 }
 
-func (s *State) getScreen(screenKey string) *data.Screen {
+func getScreen(screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated, and we don't want to change the original
 	screen := *screens[screenKey]
-
-	//fmt.Println(screen.Key, s.Vars["{account_id}"], merchantBetaAccounts, slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]))
-	//
-	if screen.Key == utils.MAIN_MENU && (s.Vars["{account_id}"] == "" || !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"])) {
-		delete(screen.Options, 0)
-	}
-	//
-	//fmt.Println(screen.GetStringRep())
 
 	options := make(map[int]*data.Option)
 	for i, v := range screen.Options {
