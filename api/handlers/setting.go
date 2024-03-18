@@ -12,7 +12,13 @@ import (
 func GetSettings() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		settings, err := datastore.FetchSettings()
+
 		marshal, err := json.Marshal(settings)
+
+		if len(settings) == 0 {
+			marshal, err = json.Marshal([]interface{}{})
+		}
+
 		if err != nil {
 			jsonBody, _ := json.Marshal(map[string]string{
 				"error": "There was an internal server error",

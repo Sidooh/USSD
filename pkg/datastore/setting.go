@@ -6,8 +6,7 @@ type Setting struct {
 }
 
 func FetchSettings() (settings []Setting, err error) {
-
-	rows, err := db.Query(`SELECT * FROM settings ORDER BY name DESC`)
+	rows, err := db.Query(`SELECT * FROM settings ORDER BY name ASC`)
 	if err != nil {
 		return
 	}
