@@ -45,6 +45,8 @@ func (s *State) ToSession() *datastore.Session {
 
 var screens = map[string]*data.Screen{}
 
+var merchantBetaAccounts []string
+
 func (s *State) EnsureScreensAreSet(sc map[string]*data.Screen) {
 	if len(screens) == 0 {
 		screens = sc
@@ -53,6 +55,13 @@ func (s *State) EnsureScreensAreSet(sc map[string]*data.Screen) {
 
 func (s *State) Init(sc map[string]*data.Screen) {
 	s.Vars = map[string]string{}
+
+	merchantBetaSetting, err := datastore.GetSettingByName("MERCHANT_BETA_ACCOUNTS")
+	if err != nil {
+		merchantBetaAccounts = strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
+	} else {
+		merchantBetaAccounts = strings.Split(merchantBetaSetting.Value, ",")
+	}
 
 	// TODO: Test efficiency/ time comp of this
 	//tempScreens, err := json.Marshal(sc)
@@ -100,8 +109,6 @@ func (s *State) Init(sc map[string]*data.Screen) {
 			s.Vars["{account_id}"] = strconv.Itoa(account.Id)
 			s.Vars["{phone}"] = account.Phone
 		}
-
-		merchantBetaAccounts := strings.Split(viper.GetString("MERCHANT_BETA_ACCOUNTS"), ",")
 
 		if !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"]) {
 			delete(s.ScreenPath.Options, 0)
@@ -243,7 +250,7 @@ func (s *State) unsetState() {
 func (s *State) ProcessOpenInput(input string) {
 	logger.UssdLog.Println("Processing open input: ", input)
 
-	s.ScreenPath.Screen.Next = getScreen(s.ScreenPath.Screen.NextKey)
+	s.ScreenPath.Screen.Next = s.getScreen(s.ScreenPath.Screen.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(input)
@@ -319,7 +326,7 @@ func (s *State) ProcessOptionInput(option *data.Option) {
 		s.setProduct(products.PAY_VOUCHER)
 	}
 
-	s.ScreenPath.Screen.Next = getScreen(option.NextKey)
+	s.ScreenPath.Screen.Next = s.getScreen(option.NextKey)
 
 	s.product.Initialize(s.Vars, &s.ScreenPath.Screen)
 	s.product.Process(strconv.Itoa(option.Value))
@@ -357,7 +364,7 @@ func (s *State) MoveNext(screenKey string) {
 	s.SetPrevious()
 
 	if screenKey != "" {
-		s.ScreenPath.Screen = *getScreen(screenKey)
+		s.ScreenPath.Screen = *s.getScreen(screenKey)
 	} else {
 		s.ScreenPath.Screen = *s.ScreenPath.Next
 	}
@@ -378,7 +385,7 @@ func (s *State) NavigateBackOrHome(input string) {
 	}
 
 	if input == "00" {
-		s.ScreenPath.Screen = *getScreen(utils.MAIN_MENU)
+		s.ScreenPath.Screen = *s.getScreen(utils.MAIN_MENU)
 		s.ScreenPath.Previous = nil
 		s.setProduct(0)
 	}
@@ -410,9 +417,13 @@ func (s *State) GetStringResponse() string {
 	return response
 }
 
-func getScreen(screenKey string) *data.Screen {
+func (s *State) getScreen(screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated, and we don't want to change the original
 	screen := *screens[screenKey]
+
+	//if screen.Key == utils.MAIN_MENU && (s.Vars["{account_id}"] == "" || !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"])) {
+	//	delete(screen.Options, 0)
+	//}
 
 	options := make(map[int]*data.Option)
 	for i, v := range screen.Options {
