@@ -421,9 +421,9 @@ func (s *State) getScreen(screenKey string) *data.Screen {
 	// here we need a value and not reference since it will be translated, and we don't want to change the original
 	screen := *screens[screenKey]
 
-	if screen.Key == utils.MAIN_MENU && (s.Vars["{account_id}"] == "" || !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"])) {
-		delete(screen.Options, 0)
-	}
+	//if screen.Key == utils.MAIN_MENU && (s.Vars["{account_id}"] == "" || !slices.Contains(merchantBetaAccounts, s.Vars["{account_id}"])) {
+	//	delete(screen.Options, 0)
+	//}
 
 	options := make(map[int]*data.Option)
 	for i, v := range screen.Options {
