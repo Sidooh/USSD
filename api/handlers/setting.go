@@ -44,6 +44,8 @@ func GetSettings() http.Handler {
 
 func SetSetting() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*") // Adjust origin as needed
+
 		decoder := json.NewDecoder(r.Body)
 		var data datastore.Setting
 		err := decoder.Decode(&data)
