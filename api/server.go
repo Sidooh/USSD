@@ -41,7 +41,7 @@ func Setup() http.Handler {
 	router.Handle("/api/v1/sessions/{id:[0-9]+}", handlers.GetSession())
 
 	router.Handle("/api/v1/settings", handlers.GetSettings())
-	router.Handle("/api/v1/settings/{name:[a-zA-Z]+}", handlers.SetSetting()).Methods("POST")
+	router.Handle("/api/v1/settings/{name:[a-zA-Z_]+}", handlers.SetSetting()).Methods("POST")
 
 	router.Handle("/api/v1/dashboard/chart", handlers.GetChartData())
 	router.Handle("/api/v1/dashboard/recent-sessions", handlers.GetRecentSessions())
