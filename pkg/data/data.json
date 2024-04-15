@@ -720,7 +720,7 @@
   },
   "merchant_float_amount": {
     "key": "merchant_float_amount",
-    "title": "Enter amount",
+    "title": "Enter amount (MAX: KES250,000)",
     "type": "OPEN",
     "next": "payment_method",
     "validations": "INT,MIN:10,MAX:250000"
